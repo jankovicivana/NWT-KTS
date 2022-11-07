@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @Table(name = "reports")
 public class Report {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

@@ -32,5 +32,4 @@ public class Car {
 
     @Column(name = "babiesAllowed", nullable = false)
     private boolean babiesAllowed;
-
 }
