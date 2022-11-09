@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "driverActivities")
 public class DriverActivity {
 
-    public DriverActivity(){}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
