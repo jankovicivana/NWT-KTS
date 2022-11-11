@@ -39,6 +39,7 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint()).and()
                 .authorizeRequests().antMatchers("/").permitAll()
+                .antMatchers("/api/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated().and()
                 .logout(logout -> logout.logoutUrl("/").logoutSuccessUrl("/").invalidateHttpSession(true));
