@@ -51,9 +51,12 @@ public class AuthenticationController {
         System.out.println("Lozinkaaaaaaa: " + passwordEncoder.encode("pass"));
         Authentication authentication;
         try{
+            System.out.println(authenticationRequest.getUsername());
+            System.out.println(authenticationRequest.getPassword());
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch(InternalAuthenticationServiceException e){
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         } catch (DisabledException e){
             return  ResponseEntity.ok(null);
