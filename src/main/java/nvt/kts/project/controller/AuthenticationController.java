@@ -4,9 +4,12 @@ import nvt.kts.project.dto.JwtAuthenticationRequest;
 import nvt.kts.project.dto.UserRequest;
 import nvt.kts.project.dto.UserTokenState;
 import nvt.kts.project.model.Client;
+import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.Role;
 import nvt.kts.project.model.User;
 import nvt.kts.project.exception.ResourceConflictException;
+import nvt.kts.project.service.ClientService;
+import nvt.kts.project.service.DriverService;
 import nvt.kts.project.service.UserService;
 import nvt.kts.project.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,12 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private DriverService driverService;
+
+    @Autowired
+    private ClientService clientService;
+
 
     @PostMapping("/login")
     public ResponseEntity<UserTokenState> createAuthenticationToken(
@@ -59,6 +68,7 @@ public class AuthenticationController {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         } catch (DisabledException e){
+            System.out.println(e.getMessage());
             return  ResponseEntity.ok(null);
         }
 
@@ -81,24 +91,16 @@ public class AuthenticationController {
         if (existUser != null) {
             throw new ResourceConflictException(userRequest.getId(), "Username already exists"); // vrati bad request
         }
-        // treba dodati i za ostale u zavisnosti od uloge
-        /*if(userRequest.getRole().equals("ROLE_client")){
-            Client client = this.clientService.save(userRequest);
-            System.out.println("Maaaaaaaaailll: " + client.getEmail());
-            emailService.sendRegistrationActivation(client);
-            return new ResponseEntity<>(client, HttpStatus.CREATED);
-        }else if(userRequest.getRole().equals("ROLE_cottageOwner")){
-            CottageOwner cottageOwner = this.cottageOwnerService.save(userRequest);
-            return new ResponseEntity<>(cottageOwner, HttpStatus.CREATED);
-        }else if(userRequest.getRole().equals("ROLE_boatOwner")){
-            BoatOwner boatOwner = this.boatOwnerService.save(userRequest);
-            return new ResponseEntity<>(boatOwner, HttpStatus.CREATED);
-        }else if(userRequest.getRole().equals("ROLE_fishingInstructor")){
-            FishingInstructor fishingInstructor = this.fishingInstructorService.save(userRequest);
-            return new ResponseEntity<>(fishingInstructor, HttpStatus.CREATED);
-        }else {
+        if(userRequest.getRole().equals("Driver")){
+            Driver driver = driverService.save(userRequest);
+            return new ResponseEntity<>(driver, HttpStatus.CREATED);
+        }else if(userRequest.getRole().equals("Client")){
+            System.out.println("dadada");
+            Client client = clientService.save(userRequest);
+            return new ResponseEntity<>(client,HttpStatus.CREATED);
+        }else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }*/
-            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
     }
 }

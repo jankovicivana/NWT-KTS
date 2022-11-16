@@ -17,7 +17,7 @@ public class Client extends User{
     private String cardNumber;
 
     @Column(name = "blocked", nullable = false)
-    private boolean blocked;
+    private boolean blocked = false;
 
     @Column(name = "photo", nullable = false)
     private String photo;

@@ -60,7 +60,6 @@ public class WebSecurityConfig {
                 .authorizeRequests().antMatchers("/").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/api/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated().and()
                 .logout(logout -> logout.logoutUrl("/").logoutSuccessUrl("/").invalidateHttpSession(true))
                 .addFilterBefore(new TokenAuthenticationFilter(new TokenUtils(), userDetailsService()), BasicAuthenticationFilter.class);
@@ -73,8 +72,9 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {
             web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
-                    "/**/*.css", "/**/*.js");
-            web.ignoring().antMatchers(HttpMethod.POST, "/auth/login");
+                    "/**/*.css", "/**/*.js","/h2-console/**");
+            web.ignoring().antMatchers(HttpMethod.POST, "/auth/login","/h2-console/**");
+            web.ignoring().antMatchers(HttpMethod.POST, "/auth/register");
         };
     }
 

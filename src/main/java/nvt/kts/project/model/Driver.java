@@ -14,19 +14,19 @@ import java.util.Set;
 public class Driver extends User{
 
     @Column(name = "active", nullable = false)
-    private boolean active;
+    private boolean active = false;
 
     @Column(name = "available", nullable = false)
-    private boolean available;
+    private boolean available = false;
 
     @Column(name = "blocked", nullable = false)
-    private boolean blocked;
+    private boolean blocked = false;
 
     @Column(name = "photo", nullable = false)
     private String photo;
 
     @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinColumn(name = "car", nullable = true)
+    @JoinColumn(name = "car")
     protected Car car;
 
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)

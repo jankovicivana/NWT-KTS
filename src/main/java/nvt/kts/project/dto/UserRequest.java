@@ -17,7 +17,7 @@ public class UserRequest {
 
     private String city;
 
-    private String street;
+    private String cardNumber;
 
     private String role;
 
