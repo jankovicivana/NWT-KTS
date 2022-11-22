@@ -23,5 +23,7 @@ public class UserRequest {
 
     private String phoneNumber;
 
+    private String photo;
+
 
 }

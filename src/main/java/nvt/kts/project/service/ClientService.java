@@ -40,7 +40,7 @@ public class ClientService {
         client.setPhoneNumber(userRequest.getPhoneNumber());
         List<Role> roles = roleRepository.findByName("ROLE_" + userRequest.getRole().toLowerCase(Locale.ROOT));
         client.setRoles(roles);
-        client.setPhoto("");
+        client.setPhoto(userRequest.getPhoto());
 
         return this.clientRepository.save(client);
     }
