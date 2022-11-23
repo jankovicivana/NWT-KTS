@@ -24,7 +24,7 @@ public class ClientService {
     @Autowired
     private RoleRepository roleRepository;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void save(Client client){clientRepository.save(client);}
 
@@ -43,5 +43,17 @@ public class ClientService {
         client.setPhoto(userRequest.getPhoto());
 
         return this.clientRepository.save(client);
+    }
+
+    public Client getClientByEmail(String email){
+        return clientRepository.findByEmail(email);
+    }
+    public void saveClient(Client client){
+        clientRepository.save(client);
+    }
+
+    public void setRole(Client client) {
+        List<Role> roles = roleRepository.findByName("ROLE_client");
+        client.setRoles(roles);
     }
 }

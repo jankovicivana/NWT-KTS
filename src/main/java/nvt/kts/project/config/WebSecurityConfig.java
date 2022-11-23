@@ -72,10 +72,12 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {
-            web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
-                    "/**/*.css", "/**/*.js","/h2-console/**","/api/user/getUser/{email}");
-            web.ignoring().antMatchers(HttpMethod.POST, "/auth/login","/h2-console/**");
+
+            web.ignoring().antMatchers(HttpMethod.GET, "/**","/h2-console/**", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
+                    "/**/*.css", "/**/*.js");
+            web.ignoring().antMatchers(HttpMethod.POST,"/**", "/auth/login","/h2-console/**");
             web.ignoring().antMatchers(HttpMethod.POST, "/auth/register");
+
         };
     }
 

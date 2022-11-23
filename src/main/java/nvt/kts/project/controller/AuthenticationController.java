@@ -56,8 +56,6 @@ public class AuthenticationController {
     public ResponseEntity<UserTokenState> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println("Lozinkaaaaaaa: " + passwordEncoder.encode("pass"));
         Authentication authentication;
         try{
             System.out.println(authenticationRequest.getUsername());

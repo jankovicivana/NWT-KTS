@@ -1,11 +1,17 @@
 package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import nvt.kts.project.dto.ClientDTO;
+import nvt.kts.project.model.Client;
 import nvt.kts.project.model.User;
+import nvt.kts.project.service.ClientService;
 import nvt.kts.project.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +22,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ModelMapper mapper;
+
+
     @GetMapping("/getUser/{email}")
     public ResponseEntity<User> getUser(@PathVariable String email) {
         User user = userService.findByEmail(email);
@@ -24,5 +37,40 @@ public class UserController {
         }
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
+
+    @GetMapping("/getClient")
+    public ResponseEntity<Client> getUser() {
+        Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
+        return new ResponseEntity<>(u, HttpStatus.OK);
+    }
+
+    @PostMapping("/saveClient")
+    public ResponseEntity<String> saveClient(@RequestBody ClientDTO clientDTO) {
+        Client client = mapper.map(clientDTO,Client.class);
+        clientService.setRole(client);
+        clientService.saveClient(client);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody String newPass) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
+        u.setPassword(passwordEncoder.encode(newPass));
+        clientService.saveClient(u);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/checkOldPassword")
+    public ResponseEntity<Boolean> isOldPasswordCorrect(@RequestBody String oldPass) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
+        if (passwordEncoder.matches(oldPass, u.getPassword())){
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false,HttpStatus.OK);
+    }
+
+   
 
 }
