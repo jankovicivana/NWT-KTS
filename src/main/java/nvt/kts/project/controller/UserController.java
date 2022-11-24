@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +40,13 @@ public class UserController {
     }
 
     @GetMapping("/getClient")
-    public ResponseEntity<Client> getUser() {
+    @PreAuthorize("hasRole('Client')")
+    public ResponseEntity<ClientDTO> getUser() {
         Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
-        return new ResponseEntity<>(u, HttpStatus.OK);
+        ClientDTO dto = mapper.map(u,ClientDTO.class);
+        String formattedRole = userService.formatRole(u.getRoles().get(0).getName());
+        dto.setRole(formattedRole);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping("/saveClient")

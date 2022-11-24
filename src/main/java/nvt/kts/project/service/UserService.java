@@ -33,6 +33,11 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
+    public String formatRole(String role){
+        String formatted = role.substring(5);
+        return formatted.substring(0, 1).toUpperCase() + formatted.substring(1).toLowerCase();
+    }
+
     public boolean isPasswordCorrect(String oldPass, String password) {
         return passwordEncoder.encode(oldPass).contentEquals(password);
     }

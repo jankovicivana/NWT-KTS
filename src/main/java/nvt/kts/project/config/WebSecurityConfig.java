@@ -73,7 +73,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {
 
-            web.ignoring().antMatchers(HttpMethod.GET, "/**","/h2-console/**", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
+            web.ignoring().antMatchers(HttpMethod.GET, "/getImage/","/h2-console/**", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
                     "/**/*.css", "/**/*.js");
             web.ignoring().antMatchers(HttpMethod.POST,"/**", "/auth/login","/h2-console/**");
             web.ignoring().antMatchers(HttpMethod.POST, "/auth/register");

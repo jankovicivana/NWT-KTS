@@ -33,7 +33,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String username;
-
+        System.out.print(tokenUtils.getToken(request));
         String authToken = tokenUtils.getToken(request);
 
         try {
