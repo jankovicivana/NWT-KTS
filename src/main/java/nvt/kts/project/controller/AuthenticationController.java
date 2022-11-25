@@ -10,6 +10,7 @@ import nvt.kts.project.model.User;
 import nvt.kts.project.exception.ResourceConflictException;
 import nvt.kts.project.service.ClientService;
 import nvt.kts.project.service.DriverService;
+import nvt.kts.project.service.EmailService;
 import nvt.kts.project.service.UserService;
 import nvt.kts.project.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,6 +49,9 @@ public class AuthenticationController {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @PostMapping("/login")
@@ -87,15 +89,33 @@ public class AuthenticationController {
         if (existUser != null) {
             throw new ResourceConflictException(userRequest.getId(), "Username already exists"); // vrati bad request
         }
-        if(userRequest.getRole().equals("Driver")){
-            Driver driver = driverService.save(userRequest);
-            return new ResponseEntity<>(driver, HttpStatus.CREATED);
-        }else if(userRequest.getRole().equals("Client")){
-            Client client = clientService.save(userRequest);
-            return new ResponseEntity<>(client,HttpStatus.CREATED);
-        }else{
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        try {
+            if(userRequest.getRole().equals("Driver")){
+                Driver driver = driverService.save(userRequest);
+                emailService.sendAccountActivation(driver);
+                return new ResponseEntity<>(driver, HttpStatus.CREATED);
+            }else if(userRequest.getRole().equals("Client")){
+                Client client = clientService.save(userRequest);
+                emailService.sendAccountActivation(client);
+                return new ResponseEntity<>(client,HttpStatus.CREATED);
+            }else{
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (MessagingException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);    // mail ne postoji
         }
 
+    }
+
+    @PostMapping("/register/activate/{token}")
+    public ResponseEntity<HttpStatus> activateAccount(@PathVariable String token) {
+        String username = tokenUtils.getUsernameFromToken(token);
+        boolean success = userService.activate(username);
+        System.out.println("Aktiviran: " + success);
+        if(success){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

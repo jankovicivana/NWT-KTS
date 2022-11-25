@@ -36,7 +36,7 @@ public class ClientService {
         client.setSurname(userRequest.getSurname());
         client.setCity(userRequest.getCity());
         client.setCardNumber(userRequest.getCardNumber());
-        client.setEnabled(true);
+        client.setEnabled(false);
         client.setPhoneNumber(userRequest.getPhoneNumber());
         List<Role> roles = roleRepository.findByName("ROLE_" + userRequest.getRole().toLowerCase(Locale.ROOT));
         client.setRoles(roles);

@@ -1,6 +1,5 @@
 package nvt.kts.project.service;
 
-import ch.qos.logback.core.joran.spi.ConsoleTarget;
 import nvt.kts.project.model.User;
 import nvt.kts.project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ public class UserService implements UserDetailsService {
     public User findByEmail(String email){
         return userRepository.findByEmail(email);
     }
+
     public User getUserByEmail(String email){
         return userRepository.findByEmail(email);
     }
@@ -40,6 +40,16 @@ public class UserService implements UserDetailsService {
 
     public boolean isPasswordCorrect(String oldPass, String password) {
         return passwordEncoder.encode(oldPass).contentEquals(password);
+
+    public boolean activate(String username) {
+        User user = findByEmail(username);
+        if(user == null || user.isEnabled()){
+            System.out.println("VEC JE ENABLED ILI NE POSTOJI");
+            return false;
+        }
+        user.setEnabled(true);
+        return true;
+
     }
 
 }

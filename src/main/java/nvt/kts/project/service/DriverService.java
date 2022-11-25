@@ -35,7 +35,7 @@ public class DriverService {
         driver.setName(userRequest.getName());
         driver.setSurname(userRequest.getSurname());
         driver.setCity(userRequest.getCity());
-        driver.setEnabled(true);
+        driver.setEnabled(false);
         driver.setPhoneNumber(userRequest.getPhoneNumber());
         List<Role> roles = roleRepository.findByName("ROLE_" + userRequest.getRole().toLowerCase(Locale.ROOT));
         driver.setRoles(roles);
