@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/user")
@@ -31,6 +33,7 @@ public class UserController {
 
 
     @GetMapping("/getUser/{email}")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<User> getUser(@PathVariable String email) {
         User user = userService.findByEmail(email);
         if(user == null){
@@ -39,10 +42,10 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @GetMapping("/getClient")
-    @PreAuthorize("hasRole('Client')")
-    public ResponseEntity<ClientDTO> getUser() {
-        Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
+    @GetMapping("/getClient/{email}")
+    @PreAuthorize("hasRole('client')")
+    public ResponseEntity<ClientDTO> getClient(@PathVariable String email) {
+        Client u = clientService.getClientByEmail(email);
         ClientDTO dto = mapper.map(u,ClientDTO.class);
         String formattedRole = userService.formatRole(u.getRoles().get(0).getName());
         dto.setRole(formattedRole);
@@ -50,6 +53,7 @@ public class UserController {
     }
 
     @PostMapping("/saveClient")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<String> saveClient(@RequestBody ClientDTO clientDTO) {
         Client client = mapper.map(clientDTO,Client.class);
         clientService.setRole(client);
@@ -58,6 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<String> changePassword(@RequestBody String newPass) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
@@ -67,6 +72,7 @@ public class UserController {
     }
 
     @PostMapping("/checkOldPassword")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<Boolean> isOldPasswordCorrect(@RequestBody String oldPass) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");

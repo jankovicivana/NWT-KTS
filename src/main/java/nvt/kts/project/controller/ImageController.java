@@ -25,6 +25,7 @@ import java.util.Base64;
 public class ImageController {
 
     @GetMapping(value = "/getImage/{name}")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<InputStreamResource> getImage(@PathVariable String name) {
         try {
             FileSystemResource imgFile = new FileSystemResource("src/main/resources/static/images/" + name);
@@ -37,6 +38,7 @@ public class ImageController {
     }
 
     @PostMapping(value = "/uploadImage")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<String> savePhoto(@RequestParam("image") MultipartFile image) {
         try {
             String name = "photo";
@@ -48,6 +50,7 @@ public class ImageController {
     }
 
     @PostMapping("/addImage")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<ImageDTO> addImage(@RequestBody ImageDTO imageDTO) throws IOException {
         byte[] data;
         try {

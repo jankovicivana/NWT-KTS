@@ -58,8 +58,6 @@ public class AuthenticationController {
 
         Authentication authentication;
         try{
-            System.out.println(authenticationRequest.getUsername());
-            System.out.println(authenticationRequest.getPassword());
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch(InternalAuthenticationServiceException e){
@@ -82,7 +80,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> addUser(@RequestBody UserRequest userRequest) throws MessagingException {
+    public ResponseEntity<User> addUser(@RequestBody UserRequest userRequest) {
 
         UserDetails existUser = this.userService.loadUserByUsername(userRequest.getEmail());
 
@@ -93,7 +91,6 @@ public class AuthenticationController {
             Driver driver = driverService.save(userRequest);
             return new ResponseEntity<>(driver, HttpStatus.CREATED);
         }else if(userRequest.getRole().equals("Client")){
-            System.out.println("dadada");
             Client client = clientService.save(userRequest);
             return new ResponseEntity<>(client,HttpStatus.CREATED);
         }else{
