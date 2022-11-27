@@ -19,17 +19,15 @@ public class EmailService {
 
     @Bean
     public JavaMailSenderImpl mailSender() {
-        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-
-
-        javaMailSender.setHost("smtp.gmail.com");
-        javaMailSender.setPort(587);
-        javaMailSender.setUsername("rentalappteam6@gmail.com");
-        javaMailSender.setPassword("qxoizxexuemjfgow");
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername("rentalappteam6@gmail.com");
+        mailSender.setPassword("qxoizxexuemjfgow");
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable", "true");
-        javaMailSender.setJavaMailProperties(props);
-        return javaMailSender;
+        mailSender.setJavaMailProperties(props);
+        return mailSender;
     }
 
     JavaMailSenderImpl javaMailSender = mailSender();
@@ -60,6 +58,41 @@ public class EmailService {
                 "                Dear "+u.getName()+",\n" +
                 "                <br/>\n" +
                 "                Click the link below to activate your account: \n" +
+                "                <br/>\n" +
+                "                "+ link + " \n" +
+                "                <br/>\n" +
+                "                Regards,\n" +
+                "                <br/>\n" +
+                "                <span >Uber app team</span>\n" +
+                "            </div>\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "\n" +
+                "    </body>\n" +
+                "</html>",true);
+        javaMailSender.send(mail.getMimeMessage());
+    }
+
+    @Async
+    public void sendPasswordChange(User u) throws MessagingException {
+        MimeMessageHelper mail = new MimeMessageHelper(javaMailSender.createMimeMessage(), true, "UTF-8");
+        mail.setTo(u.getEmail());
+        mail.setFrom(Objects.requireNonNull(env.getProperty("spring.mail.username")));
+        mail.setSubject("Uber account password forgotten");
+
+        String token = tokenUtils.generateToken(u.getUsername());
+        String link = "http://localhost:4200/changePassword/" + token;
+        mail.setText("<html>\n" +
+                "    <body>\n" +
+                "        <div style=\"margin: 50px;\">\n" +
+                "            <div style=\"background-color: rgb(99, 216, 99);height: 55px;\">\n" +
+                "                    <h1 style=\"margin-left:15px; color: white;\">Change your password</h1>\n" +
+                "            </div>\n" +
+                "            <div style=\"margin-top: 10px;\">\n" +
+                "                <div style=\"margin: 25px;\">\n" +
+                "                Dear "+u.getName()+",\n" +
+                "                <br/>\n" +
+                "                Click the link below to change your password: \n" +
                 "                <br/>\n" +
                 "                "+ link + " \n" +
                 "                <br/>\n" +

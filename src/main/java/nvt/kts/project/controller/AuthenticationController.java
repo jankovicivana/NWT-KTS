@@ -111,9 +111,7 @@ public class AuthenticationController {
     @PostMapping("/register/activate/{token}")
     public ResponseEntity<HttpStatus> activateAccount(@PathVariable String token) {
         String username = tokenUtils.getUsernameFromToken(token);
-        boolean success = userService.activate(username);
-        System.out.println("Aktiviran: " + success);
-        if(success){
+        if(userService.activate(username)){
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
