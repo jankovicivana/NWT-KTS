@@ -5,6 +5,7 @@ import nvt.kts.project.dto.ClientDTO;
 import nvt.kts.project.model.Client;
 import nvt.kts.project.model.User;
 import nvt.kts.project.service.ClientService;
+import nvt.kts.project.service.EmailService;
 import nvt.kts.project.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.security.Principal;
 
 @RestController
@@ -30,6 +32,9 @@ public class UserController {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @GetMapping("/getUser/{email}")
@@ -82,6 +87,16 @@ public class UserController {
         return new ResponseEntity<>(false,HttpStatus.OK);
     }
 
-   
+    @GetMapping("/sendPasswordReset/{email}")
+    @PreAuthorize("hasAnyRole('client', 'driver')")
+    public ResponseEntity<ClientDTO> sendPasswordReset(@PathVariable String email) {
+        User u = userService.findByEmail(email);
+        try {
+            emailService.sendPasswordChange(u);
+        } catch (MessagingException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }
