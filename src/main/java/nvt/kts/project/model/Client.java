@@ -13,8 +13,8 @@ import java.util.Set;
 @Table(name = "clients")
 public class Client extends User{
 
-    @Column(name = "cardNumber", nullable = false)
-    private String cardNumber;
+    @Column(name = "tokens", nullable = false)
+    private double tokens;
 
     @Column(name = "blocked", nullable = false)
     private boolean blocked = false;

@@ -17,7 +17,7 @@ public class UserRequest {
 
     private String city;
 
-    private String cardNumber;
+    private Double tokens;
 
     private String role;
 

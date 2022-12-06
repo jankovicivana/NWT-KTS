@@ -9,6 +9,7 @@ public class TokenBasedAuthentication extends AbstractAuthenticationToken {
 
     public TokenBasedAuthentication(UserDetails principle) {
         super(principle.getAuthorities());
+        System.out.print("setuje ga naa "+ principle);
         this.principle = principle;
     }
 
@@ -19,6 +20,7 @@ public class TokenBasedAuthentication extends AbstractAuthenticationToken {
 
     @Override
     public UserDetails getPrincipal() {
+        System.out.print("principle" + principle);
         return principle;
     }
 

@@ -15,7 +15,7 @@ public class ClientDTO {
     private String phoneNumber;
     private String role;
     private String city;
-    private String cardNumber;
+    private Double tokens;
     private String photo;
     private Boolean enabled;
     private Boolean blocked;

@@ -15,23 +15,16 @@ import java.util.Date;
 @Component
 public class TokenUtils {
 
-    @Value("uber")
-    private String appName;
+    public String secret = "somesecret";
 
-    @Value("somesecret")
-    public String secret;
-
-    @Value("1800000")
-    private int expiresIn;
-
-    @Value("Authorization")
-    private String authHeader;
+    private final int expiresIn = 1800000;
 
     private static final String AUDIENCE_WEB = "web";
 
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
     public String generateToken(String username) {
+        String appName = "uber";
         return Jwts.builder()
                 .setIssuer(appName)
                 .setSubject(username)
@@ -61,7 +54,6 @@ public class TokenUtils {
 
     public String getUsernameFromToken(String token){
         String username = null;
-
         try {
             final Claims claims = this.getAllClaimsFromToken(token);
             if(claims != null)
@@ -153,6 +145,7 @@ public class TokenUtils {
     }
 
     public String getAuthHeaderFromHeader(HttpServletRequest request) {
-        return request.getHeader("Authorization");
+        String authHeader = "Authorization";
+        return request.getHeader(authHeader);
     }
 }

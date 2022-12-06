@@ -47,10 +47,10 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @GetMapping("/getClient/{email}")
+    @GetMapping("/getClient")
     @PreAuthorize("hasRole('client')")
-    public ResponseEntity<ClientDTO> getClient(@PathVariable String email) {
-        Client u = clientService.getClientByEmail(email);
+    public ResponseEntity<ClientDTO> getClient(Principal principal) {
+        Client u = clientService.getClientByEmail(principal.getName());
         ClientDTO dto = mapper.map(u,ClientDTO.class);
         String formattedRole = userService.formatRole(u.getRoles().get(0).getName());
         dto.setRole(formattedRole);
@@ -68,9 +68,9 @@ public class UserController {
 
     @PostMapping("/changePassword")
     @PreAuthorize("hasRole('client')")
-    public ResponseEntity<String> changePassword(@RequestBody String newPass) {
+    public ResponseEntity<String> changePassword(@RequestBody String newPass, Principal principal) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
+        Client u = clientService.getClientByEmail(principal.getName());
         u.setPassword(passwordEncoder.encode(newPass));
         clientService.saveClient(u);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -78,9 +78,9 @@ public class UserController {
 
     @PostMapping("/checkOldPassword")
     @PreAuthorize("hasRole('client')")
-    public ResponseEntity<Boolean> isOldPasswordCorrect(@RequestBody String oldPass) {
+    public ResponseEntity<Boolean> isOldPasswordCorrect(@RequestBody String oldPass, Principal principal) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        Client u = clientService.getClientByEmail("ivanaj0610@gmail.com");
+        Client u = clientService.getClientByEmail(principal.getName());
         if (passwordEncoder.matches(oldPass, u.getPassword())){
             return new ResponseEntity<>(true,HttpStatus.OK);
         }
