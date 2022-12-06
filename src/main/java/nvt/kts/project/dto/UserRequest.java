@@ -25,5 +25,5 @@ public class UserRequest {
 
     private String photo;
 
-
+    private Boolean isSocialLogin;
 }

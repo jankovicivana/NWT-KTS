@@ -19,4 +19,5 @@ public class ClientDTO {
     private String photo;
     private Boolean enabled;
     private Boolean blocked;
+    private Boolean isSocialLogin;
 }

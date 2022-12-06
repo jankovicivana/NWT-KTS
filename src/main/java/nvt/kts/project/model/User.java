@@ -48,6 +48,9 @@ public class User implements UserDetails {
     @Column(name = "city", nullable = false)
     private String city;
 
+    @Column(name = "is_social_login", nullable = false)
+    private Boolean isSocialLogin = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

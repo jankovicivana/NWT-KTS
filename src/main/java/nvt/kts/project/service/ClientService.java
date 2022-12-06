@@ -36,7 +36,8 @@ public class ClientService {
         client.setSurname(userRequest.getSurname());
         client.setCity(userRequest.getCity());
         client.setCardNumber(userRequest.getCardNumber());
-        client.setEnabled(false);
+        client.setIsSocialLogin(userRequest.getIsSocialLogin());
+        client.setEnabled(userRequest.getIsSocialLogin()); // ako je preko googla odmah je enabled
         client.setPhoneNumber(userRequest.getPhoneNumber());
         List<Role> roles = roleRepository.findByName("ROLE_" + userRequest.getRole().toLowerCase(Locale.ROOT));
         client.setRoles(roles);

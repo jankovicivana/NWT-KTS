@@ -97,7 +97,9 @@ public class AuthenticationController {
                 return new ResponseEntity<>(driver, HttpStatus.CREATED);
             }else if(userRequest.getRole().equals("Client")){
                 Client client = clientService.save(userRequest);
-                emailService.sendAccountActivation(client);
+                if(!userRequest.getIsSocialLogin()){
+                    emailService.sendAccountActivation(client);
+                }
                 return new ResponseEntity<>(client,HttpStatus.CREATED);
             }else{
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
