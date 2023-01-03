@@ -53,7 +53,7 @@ public class NoteController {
     }
 
     @PostMapping("/saveNotes")
-    @PreAuthorize("hasRole('client')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<String> saveNotes(@RequestBody List<NoteDTO> noteDTOS) {
         List<Note> notes = new ArrayList<>();
         for (NoteDTO dto: noteDTOS){
