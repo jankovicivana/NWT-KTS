@@ -1,11 +1,15 @@
 package nvt.kts.project.service;
 
 import nvt.kts.project.dto.UserRequest;
+import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.Role;
 import nvt.kts.project.repository.DriverRepository;
 import nvt.kts.project.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,5 +46,16 @@ public class DriverService {
         driver.setPhoto("");
 
         return this.driverRepository.save(driver);
+    }
+
+    public List<Driver> getDrivers(Pageable pageable, HttpHeaders hh) {
+        Page<Driver> drivers =driverRepository.findAllByDeletedIsFalse(pageable);
+        hh.add("Total-items", Long.toString(drivers.getTotalElements()));
+        return drivers.getContent();
+    }
+
+
+    public Driver findDriverById(Long id){
+        return driverRepository.findDriverById(id);
     }
 }

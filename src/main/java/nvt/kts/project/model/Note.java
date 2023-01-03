@@ -15,18 +15,16 @@ public class Note {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "admin")
-    private Admin admin;
+    private Long adminId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver")
-    private Driver driver;
+    private Long driverId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client")
-    private Client client;
+    private Long clientId;
 
+    @Column(name = "note", nullable = false)
     private String comment;
 
 }

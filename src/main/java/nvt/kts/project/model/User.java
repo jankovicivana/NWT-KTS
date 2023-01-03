@@ -48,6 +48,9 @@ public class User implements UserDetails {
     @Column(name = "city", nullable = false)
     private String city;
 
+    @Column(name = "blocked", nullable = false)
+    private boolean blocked = false;
+
     @Column(name = "is_social_login", nullable = false)
     private Boolean isSocialLogin = false;
 

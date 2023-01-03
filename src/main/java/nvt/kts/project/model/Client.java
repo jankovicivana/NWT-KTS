@@ -16,9 +16,6 @@ public class Client extends User{
     @Column(name = "tokens", nullable = false)
     private double tokens;
 
-    @Column(name = "blocked", nullable = false)
-    private boolean blocked = false;
-
     @Column(name = "photo", nullable = false)
     private String photo;
 
@@ -34,7 +31,5 @@ public class Client extends User{
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Set<Grade> grades = new HashSet<>();
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    private Set<Note> notes = new HashSet<>();
 
 }

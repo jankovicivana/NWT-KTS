@@ -1,16 +1,20 @@
 package nvt.kts.project.service;
 
 import nvt.kts.project.dto.UserRequest;
+import nvt.kts.project.model.Admin;
 import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Role;
 import nvt.kts.project.repository.ClientRepository;
 import nvt.kts.project.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,8 +50,18 @@ public class ClientService {
         return this.clientRepository.save(client);
     }
 
+    public Client findClientById(Long id){
+        return clientRepository.findClientById(id);
+    }
     public Client getClientByEmail(String email){
         return clientRepository.findByEmail(email);
+    }
+
+
+    public List<Client> getClients(Pageable pageable, HttpHeaders hh){
+        Page<Client> clients =clientRepository.findAllByDeletedIsFalse(pageable);
+        hh.add("Total-items", Long.toString(clients.getTotalElements()));
+        return clients.getContent();
     }
     public void saveClient(Client client){
         clientRepository.save(client);

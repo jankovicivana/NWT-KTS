@@ -7,8 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ClientDTO {
-
+public class DriverDTO {
     private Long id;
     private String name;
     private String surname;
@@ -17,7 +16,6 @@ public class ClientDTO {
     private String phoneNumber;
     private String role;
     private String city;
-    private Double tokens;
     private String photo;
     private Boolean enabled;
     private Boolean blocked;

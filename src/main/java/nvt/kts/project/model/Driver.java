@@ -19,9 +19,6 @@ public class Driver extends User{
     @Column(name = "available", nullable = false)
     private boolean available = false;
 
-    @Column(name = "blocked", nullable = false)
-    private boolean blocked = false;
-
     @Column(name = "photo", nullable = false)
     private String photo;
 
@@ -34,9 +31,6 @@ public class Driver extends User{
 
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     private Set<Grade> grades = new HashSet<>();
-
-    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
-    private Set<Note> notes = new HashSet<>();
 
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     private Set<DriverActivity> activity = new HashSet<>();
