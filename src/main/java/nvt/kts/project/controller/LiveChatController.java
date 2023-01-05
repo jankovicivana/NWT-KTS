@@ -46,24 +46,7 @@ public class LiveChatController {
     @GetMapping("/getMessages")
     @PreAuthorize("hasAnyRole('client','admin')")
     public ResponseEntity<List<OutputMessageDTO>> getUserMessages(Principal principal) {
-        List<Message> messages = messageService.getUserMessages(principal.getName());
-        List<OutputMessageDTO> messageDTOS = new ArrayList<>();
-        for (Message message:messages) {
-            MessageClientDTO senderDTO = new MessageClientDTO(message.getSender().getName(),message.getSender().getSurname(),message.getSender().getEmail(),"");
-            MessageClientDTO recipientDTO = new MessageClientDTO(message.getRecipient().getName(),message.getRecipient().getSurname(),message.getRecipient().getEmail(),"");
-            if(message.getSender().getRoles().get(0).getName().equals("ROLE_client")){
-                Client sender = (Client) message.getSender();
-                senderDTO.setPhoto(sender.getPhoto());
-            }
-            if(message.getRecipient().getRoles().get(0).getName().equals("ROLE_client")){
-                Client recipient = (Client) message.getRecipient();
-                recipientDTO.setPhoto(recipient.getPhoto());
-            }
-
-            OutputMessageDTO out = new OutputMessageDTO(senderDTO,message.getText(),recipientDTO);
-            //MessageDTO messageDTO = new MessageDTO(message.getSender().getEmail(),message.getRecipient().getEmail(),message.getText());
-            messageDTOS.add(out);
-        }
+        List<OutputMessageDTO> messageDTOS = messageService.getOutputMessages(principal.getName());
         return new ResponseEntity<>(messageDTOS, HttpStatus.OK);
     }
 
