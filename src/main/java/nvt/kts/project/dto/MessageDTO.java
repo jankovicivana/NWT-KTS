@@ -13,6 +13,8 @@ public class MessageDTO {
 
     private String to;
 
+    public MessageDTO(){}
+
     public MessageDTO(String from, String to, String text){
         this.from = from;
         this.text = text;

@@ -15,7 +15,7 @@ VALUES (nextval('user_seq'), 'admin@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYs
 insert into user_role (user_id, role_id) values (2, 2);
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled)
-VALUES (nextval('user_seq'), 'maki@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Marija', 'Milosevic', false, '0654079380', 'Cuprija',false, 10, 'unknown.jpg', false, true);
+VALUES (nextval('user_seq'), 'maki@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Marija', 'Milosevic', false, '0654079380', 'Cuprija',false, 10, 'coka.jpg', false, true);
 
 insert into user_role (user_id, role_id) values (3, 1);
 

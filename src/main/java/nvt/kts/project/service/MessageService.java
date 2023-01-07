@@ -23,6 +23,10 @@ public class MessageService {
         return messageRepository.findAllBySenderEmailOrRecipientEmail(email,email);
     }
 
+    public void save(Message message){
+        messageRepository.save(message);
+    }
+
     public List<OutputMessageDTO> getOutputMessages(String email){
         List<Message> messages = getUserMessages(email);
         List<OutputMessageDTO> messageDTOS = new ArrayList<>();

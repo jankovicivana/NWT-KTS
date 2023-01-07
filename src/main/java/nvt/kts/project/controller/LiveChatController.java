@@ -1,27 +1,21 @@
 package nvt.kts.project.controller;
 
 import nvt.kts.project.dto.ClientDTO;
-import nvt.kts.project.dto.MessageClientDTO;
 import nvt.kts.project.dto.MessageDTO;
 import nvt.kts.project.dto.OutputMessageDTO;
 import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Message;
 import nvt.kts.project.service.MessageService;
+import nvt.kts.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,6 +26,9 @@ public class LiveChatController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public LiveChatController(SimpMessagingTemplate simpleMessageTemplate) {
@@ -48,6 +45,17 @@ public class LiveChatController {
     public ResponseEntity<List<OutputMessageDTO>> getUserMessages(Principal principal) {
         List<OutputMessageDTO> messageDTOS = messageService.getOutputMessages(principal.getName());
         return new ResponseEntity<>(messageDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping("/saveMessage")
+    @PreAuthorize("hasAnyRole('client','admin')")
+    public ResponseEntity<String> saveMessage(@RequestBody MessageDTO messageDTO) {
+        Message m = new Message();
+        m.setSender(userService.findByEmail(messageDTO.getFrom()));
+        m.setRecipient(userService.findByEmail(messageDTO.getTo().equals("admins")?"admin@gmail.com":messageDTO.getTo()));
+        m.setText(messageDTO.getText());
+        messageService.save(m);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
