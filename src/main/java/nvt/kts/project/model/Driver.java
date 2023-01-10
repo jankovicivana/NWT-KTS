@@ -30,9 +30,6 @@ public class Driver extends User{
     private Set<Drive> drives = new HashSet<>();
 
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
-    private Set<Grade> grades = new HashSet<>();
-
-    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     private Set<DriverActivity> activity = new HashSet<>();
 
 }

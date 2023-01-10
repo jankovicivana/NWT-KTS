@@ -30,4 +30,5 @@ insert into user_role (user_id, role_id) values (1, 1);
 insert into user_role (user_id, role_id) values (2, 1);
 insert into user_role (user_id, role_id) values (3, 2);
 
-insert into notes (admin_id,driver_id,client_id,note) values (3,-1 ,1,'Neki pogrdan komentar')
+insert into notes (admin_id,driver_id,client_id,note) values (3,-1 ,1,'Neki pogrdan komentar');
+insert into grades (car_grade,driver_grade,comment,client,driver,drive_id) values (2,2,null ,1,7,1)

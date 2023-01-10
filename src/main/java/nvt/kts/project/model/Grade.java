@@ -21,14 +21,15 @@ public class Grade {
     @Column(name = "driverGrade")
     private double driverGrade;
 
+    @Column(name = "driveId")
+    private long driveId;
+
     @Column(name = "comment")
     private String comment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "client")
-    private Client client;
+    @Column(name = "client")
+    private long clientId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "driver")
-    private Driver driver;
+    @Column(name = "driver")
+    private long driverId;
 }

@@ -28,8 +28,4 @@ public class Client extends User{
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Set<Report> reports = new HashSet<>();
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    private Set<Grade> grades = new HashSet<>();
-
-
 }
