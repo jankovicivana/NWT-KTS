@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
 
@@ -53,6 +50,12 @@ public class User implements UserDetails {
 
     @Column(name = "is_social_login", nullable = false)
     private Boolean isSocialLogin = false;
+
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
+    private Set<Message> sentMessages = new HashSet<>();
+
+    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
+    private Set<Message> receivedMessages = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
