@@ -1,9 +1,7 @@
 package nvt.kts.project.controller;
 
-import nvt.kts.project.dto.ClientDTO;
 import nvt.kts.project.dto.MessageDTO;
 import nvt.kts.project.dto.OutputMessageDTO;
-import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Message;
 import nvt.kts.project.service.MessageService;
 import nvt.kts.project.service.UserService;
