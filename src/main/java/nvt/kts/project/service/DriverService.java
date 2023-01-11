@@ -1,7 +1,6 @@
 package nvt.kts.project.service;
 
 import nvt.kts.project.dto.UserRequest;
-import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.Role;
 import nvt.kts.project.repository.DriverRepository;
@@ -54,8 +53,10 @@ public class DriverService {
         return drivers.getContent();
     }
 
-
-    public Driver findDriverById(Long id){
+    public Driver findDriverById(Long id) {
         return driverRepository.findDriverById(id);
+    }
+    public List<Driver> findAll() {
+        return driverRepository.findAll();
     }
 }

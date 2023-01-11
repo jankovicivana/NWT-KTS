@@ -43,3 +43,48 @@ insert into messages (sender, recipient, text) values (1,3,'sta sta');
 insert into messages (sender, recipient, text) values (3,1,'sta vam treba?');
 insert into messages (sender, recipient, text) values (1,3,'nista hehe');
 insert into messages (sender, recipient, text) values (2,3,'sta ima?');
+
+insert into positions (lat, lon) values (45.2484513, 19.8487313);
+
+insert into positions (lat, lon) values (45.2451945, 19.8324524);
+
+INSERT INTO drivers (id, email, password,
+                    name, surname, deleted, phone_number, city, is_social_login,
+                    photo, blocked, enabled, active, available, position)
+
+            VALUES (nextval('user_seq'), 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+                    'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
+                     'unknown.jpg', false, true, true, true, 1);
+
+INSERT INTO drivers (id, email, password,
+                 name, surname, deleted, phone_number, city, is_social_login,
+                 photo, blocked, enabled, active, available, position)
+
+             VALUES (nextval('user_seq'), 'ivana1@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+                     'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
+                      'unknown.jpg', false, true, true, true, 2);
+
+insert into user_role (user_id, role_id) values (2, 3);
+insert into user_role (user_id, role_id) values (3, 3);
+
+insert into cars (babies_allowed, pet_friendly, driver)
+            values (true, true, 2);
+
+insert into cars (babies_allowed, pet_friendly, driver)
+            values (true, true, 3);
+
+
+insert into drives (driver, start_time, end_time, price, status)
+values (2, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0);
+
+insert into client_drives (client, drive, price) values (1, 1, 20.0);
+
+insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 'fastest');
+
+
+insert into drives (driver, start_time, end_time, price, status)
+values (3, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0);
+
+insert into client_drives (client, drive, price) values (1, 2, 20.0);
+
+insert into routes (drive, start_position, end_position, type) values (2, 2, 1, 'shortest');

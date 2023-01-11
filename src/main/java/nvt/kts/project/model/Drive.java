@@ -19,16 +19,15 @@ public class Drive {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver")
     private Driver driver;
 
     @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
     private Set<ClientDrive> passengers = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "route")
-    private Route route;
+    @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
+    private Set<Route> routes =  new HashSet<>();
 
     @Column(name = "startTime")
     private LocalDateTime startTime;

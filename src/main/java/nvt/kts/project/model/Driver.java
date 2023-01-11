@@ -32,4 +32,8 @@ public class Driver extends User{
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     private Set<DriverActivity> activity = new HashSet<>();
 
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "position")
+    private Position position;
+
 }

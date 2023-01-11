@@ -20,11 +20,18 @@ public class Route {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "client")
-    private Client client;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "drive")
+    private Drive drive;
 
-    @OneToMany(mappedBy = "route", fetch = FetchType.LAZY)
-    private Set<Drive> drives = new HashSet<>();
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "startPosition")
+    private Position startPosition;
 
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "endPosition")
+    private Position endPosition;
+
+    @Column(name = "type", nullable = false)
+    private String type;
 }

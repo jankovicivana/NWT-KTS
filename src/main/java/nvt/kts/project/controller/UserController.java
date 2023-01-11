@@ -160,4 +160,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/getDriverPosition/{username}")
+    public ResponseEntity<String> getDriverPosition(@PathVariable int username) {
+        // NEAKTIVAN ? vrati null
+        // AKTIVAN ?
+        // nadji trenutnu voznju, pa onda rutu te voznje
+        return null;
+    }
+
 }

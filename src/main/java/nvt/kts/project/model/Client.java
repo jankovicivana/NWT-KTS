@@ -18,9 +18,9 @@ public class Client extends User{
 
     @Column(name = "photo", nullable = false)
     private String photo;
-
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    private Set<Route> favouriteRoutes = new HashSet<>();
+//
+//    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+//    private Set<Route> favouriteRoutes = new HashSet<>();
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Set<ClientDrive> drives = new HashSet<>();
