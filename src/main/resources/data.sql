@@ -64,18 +64,18 @@ INSERT INTO drivers (id, email, password,
                      'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
                       'unknown.jpg', false, true, true, true, 2);
 
-insert into user_role (user_id, role_id) values (2, 3);
-insert into user_role (user_id, role_id) values (3, 3);
+insert into user_role (user_id, role_id) values (8, 3);
+insert into user_role (user_id, role_id) values (9, 3);
 
 insert into cars (babies_allowed, pet_friendly, driver)
-            values (true, true, 2);
+            values (true, true, 8);
 
 insert into cars (babies_allowed, pet_friendly, driver)
-            values (true, true, 3);
+            values (true, true, 9);
 
 
 insert into drives (driver, start_time, end_time, price, status)
-values (2, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0);
+values (8, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0);
 
 insert into client_drives (client, drive, price) values (1, 1, 20.0);
 
@@ -83,7 +83,7 @@ insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 
 
 
 insert into drives (driver, start_time, end_time, price, status)
-values (3, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0);
+values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 20.0, 0);
 
 insert into client_drives (client, drive, price) values (1, 2, 20.0);
 

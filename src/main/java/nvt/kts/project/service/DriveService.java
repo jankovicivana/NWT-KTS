@@ -17,4 +17,8 @@ public class DriveService {
     public List<Drive> getCurrentDrives() {
         return driveRepository.getCurrentDrives(LocalDateTime.now());
     }
+
+    public Drive findById(Long id) {
+        return driveRepository.findById(id).orElse(null);
+    }
 }

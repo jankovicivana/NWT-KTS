@@ -11,10 +11,11 @@ import nvt.kts.project.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.Nullable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -27,6 +28,9 @@ public class DriveController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/current")
     public ResponseEntity<List<DriverRouteDTO>> getCurrentDrives() {
@@ -52,5 +56,21 @@ public class DriveController {
             }
         }
         return new ResponseEntity<>(driversMap, HttpStatus.OK);
+    }
+
+    @PostMapping("/start/{id}")
+    public ResponseEntity<DriverRouteDTO> startDrive(@PathVariable("id") Long id){
+        Drive drive = this.driveService.findById(id);
+        DriverRouteDTO driverRouteDTO = null;
+        if(drive != null) {
+            Set<Route> routeList = drive.getRoutes();
+            for (Route r : routeList) {
+                r.setDrive(null);
+            }
+            driverRouteDTO = new DriverRouteDTO(drive.getDriver().getUsername(), routeList, LocalDateTime.now());
+            this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
+            return new ResponseEntity<>(driverRouteDTO, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(driverRouteDTO, HttpStatus.BAD_REQUEST);
     }
 }
