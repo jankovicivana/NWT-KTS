@@ -1,15 +1,14 @@
 package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import nvt.kts.project.dto.AdminDTO;
 import nvt.kts.project.dto.ClientDTO;
 import nvt.kts.project.dto.DriverDTO;
+import nvt.kts.project.model.Admin;
 import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.User;
-import nvt.kts.project.service.ClientService;
-import nvt.kts.project.service.DriverService;
-import nvt.kts.project.service.EmailService;
-import nvt.kts.project.service.UserService;
+import nvt.kts.project.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +42,9 @@ public class UserController {
     private ClientService clientService;
 
     @Autowired
+    private AdminService adminService;
+
+    @Autowired
     private ModelMapper mapper;
 
     @Autowired
@@ -68,6 +70,18 @@ public class UserController {
         }
         System.out.print(user.getId());
         return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+
+    @GetMapping("/getLoggedAdmin")
+    @PreAuthorize("hasAnyRole('client','admin')")
+    public ResponseEntity<AdminDTO> getLoggedAdmin(Principal principal) {
+        Admin user = adminService.findByEmail(principal.getName());
+        if(user == null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        AdminDTO dto = mapper.map(user,AdminDTO.class);
+        System.out.print(user.getId());
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
     @GetMapping("/getClient")

@@ -6,6 +6,7 @@ import nvt.kts.project.model.Note;
 import nvt.kts.project.model.User;
 import nvt.kts.project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 @Service
 @Transactional
+@Configurable
 public class UserService implements UserDetailsService {
 
     @Autowired

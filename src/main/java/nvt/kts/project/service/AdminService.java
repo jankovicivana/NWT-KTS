@@ -15,6 +15,10 @@ public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
+    public Admin findByEmail(String email) {
+        return adminRepository.findByEmail(email);
+    }
+
 //    public Admin findAdminById(Long id){
 //        return adminRepository.findAdminById(id);
 //    }
