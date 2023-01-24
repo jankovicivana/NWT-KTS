@@ -49,7 +49,7 @@ public class LiveChatController {
     @PreAuthorize("hasAnyRole('client','admin')")
     public ResponseEntity<String> saveMessage(@RequestBody MessageDTO messageDTO) {
         Message m = new Message();
-        m.setSender(userService.findByEmail(messageDTO.getFrom()));
+        m.setSender(userService.findByEmail(messageDTO.getFrom().getEmail()));
         m.setRecipient(userService.findByEmail(messageDTO.getTo().equals("admins")?"admin@gmail.com":messageDTO.getTo()));
         m.setText(messageDTO.getText());
         messageService.save(m);

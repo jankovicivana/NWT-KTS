@@ -11,11 +11,15 @@ public class MessageClientDTO {
     private String surname;
     private String email;
     private String photo;
+    private Boolean isSocialLogin;
 
-    public MessageClientDTO(String name, String surname, String email, String photo) {
+    public MessageClientDTO(){}
+
+    public MessageClientDTO(String name, String surname, String email, String photo,Boolean isSocialLogin) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.photo = photo;
+        this.isSocialLogin = isSocialLogin;
     }
 }

@@ -18,7 +18,13 @@ public class DriveService {
         return driveRepository.getCurrentDrives(LocalDateTime.now());
     }
 
+    public List<Drive> getClientDriveHistory(String email) {
+        return driveRepository.getClientDriveHistory(LocalDateTime.now(),email);
+    }
+
     public Drive findById(Long id) {
         return driveRepository.findById(id).orElse(null);
     }
+
+
 }

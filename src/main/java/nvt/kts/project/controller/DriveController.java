@@ -1,6 +1,8 @@
 package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import nvt.kts.project.dto.DriveDTO;
+import nvt.kts.project.dto.DriverDTO;
 import nvt.kts.project.dto.DriverRouteDTO;
 import nvt.kts.project.model.Drive;
 import nvt.kts.project.model.Driver;
@@ -8,13 +10,16 @@ import nvt.kts.project.model.Position;
 import nvt.kts.project.model.Route;
 import nvt.kts.project.service.DriveService;
 import nvt.kts.project.service.DriverService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -25,6 +30,9 @@ public class DriveController {
 
     @Autowired
     private DriveService driveService;
+
+    @Autowired
+    private ModelMapper mapper;
 
     @Autowired
     private DriverService driverService;
@@ -44,6 +52,23 @@ public class DriveController {
             routes.add(new DriverRouteDTO(d.getDriver().getUsername(), routeList, d.getStartTime()));
         }
         return new ResponseEntity<>(routes, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAll")
+    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    public ResponseEntity<List<DriveDTO>> getAllDrives(Principal principal) {
+        List<Drive> drives = driveService.getClientDriveHistory(principal.getName());
+        List<DriveDTO> drivesDTO = new ArrayList<>();
+        for (Drive d:drives){
+            Set<Route> routeList = d.getRoutes();
+            for(Route r: routeList){
+                r.setDrive(null);
+            }
+            DriverDTO driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
+            drivesDTO.add(new DriveDTO(d.getId(), driverDTO,d.getStartTime(),d.getEndTime(),d.getPrice(),d.getStatus().name(),routeList));
+        }
+
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
     }
 
     @GetMapping("/positions")

@@ -31,8 +31,8 @@ public class MessageService {
         List<Message> messages = getUserMessages(email);
         List<OutputMessageDTO> messageDTOS = new ArrayList<>();
         for (Message message:messages) {
-            MessageClientDTO senderDTO = new MessageClientDTO(message.getSender().getName(),message.getSender().getSurname(),message.getSender().getEmail(),"");
-            MessageClientDTO recipientDTO = new MessageClientDTO(message.getRecipient().getName(),message.getRecipient().getSurname(),message.getRecipient().getEmail(),"");
+            MessageClientDTO senderDTO = new MessageClientDTO(message.getSender().getName(),message.getSender().getSurname(),message.getSender().getEmail(),"",message.getSender().getIsSocialLogin());
+            MessageClientDTO recipientDTO = new MessageClientDTO(message.getRecipient().getName(),message.getRecipient().getSurname(),message.getRecipient().getEmail(),"",message.getRecipient().getIsSocialLogin());
             if(message.getSender().getRoles().get(0).getName().equals("ROLE_client")){
                 Client sender = (Client) message.getSender();
                 senderDTO.setPhoto(sender.getPhoto());
