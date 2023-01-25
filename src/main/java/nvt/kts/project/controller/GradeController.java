@@ -60,7 +60,22 @@ public class GradeController {
         dto.setDriverId(d.getId());
         dto.setDriverName(d.getName());
         dto.setDriverSurname(d.getSurname());
+        dto.setClientEmail(c.getEmail());
         return new ResponseEntity<>(dto,HttpStatus.OK);    }
+
+    @GetMapping("/getAllGrades/{id}")
+    @PreAuthorize("hasAnyRole('admin','client')")
+    public ResponseEntity<List<GradeDTO>> getAllDriveGrades(@PathVariable Long id) {
+        List<Grade> grades = gradeService.getAllGrades(id);
+        List<GradeDTO> gradeDTOS = new ArrayList<>();
+        for (Grade grade: grades) {
+            Client c = clientService.findClientById(grade.getClientId());
+            GradeDTO gradeDTO = modelMapper.map(grade,GradeDTO.class);
+            gradeDTO.setClientEmail(c.getEmail());
+            gradeDTOS.add(gradeDTO);
+        }
+        return new ResponseEntity<>(gradeDTOS,HttpStatus.OK);
+    }
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('admin')")

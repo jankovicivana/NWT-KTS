@@ -12,4 +12,6 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     @Query("SELECT b from Grade b where b.clientId=:clientId and b.driveId=:drive")
     Grade getGrade(Long clientId,Long drive);
 
+    List<Grade> getAllByDriveId(Long driveId);
+
 }

@@ -83,8 +83,12 @@ insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 
 
 
 insert into drives (driver, start_time, end_time, price, status)
-values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 20.0, 0);
+values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0);
 
 insert into client_drives (client, drive, price) values (1, 2, 20.0);
 
 insert into routes (drive, start_position, end_position, type) values (2, 2, 1, 'shortest');
+
+insert into grades (car_grade,driver_grade,comment,client,driver,drive_id) values (3,3,null ,1,8,1);
+insert into grades (car_grade,driver_grade,comment,client,driver,drive_id) values (5,4,null ,2,8,1);
+insert into grades (car_grade,driver_grade,comment,client,driver,drive_id) values (5,5,null ,2,9,2);

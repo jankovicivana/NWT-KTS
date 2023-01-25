@@ -16,6 +16,7 @@ public class GradeDTO {
     private String driverSurname;
     private long driveId;
     private String carType;
+    private String clientEmail;
 
     public GradeDTO(){
         this.id = -1;

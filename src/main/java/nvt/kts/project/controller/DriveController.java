@@ -32,9 +32,6 @@ public class DriveController {
     private DriveService driveService;
 
     @Autowired
-    private ModelMapper mapper;
-
-    @Autowired
     private DriverService driverService;
 
     @Autowired
@@ -54,20 +51,27 @@ public class DriveController {
         return new ResponseEntity<>(routes, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllClientDrives")
+    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    public ResponseEntity<List<DriveDTO>> getAllClientDrives(Principal principal) {
+        List<Drive> drives = driveService.getClientDriveHistory(principal.getName());
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllDriverDrives")
+    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    public ResponseEntity<List<DriveDTO>> getAllDriverDrives(Principal principal) {
+        List<Drive> drives = driveService.getDriverDriveHistory(principal.getName());
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
     @GetMapping("/getAll")
     @PreAuthorize("hasAnyRole('client','admin','driver')")
-    public ResponseEntity<List<DriveDTO>> getAllDrives(Principal principal) {
-        List<Drive> drives = driveService.getClientDriveHistory(principal.getName());
-        List<DriveDTO> drivesDTO = new ArrayList<>();
-        for (Drive d:drives){
-            Set<Route> routeList = d.getRoutes();
-            for(Route r: routeList){
-                r.setDrive(null);
-            }
-            DriverDTO driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
-            drivesDTO.add(new DriveDTO(d.getId(), driverDTO,d.getStartTime(),d.getEndTime(),d.getPrice(),d.getStatus().name(),routeList));
-        }
-
+    public ResponseEntity<List<DriveDTO>> getAll(Principal principal) {
+        List<Drive> drives = driveService.getAllDrives();
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
         return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
     }
 

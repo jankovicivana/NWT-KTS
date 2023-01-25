@@ -15,4 +15,5 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     Page<Client> findAllByDeletedIsFalse(Pageable pageable);
 
     Client findClientById(Long id);
+
 }
