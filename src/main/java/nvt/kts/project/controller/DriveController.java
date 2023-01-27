@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.DriverDTO;
 import nvt.kts.project.dto.DriverRouteDTO;
+import nvt.kts.project.dto.ReportDatesDTO;
 import nvt.kts.project.model.Drive;
 import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.Position;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
@@ -52,7 +54,7 @@ public class DriveController {
     }
 
     @GetMapping("/getAllClientDrives")
-    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    @PreAuthorize("hasRole('client')")
     public ResponseEntity<List<DriveDTO>> getAllClientDrives(Principal principal) {
         List<Drive> drives = driveService.getClientDriveHistory(principal.getName());
         List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
@@ -60,7 +62,7 @@ public class DriveController {
     }
 
     @GetMapping("/getAllDriverDrives")
-    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    @PreAuthorize("hasRole('driver')")
     public ResponseEntity<List<DriveDTO>> getAllDriverDrives(Principal principal) {
         List<Drive> drives = driveService.getDriverDriveHistory(principal.getName());
         List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
@@ -68,9 +70,42 @@ public class DriveController {
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<List<DriveDTO>> getAll(Principal principal) {
         List<Drive> drives = driveService.getAllDrives();
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/getAllByClientDate")
+    @PreAuthorize("hasRole('client')")
+    public ResponseEntity<List<DriveDTO>> getAllByClientDate(@RequestBody ReportDatesDTO reportDatesDTO,Principal principal) {
+        LocalDateTime startDateTime = driveService.convertToLocalDateTime(reportDatesDTO.getStartDate());
+        LocalDateTime endDateTime = driveService.convertToLocalDateTime(reportDatesDTO.getEndDate());
+
+        List<Drive> drives = driveService.getAllClientDrivesByDate(startDateTime,endDateTime,principal.getName());
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/getAllByDriverDate")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<List<DriveDTO>> getAllByDriverDate(@RequestBody ReportDatesDTO reportDatesDTO,Principal principal) {
+        LocalDateTime startDateTime = driveService.convertToLocalDateTime(reportDatesDTO.getStartDate());
+        LocalDateTime endDateTime = driveService.convertToLocalDateTime(reportDatesDTO.getEndDate());
+
+        List<Drive> drives = driveService.getAllDriverDrivesByDate(startDateTime,endDateTime,principal.getName());
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/getAllByDate")
+    @PreAuthorize("hasAnyRole('admin')")
+    public ResponseEntity<List<DriveDTO>> getAllByDate(@RequestBody ReportDatesDTO reportDatesDTO,Principal principal) {
+        LocalDateTime startDateTime = driveService.convertToLocalDateTime(reportDatesDTO.getStartDate());
+        LocalDateTime endDateTime = driveService.convertToLocalDateTime(reportDatesDTO.getEndDate());
+
+        List<Drive> drives = driveService.getAllDrivesByDate(startDateTime,endDateTime,principal.getName());
         List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
         return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
     }

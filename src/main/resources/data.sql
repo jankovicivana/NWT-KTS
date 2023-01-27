@@ -74,16 +74,16 @@ insert into cars (babies_allowed, pet_friendly, driver)
             values (true, true, 9);
 
 
-insert into drives (driver, start_time, end_time, price, status)
-values (8, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0);
+insert into drives (driver, start_time, end_time, price, status, distance)
+values (8, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0, 25);
 
 insert into client_drives (client, drive, price) values (2, 1, 20.0);
 
 insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 'fastest');
 
 
-insert into drives (driver, start_time, end_time, price, status)
-values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0);
+insert into drives (driver, start_time, end_time, price, status, distance)
+values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0, 38);
 
 insert into client_drives (client, drive, price) values (1, 2, 20.0);
 insert into client_drives (client, drive, price) values (5, 2, 20.0);

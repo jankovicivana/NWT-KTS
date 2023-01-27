@@ -48,4 +48,7 @@ public class Drive {
     @Column(name = "rejectionReason")
     private String rejectionReason;
 
+    @Column(name = "distance")
+    private Double distance;
+
 }
