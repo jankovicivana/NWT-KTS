@@ -3,10 +3,9 @@ package nvt.kts.project.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-public class ClientDTO {
+public class UserDTO {
 
     private Long id;
     private String name;
@@ -16,9 +15,5 @@ public class ClientDTO {
     private String phoneNumber;
     private String role;
     private String city;
-    private Double tokens;
     private String photo;
-    private Boolean enabled;
-    private Boolean blocked;
-    private Boolean isSocialLogin;
 }

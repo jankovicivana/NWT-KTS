@@ -91,7 +91,7 @@ public class AuthenticationController {
         try {
             if(userRequest.getRole().equals("Driver")){
                 Driver driver = driverService.save(userRequest);
-                emailService.sendAccountActivation(driver);
+                //emailService.sendAccountActivation(driver);
                 return new ResponseEntity<>(driver, HttpStatus.CREATED);
             }else if(userRequest.getRole().equals("Client")){
                 Client client = clientService.save(userRequest);

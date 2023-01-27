@@ -17,7 +17,7 @@ public class Client extends User{
     private double tokens;
 
     @Column(name = "photo", nullable = false)
-    private String photo;
+    private String photo = "unknown.jog";
 //
 //    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
 //    private Set<Route> favouriteRoutes = new HashSet<>();

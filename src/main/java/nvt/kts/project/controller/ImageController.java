@@ -51,7 +51,7 @@ public class ImageController {
 
     @PostMapping("/addImage")
     @PreAuthorize("hasRole('client')")
-    public ResponseEntity<ImageDTO> addImage(@RequestBody ImageDTO imageDTO) throws IOException {
+    public ResponseEntity<InputStreamResource> addImage(@RequestBody ImageDTO imageDTO) throws IOException {
         byte[] data;
         try {
             data = Base64.getDecoder().decode(imageDTO.getData().split(",")[1]);
@@ -62,9 +62,12 @@ public class ImageController {
         String picturePath = "src\\main\\resources\\static\\images\\"+imageName;
         try (OutputStream stream = new FileOutputStream(new File(picturePath).getCanonicalFile())) {
             stream.write(data);
+            FileSystemResource imgFile = new FileSystemResource("src/main/resources/static/images/" + imageName);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(new InputStreamResource(imgFile.getInputStream()));
         }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

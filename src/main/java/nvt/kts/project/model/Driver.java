@@ -20,7 +20,7 @@ public class Driver extends User{
     private boolean available = false;
 
     @Column(name = "photo", nullable = false)
-    private String photo;
+    private String photo = "unknown.jpg";
 
     @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "car")

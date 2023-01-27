@@ -2,6 +2,7 @@ package nvt.kts.project.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import nvt.kts.project.model.Driver;
 
 import java.util.List;
 
@@ -20,4 +21,21 @@ public class DriverDTO {
     private Boolean enabled;
     private Boolean blocked;
     private Boolean isSocialLogin;
+
+    public DriverDTO(){}
+
+    public DriverDTO(DriverCarDTO driverCarDto,Driver d){
+        this.id = driverCarDto.getDriverId();
+        this.name = driverCarDto.getName();
+        this.surname = driverCarDto.getSurname();
+        this.email = driverCarDto.getEmail();
+        this.password = driverCarDto.getPassword();
+        this.phoneNumber = driverCarDto.getPhoneNumber();
+        this.role = driverCarDto.getRole();
+        this.city = driverCarDto.getCity();
+        this.photo = driverCarDto.getPhoto();
+        this.enabled = d.isEnabled();
+        this.blocked = d.isBlocked();
+        this.isSocialLogin = d.getIsSocialLogin();
+    }
 }

@@ -12,6 +12,5 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
     Page<Driver> findAllByDeletedIsFalse(Pageable pageable);
 
-
     Driver findDriverById(Long id);
 }

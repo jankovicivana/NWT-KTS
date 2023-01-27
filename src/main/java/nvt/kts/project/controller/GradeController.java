@@ -3,14 +3,8 @@ package nvt.kts.project.controller;
 import lombok.RequiredArgsConstructor;
 import nvt.kts.project.dto.GradeDTO;
 import nvt.kts.project.dto.NoteDTO;
-import nvt.kts.project.model.Client;
-import nvt.kts.project.model.Driver;
-import nvt.kts.project.model.Grade;
-import nvt.kts.project.model.Note;
-import nvt.kts.project.service.ClientService;
-import nvt.kts.project.service.DriverService;
-import nvt.kts.project.service.GradeService;
-import nvt.kts.project.service.UserService;
+import nvt.kts.project.model.*;
+import nvt.kts.project.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,25 +31,26 @@ public class GradeController {
     private GradeService gradeService;
 
     @Autowired
+    private DriveService driveService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @GetMapping("/getGrade/{id}")
     @PreAuthorize("hasAnyRole('admin','client')")
     public ResponseEntity<GradeDTO> getGrade(@PathVariable Long id, Principal principal) {
         Client c = clientService.getClientByEmail("ivanaj0610@gmail.com");
-        //Drive d = driveService.getDriveById(id);
-        //provjera da li je putnik u voznji
+        Drive drive = driveService.findById(id);
         Grade grade = gradeService.getGrade(id,c.getId());
         GradeDTO dto = new GradeDTO();
         Driver d;
         if (grade == null){
-            //preuzmi iz voznje id vozaca
-            d = driverService.findDriverById(Long.parseLong("7"));
+            d = driverService.findDriverById(drive.getDriver().getId());
         }else {
             dto = modelMapper.map(grade,GradeDTO.class);
             d = driverService.findDriverById(grade.getDriverId());
         }
-        //setuj vrstu auta
+        dto.setCarType(d.getCar().getType().getType());
         dto.setDriveId(id);
         dto.setDriverId(d.getId());
         dto.setDriverName(d.getName());

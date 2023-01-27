@@ -1,13 +1,8 @@
 package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
-import nvt.kts.project.dto.AdminDTO;
-import nvt.kts.project.dto.ClientDTO;
-import nvt.kts.project.dto.DriverDTO;
-import nvt.kts.project.model.Admin;
-import nvt.kts.project.model.Client;
-import nvt.kts.project.model.Driver;
-import nvt.kts.project.model.User;
+import nvt.kts.project.dto.*;
+import nvt.kts.project.model.*;
 import nvt.kts.project.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +40,12 @@ public class UserController {
     private AdminService adminService;
 
     @Autowired
+    private EditDriverService editDriverService;
+
+    @Autowired
+    private CarService carService;
+
+    @Autowired
     private ModelMapper mapper;
 
     @Autowired
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/getLoggedUser")
-    @PreAuthorize("hasAnyRole('client','admin')")
+    @PreAuthorize("hasAnyRole('client','admin','driver')")
     public ResponseEntity<User> getLoggedUser(Principal principal) {
         User user = userService.findByEmail(principal.getName());
         if(user == null){
@@ -80,6 +81,7 @@ public class UserController {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
         AdminDTO dto = mapper.map(user,AdminDTO.class);
+        dto.setRole("Admin");
         System.out.print(user.getId());
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
@@ -91,6 +93,38 @@ public class UserController {
         ClientDTO dto = mapper.map(u,ClientDTO.class);
         String formattedRole = userService.formatRole(u.getRoles().get(0).getName());
         dto.setRole(formattedRole);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/getDriver")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<DriverDTO> getDriver(Principal principal) {
+        Driver u = driverService.getDriverByEmail(principal.getName());
+        DriverDTO dto = mapper.map(u, DriverDTO.class);
+        dto.setRole("Driver");
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/getDriver/{id}")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<DriverDTO> getDriverById(@PathVariable Long id ,Principal principal) {
+        Driver u = driverService.getDriverById(id);
+        DriverDTO dto = mapper.map(u, DriverDTO.class);
+        dto.setRole("Driver");
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/getDriverCarInfo")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<DriverCarDTO> getDriverCarInfo(Principal principal) {
+        Driver u = driverService.getDriverByEmail(principal.getName());
+        DriverCarDTO dto = mapper.map(u, DriverCarDTO.class);
+        dto.setRole("Driver");
+        if (u.getCar() != null){
+            dto.setBabiesAllowed(u.getCar().isBabiesAllowed());
+            dto.setPetFriendly(u.getCar().isPetFriendly());
+            dto.setType(u.getCar().getType().getType());
+        }
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -125,6 +159,16 @@ public class UserController {
         return new ResponseEntity<>(driverDTOS,header, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/saveEditDriver")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<Boolean> saveEditDriver(@RequestBody DriverCarDTO dto,Principal principal) {
+        EditDriver e = mapper.map(dto,EditDriver.class);
+        e.setStatus(RequestStatus.PENDING);
+        e.setType(carService.findCarTypeByName(dto.getType()).getId().toString());
+        editDriverService.save(e);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/saveClient")
     @PreAuthorize("hasRole('client')")
     public ResponseEntity<String> saveClient(@RequestBody ClientDTO clientDTO) {
@@ -135,9 +179,17 @@ public class UserController {
     }
     @PostMapping("/saveDriver")
     @PreAuthorize("hasRole('client')")
-    public ResponseEntity<String> saveDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<Driver> saveDriver(@RequestBody DriverDTO driverDTO) {
         Driver driver = mapper.map(driverDTO,Driver.class);
-        driverService.save(driver);
+        driver = driverService.save(driver);
+        return new ResponseEntity<>(driver,HttpStatus.OK);
+    }
+
+    @PostMapping("/saveAdmin")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<String> saveAdmin(@RequestBody UserDTO adminDTO) {
+        Admin admin = mapper.map(adminDTO,Admin.class);
+        adminService.save(admin);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -162,6 +214,29 @@ public class UserController {
         return new ResponseEntity<>(false,HttpStatus.OK);
     }
 
+    @PostMapping("/acceptDriverChanges")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<Boolean> acceptDriverChanges(@RequestBody DriverCarDTO dto, Principal principal) {
+        EditDriver e = mapper.map(dto,EditDriver.class);
+        Driver driver = driverService.findDriverById(e.getDriverId());
+        Driver updatedDriver = driverService.mapDriverInfo(dto, driver);
+        driverService.save(updatedDriver);
+        e.setStatus(RequestStatus.ACCEPTED);
+        editDriverService.save(e);
+        return new ResponseEntity<>(false,HttpStatus.OK);
+    }
+
+
+
+    @PostMapping("/rejectDriverChanges")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<Boolean> rejectDriverChanges(@RequestBody DriverCarDTO dto, Principal principal) {
+        EditDriver e = mapper.map(dto,EditDriver.class);
+        e.setStatus(RequestStatus.REJECTED);
+        editDriverService.save(e);
+        return new ResponseEntity<>(false,HttpStatus.OK);
+    }
+
     @GetMapping("/sendPasswordReset/{email}")
     @PreAuthorize("hasAnyRole('client', 'driver')")
     public ResponseEntity<ClientDTO> sendPasswordReset(@PathVariable String email) {
@@ -180,6 +255,29 @@ public class UserController {
         // AKTIVAN ?
         // nadji trenutnu voznju, pa onda rutu te voznje
         return null;
+    }
+
+    @GetMapping(value = "/getPendingDriverChanges",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<List<DriverCarDTO>> getPendingDriverChanges(Pageable pageable,Principal principal) {
+        ArrayList<DriverCarDTO> driverCarDTOS = new ArrayList<>();
+        HttpHeaders header = new HttpHeaders();
+        header.setAccessControlExposeHeaders(Collections.singletonList("Total-items"));
+        List<EditDriver> changes = editDriverService.getPendingDriverChanges(pageable,header);
+        for(EditDriver c: changes){
+            DriverCarDTO dto = mapper.map(c,DriverCarDTO.class);
+            driverCarDTOS.add(dto);
+        }
+        return new ResponseEntity<>(driverCarDTOS, header,HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/getDriverChanges/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<DriverCarDTO> getDriverChangesById(@PathVariable Long id,Principal principal) {
+        EditDriver d = editDriverService.getDriverChangesById(id);
+        DriverCarDTO dto = mapper.map(d,DriverCarDTO.class);
+        dto.setType(carService.findCarTypeById(dto.getType()).getType());
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
 }

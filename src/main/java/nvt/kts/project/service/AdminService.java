@@ -19,6 +19,10 @@ public class AdminService {
         return adminRepository.findByEmail(email);
     }
 
+    public void save(Admin admin) {
+        adminRepository.save(admin);
+    }
+
 //    public Admin findAdminById(Long id){
 //        return adminRepository.findAdminById(id);
 //    }

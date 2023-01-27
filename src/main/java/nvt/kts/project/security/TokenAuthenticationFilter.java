@@ -34,8 +34,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String username;
         String authToken = tokenUtils.getToken(request);
-        System.out.print("pozvalo inteeeeeeeeeeeeeeeeeeeeeeernalll");
-        System.out.print("pozvalo tokeeeeen "+ authToken);
 
         try {
             if (authToken != null) {
