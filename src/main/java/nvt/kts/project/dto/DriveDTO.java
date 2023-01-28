@@ -27,9 +27,11 @@ public class DriveDTO {
 
     private Set<Route> routes;
 
-    private Set<ClientDTO> passengers;
+    private Set<ClientDriveDTO> passengers;
 
-    public DriveDTO(Long id, DriverDTO driver, LocalDateTime startTime, LocalDateTime endTime, Double price, String status, Set<Route> routes) {
+    private Double distance;
+
+    public DriveDTO(Long id, DriverDTO driver, LocalDateTime startTime, LocalDateTime endTime, Double price, String status, Set<Route> routes,Double distance) {
         this.id = id;
         this.driver = driver;
         this.startTime = startTime;
@@ -38,5 +40,6 @@ public class DriveDTO {
         this.status = status;
         this.routes = routes;
         this.passengers = new HashSet<>();
+        this.distance = distance;
     }
 }

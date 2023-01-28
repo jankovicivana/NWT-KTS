@@ -1,6 +1,7 @@
 package nvt.kts.project.service;
 
 import nvt.kts.project.dto.ClientDTO;
+import nvt.kts.project.dto.ClientDriveDTO;
 import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.DriverDTO;
 import nvt.kts.project.model.ClientDrive;
@@ -11,7 +12,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +46,21 @@ public class DriveService {
         return driveRepository.getAllDrives(LocalDateTime.now());
     }
 
+    public List<Drive> getAllClientDrivesByDate(LocalDateTime start, LocalDateTime end, String email){
+        return driveRepository.getDrivesByClientDate(start,end,email);
+    }
+    public List<Drive> getAllDriverDrivesByDate(LocalDateTime start, LocalDateTime end, String email){
+        return driveRepository.getDrivesByDriverDate(start,end,email);
+    }
+    public List<Drive> getAllDrivesByDate(LocalDateTime start, LocalDateTime end, String email){
+        return driveRepository.getDrivesByDate(start,end);
+    }
+
+    public LocalDateTime convertToLocalDateTime(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return LocalDateTime.parse(date+" 00:00", formatter);
+    }
+
     public Drive findById(Long id) {
         return driveRepository.findById(id).orElse(null);
     }
@@ -55,10 +74,10 @@ public class DriveService {
                 r.setDrive(null);
             }
             DriverDTO driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
-            DriveDTO driveDTO = new DriveDTO(d.getId(), driverDTO,d.getStartTime(),d.getEndTime(),d.getPrice(),d.getStatus().name(),routeList);
-            Set<ClientDTO> passengers = new HashSet<>();
+            DriveDTO driveDTO = new DriveDTO(d.getId(), driverDTO,d.getStartTime(),d.getEndTime(),d.getPrice(),d.getStatus().name(),routeList,d.getDistance());
+            Set<ClientDriveDTO> passengers = new HashSet<>();
             for(ClientDrive cd:d.getPassengers()){
-                passengers.add(mapper.map(cd.getClient(),ClientDTO.class));
+                passengers.add(new ClientDriveDTO(cd.getId(),cd.getClient().getName(),cd.getClient().getSurname(),cd.getClient().getEmail(),cd.getPrice()));
             }
             driveDTO.setPassengers(passengers);
             drivesDTO.add(driveDTO);
