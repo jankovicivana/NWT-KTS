@@ -56,6 +56,8 @@ public class UserController {
     @PreAuthorize("hasRole('client')")
     public ResponseEntity<User> getUser(@PathVariable String email) {
         User user = userService.findByEmail(email);
+        user.setSentMessages(null);
+        user.setReceivedMessages(null);
         if(user == null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
@@ -90,6 +92,22 @@ public class UserController {
     @PreAuthorize("hasRole('client')")
     public ResponseEntity<ClientDTO> getClient(Principal principal) {
         Client u = clientService.getClientByEmail(principal.getName());
+        if(u == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        ClientDTO dto = mapper.map(u,ClientDTO.class);
+        String formattedRole = userService.formatRole(u.getRoles().get(0).getName());
+        dto.setRole(formattedRole);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/getClient/{mail}")
+    @PreAuthorize("hasRole('client')")
+    public ResponseEntity<ClientDTO> getClientByMail(Principal principal, @PathVariable String mail) {
+        Client u = clientService.getClientByEmail(mail);
+        if(u == null){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
         ClientDTO dto = mapper.map(u,ClientDTO.class);
         String formattedRole = userService.formatRole(u.getRoles().get(0).getName());
         dto.setRole(formattedRole);
