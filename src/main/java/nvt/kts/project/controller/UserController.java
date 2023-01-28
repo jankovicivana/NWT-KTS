@@ -105,14 +105,6 @@ public class UserController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @GetMapping("/getDriver/{id}")
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<DriverDTO> getDriverById(@PathVariable Long id ,Principal principal) {
-        Driver u = driverService.getDriverById(id);
-        DriverDTO dto = mapper.map(u, DriverDTO.class);
-        dto.setRole("Driver");
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
 
     @GetMapping("/getDriverCarInfo")
     @PreAuthorize("hasRole('driver')")
@@ -270,14 +262,4 @@ public class UserController {
         }
         return new ResponseEntity<>(driverCarDTOS, header,HttpStatus.OK);
     }
-
-    @GetMapping(value = "/getDriverChanges/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<DriverCarDTO> getDriverChangesById(@PathVariable Long id,Principal principal) {
-        EditDriver d = editDriverService.getDriverChangesById(id);
-        DriverCarDTO dto = mapper.map(d,DriverCarDTO.class);
-        dto.setType(carService.findCarTypeById(dto.getType()).getType());
-        return new ResponseEntity<>(dto,HttpStatus.OK);
-    }
-
 }

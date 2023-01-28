@@ -8,7 +8,7 @@ insert into car_types (person_num,type,price,photo) values (4,'Comfort ride',100
 insert into car_types (person_num,type,price,photo) values (6,'Van XL',150,'c5.png');
 insert into car_types (person_num,type,price,photo) values (8,'Minibus',50,'c6.png');
 
-insert  into cars (type,pet_friendly,babies_allowed,driver) values (2,false,true,null );
+insert  into cars (type,pet_friendly,babies_allowed,driver) values (2,true,true,null );
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled)
           VALUES (nextval('user_seq'), 'ivanaj0610@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Jankovic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true);

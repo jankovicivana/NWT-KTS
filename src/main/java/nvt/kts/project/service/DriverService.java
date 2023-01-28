@@ -1,10 +1,14 @@
 package nvt.kts.project.service;
 
+
+import nvt.kts.project.dto.CarDTO;
 import nvt.kts.project.dto.DriverCarDTO;
 import nvt.kts.project.dto.DriverDTO;
 import nvt.kts.project.dto.UserRequest;
 import nvt.kts.project.model.Driver;
+import nvt.kts.project.model.DriverActivity;
 import nvt.kts.project.model.Role;
+import nvt.kts.project.repository.DriverActivityRepository;
 import nvt.kts.project.repository.DriverRepository;
 import nvt.kts.project.repository.RoleRepository;
 import org.modelmapper.ModelMapper;
@@ -17,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,6 +31,9 @@ public class DriverService {
 
     @Autowired
     private DriverRepository driverRepository;
+
+    @Autowired
+    private DriverActivityRepository driverActivityRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -88,4 +96,29 @@ public class DriverService {
     public Driver getDriverById(Long id) {
         return driverRepository.findDriverById(id);
     }
+
+    public List<Driver> getActiveDriversByCarCriteria(CarDTO dto) {
+        List<Driver> activeDrivers = driverRepository.findActiveDriversByCarCriteria(dto.getType(),dto.isBabiesAllowed(),dto.isPetFriendly());
+        System.out.print(activeDrivers);
+        return activeDrivers;
+    }
+
+    public void createActivityLog(Driver d) {
+        DriverActivity activity = new DriverActivity();
+        activity.setDriver(d);
+        activity.setStartTime(LocalDateTime.now());
+        driverActivityRepository.save(activity);
+    }
+
+    public void finishActivityLog(Driver d) {
+        DriverActivity activity = driverActivityRepository.findUnfinishedLog(d.getId());
+        activity.setEndTime(LocalDateTime.now());
+        driverActivityRepository.save(activity);
+    }
+
+    public boolean isActive(Driver d) {
+        DriverActivity activity = driverActivityRepository.findUnfinishedLog(d.getId());
+        return activity != null;
+    }
+
 }
