@@ -15,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +43,7 @@ public class DriveController {
         List<Drive> drives = driveService.getCurrentDrives();
         List<DriverRouteDTO> routes = new ArrayList<>();
         for(Drive d: drives){
-            Set<Route> routeList = d.getRoutes();
+            List<Route> routeList = d.getRoutes();
             for(Route r: routeList){
                 r.setDrive(null);
             }
@@ -125,9 +124,11 @@ public class DriveController {
     @PostMapping("/start/{id}")
     public ResponseEntity<DriverRouteDTO> startDrive(@PathVariable("id") Long id){
         Drive drive = this.driveService.findById(id);
+        // promijeni u bazi pocetak voznje
+        // mozda i stanje i poziciju vozaca da promijenimo
         DriverRouteDTO driverRouteDTO = null;
         if(drive != null) {
-            Set<Route> routeList = drive.getRoutes();
+            List<Route> routeList = drive.getRoutes();
             for (Route r : routeList) {
                 r.setDrive(null);
             }
@@ -136,5 +137,22 @@ public class DriveController {
             return new ResponseEntity<>(driverRouteDTO, HttpStatus.OK);
         }
         return new ResponseEntity<>(driverRouteDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/stop/{id}")
+    public ResponseEntity<Map<String, Position>> stopDrive(@PathVariable("id") Long id){
+        Drive drive = this.driveService.findById(id);
+        // mozda i stanje i poziciju vozaca da promijenimo
+        // promijeni status voznje - cancelled
+
+        if(drive != null) {
+            Route route = drive.getRoutes().get(0);
+            Position pos = route.getStartPosition();
+            Map<String, Position> mapa =  new HashMap<String, Position>();
+            mapa.put(drive.getDriver().getUsername(), pos);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
+            return new ResponseEntity<>(mapa, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 }

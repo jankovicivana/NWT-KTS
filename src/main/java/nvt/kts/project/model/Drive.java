@@ -5,8 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -27,7 +26,7 @@ public class Drive {
     private Set<ClientDrive> passengers = new HashSet<>();
 
     @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
-    private Set<Route> routes =  new HashSet<>();
+    private List<Route> routes =  new ArrayList<>();
 
     @Column(name = "startTime")
     private LocalDateTime startTime;

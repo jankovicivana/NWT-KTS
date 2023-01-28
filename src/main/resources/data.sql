@@ -17,7 +17,7 @@ INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, 
           VALUES (nextval('user_seq'), 'i@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Kasikovic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true);
 
 INSERT INTO admins (id, email, password, name, surname, deleted, phone_number, city,is_social_login, enabled,blocked)
-VALUES (nextval('user_seq'), 'admin@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Maki', 'Milosevic', false, '0654079380', 'Trebinje',false, true,false);
+VALUES (nextval('user_seq'), 'admin@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Maki', 'Milosevic', false, '0654079380', 'Trebinje', false, true, false);
 
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled)
