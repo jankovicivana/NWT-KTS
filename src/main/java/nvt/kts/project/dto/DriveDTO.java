@@ -2,11 +2,12 @@ package nvt.kts.project.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import nvt.kts.project.model.Drive;
 import nvt.kts.project.model.Route;
-import org.springframework.security.web.server.authentication.logout.HeaderWriterServerLogoutHandler;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -25,21 +26,21 @@ public class DriveDTO {
 
     private String status;
 
-    private Set<Route> routes;
+    private List<Route> routes;
 
     private Set<ClientDriveDTO> passengers;
 
     private Double distance;
 
-    public DriveDTO(Long id, DriverDTO driver, LocalDateTime startTime, LocalDateTime endTime, Double price, String status, Set<Route> routes,Double distance) {
-        this.id = id;
-        this.driver = driver;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.price = price;
-        this.status = status;
-        this.routes = routes;
+    public DriveDTO(Drive d, List<Route> routeList, DriverDTO driverDTO) {
+        this.id = d.getId();
+        this.driver = driverDTO;
+        this.startTime = d.getStartTime();
+        this.endTime = d.getEndTime();
+        this.price = d.getPrice();
+        this.status = d.getStatus().name();
+        this.routes = routeList;
         this.passengers = new HashSet<>();
-        this.distance = distance;
+        this.distance = d.getDistance();
     }
 }

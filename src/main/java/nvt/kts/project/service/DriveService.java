@@ -1,6 +1,5 @@
 package nvt.kts.project.service;
 
-import nvt.kts.project.dto.ClientDTO;
 import nvt.kts.project.dto.ClientDriveDTO;
 import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.DriverDTO;
@@ -12,8 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,13 +66,13 @@ public class DriveService {
     public List<DriveDTO> convertDriveToDTO(List<Drive> drives){
         List<DriveDTO> drivesDTO = new ArrayList<>();
         for (Drive d:drives){
-            Set<Route> routeList = d.getRoutes();
+            List<Route> routeList = d.getRoutes();
 
             for(Route r: routeList){
                 r.setDrive(null);
             }
             DriverDTO driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
-            DriveDTO driveDTO = new DriveDTO(d.getId(), driverDTO,d.getStartTime(),d.getEndTime(),d.getPrice(),d.getStatus().name(),routeList,d.getDistance());
+            DriveDTO driveDTO = new DriveDTO(d, routeList, driverDTO);
             Set<ClientDriveDTO> passengers = new HashSet<>();
             for(ClientDrive cd:d.getPassengers()){
                 passengers.add(new ClientDriveDTO(cd.getId(),cd.getClient().getName(),cd.getClient().getSurname(),cd.getClient().getEmail(),cd.getPrice()));
