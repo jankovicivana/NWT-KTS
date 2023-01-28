@@ -72,6 +72,14 @@ public class DriverController {
         return new ResponseEntity<>(isActive,HttpStatus.OK);
     }
 
+    @GetMapping(value = "/hasWorkingTime/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('driver','client','admin')")
+    public ResponseEntity<Boolean> hasWorkingTime(@PathVariable Long id, Principal principal) {
+        Driver d = driverService.getDriverById(id);
+        Boolean isActive = driverService.hasWorkingHours(d);
+        return new ResponseEntity<>(isActive,HttpStatus.OK);
+    }
+
     @PostMapping("/acceptDriverChanges")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Boolean> acceptDriverChanges(@RequestBody DriverCarDTO dto, Principal principal) {

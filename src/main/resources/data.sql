@@ -108,3 +108,6 @@ insert into grades (car_grade,driver_grade,comment,client,driver,drive_id) value
 INSERT INTO edit_driver (id,driver_id, email, password, name, surname, status, phone_number, city, photo,type,pet_friendly,babies_allowed)
 VALUES (nextval('edit_seq'),7,'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozaccc', 'Vozic', 1, '0654079380', 'Trebinjeee', 'unknown.jpg',1,true, true);
 
+insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 19:04:00', '2023-01-28 21:59:00',7);
+insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 19:04:00', null ,7);
+insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 16:04:00', '2023-01-28 16:59:00',7);

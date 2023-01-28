@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 
@@ -121,4 +122,22 @@ public class DriverService {
         return activity != null;
     }
 
+    public Boolean hasWorkingHours(Driver d) {
+        long workingMinutes = 0;
+        LocalDateTime to = LocalDateTime.now();
+        LocalDateTime from = LocalDateTime.now().minusDays(1);
+        List<DriverActivity> activities = driverActivityRepository.getDriverActivites(d.getId());
+        for (DriverActivity activity: activities){
+            if(activity.getStartTime().isAfter(from) && (activity.getEndTime() == null || activity.getEndTime().isAfter(to))){
+                workingMinutes += activity.getStartTime().until(to, ChronoUnit.MINUTES);
+            }
+            else if(activity.getStartTime().isBefore(from) && (activity.getEndTime() == null || activity.getEndTime().isAfter(to))){
+                workingMinutes += from.until(to, ChronoUnit.MINUTES);
+            }
+            else if(activity.getStartTime().isAfter(from) && activity.getEndTime().isBefore(to)){
+                workingMinutes += activity.getStartTime().until(activity.getEndTime(), ChronoUnit.MINUTES);
+            }
+        }
+        return workingMinutes < 8*60;
+    }
 }
