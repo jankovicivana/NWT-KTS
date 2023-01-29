@@ -1,10 +1,8 @@
 package nvt.kts.project.service;
-
-
 import nvt.kts.project.dto.*;
-import nvt.kts.project.model.Drive;
 import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.DriverActivity;
+import nvt.kts.project.model.Position;
 import nvt.kts.project.model.Role;
 import nvt.kts.project.repository.DriverActivityRepository;
 import nvt.kts.project.repository.DriverRepository;
@@ -139,5 +137,42 @@ public class DriverService {
         return workingMinutes < 8*60;
     }
 
+    public Driver getNearestDriver(List<Driver> drivers, Position position){
+        double minDistance = Double.POSITIVE_INFINITY;
+        Driver nearest = null;
+        for(Driver d: drivers){
+            Position p = d.getPosition();
+            double dis = distance(p.getLat(), p.getLon(), position.getLat(), position.getLon());
+            if(dis < minDistance){
+                minDistance = dis;
+                nearest =d;
+            }
+        }
+        return nearest;
+    }
 
+    public Driver getDriverNearestToEnd(List<Driver> drivers){
+        // dobavi trenutnu voznju svakog vozaca
+        // vidi kad je pocela i koliko traje
+        // nadji min razlike (krajVoznje - sada)
+        return null;
+    }
+
+
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515 * 1.609344;
+        return (dist);
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
 }

@@ -152,7 +152,7 @@ public class DriveController {
         if(drive != null) {
             Route route = drive.getRoutes().get(0);
             Position pos = route.getStartPosition();
-            Map<String, Position> mapa =  new HashMap<String, Position>();
+            Map<String, Position> mapa =  new HashMap<>();
             mapa.put(drive.getDriver().getUsername(), pos);
             this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
             return new ResponseEntity<>(mapa, HttpStatus.OK);
