@@ -23,7 +23,7 @@ public class Drive {
     private Driver driver;
 
     @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
-    private Set<ClientDrive> passengers = new HashSet<>();
+    private List<ClientDrive> passengers = new ArrayList<>();
 
     @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
     private List<Route> routes =  new ArrayList<>();
@@ -49,5 +49,8 @@ public class Drive {
 
     @Column(name = "distance")
     private Double distance;
+
+    @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
+    private List<Notification> notifications = new ArrayList<>();
 
 }

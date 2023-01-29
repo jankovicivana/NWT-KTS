@@ -111,3 +111,9 @@ VALUES (nextval('edit_seq'),7,'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGO
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 19:04:00', '2023-01-28 21:59:00',7);
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 19:04:00', null ,7);
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 16:04:00', '2023-01-28 16:59:00',7);
+
+insert into client_drives (client,drive,price) values (1,1,20);
+insert into client_drives (client,drive,price) values (1,2,15);
+
+insert into notifications (client,drive,reason,message,date_time) values (1,1,0,'Molimo Vas odobrite placanja na ruti Beograd - Novi Sad u iznosu od 15$ sto je 3 tokena! ','2023-01-28 19:04:00');
+insert into notifications (client,drive,reason,message,date_time) values (1,2,0,'Molimo Vas odobrite placanja na ruti Beograd - Pazar u iznosu od 20$ sto je 4 tokena! ','2023-01-28 19:04:00');

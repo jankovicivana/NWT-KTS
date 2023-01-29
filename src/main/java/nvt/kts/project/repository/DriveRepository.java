@@ -1,5 +1,6 @@
 package nvt.kts.project.repository;
 
+import nvt.kts.project.model.ClientDrive;
 import nvt.kts.project.model.Drive;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

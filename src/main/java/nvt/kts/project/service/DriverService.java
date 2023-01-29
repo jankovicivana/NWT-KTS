@@ -1,10 +1,8 @@
 package nvt.kts.project.service;
 
 
-import nvt.kts.project.dto.CarDTO;
-import nvt.kts.project.dto.DriverCarDTO;
-import nvt.kts.project.dto.DriverDTO;
-import nvt.kts.project.dto.UserRequest;
+import nvt.kts.project.dto.*;
+import nvt.kts.project.model.Drive;
 import nvt.kts.project.model.Driver;
 import nvt.kts.project.model.DriverActivity;
 import nvt.kts.project.model.Role;
@@ -140,4 +138,6 @@ public class DriverService {
         }
         return workingMinutes < 8*60;
     }
+
+
 }

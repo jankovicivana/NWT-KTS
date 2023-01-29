@@ -3,9 +3,9 @@ package nvt.kts.project.service;
 import nvt.kts.project.dto.ClientDriveDTO;
 import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.DriverDTO;
-import nvt.kts.project.model.ClientDrive;
-import nvt.kts.project.model.Drive;
-import nvt.kts.project.model.Route;
+import nvt.kts.project.dto.ScheduleInfoDTO;
+import nvt.kts.project.model.*;
+import nvt.kts.project.repository.ClientDriveRepository;
 import nvt.kts.project.repository.DriveRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,12 @@ public class DriveService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ClientDriveRepository clientDriveRepository;
 
     public List<Drive> getCurrentDrives() {
         return driveRepository.getCurrentDrives(LocalDateTime.now());
@@ -83,4 +89,40 @@ public class DriveService {
         return drivesDTO;
     }
 
+    public Drive saveDrive(ScheduleInfoDTO info,Client loggedUser) {
+        List<ClientDrive> set = new ArrayList<>();
+        Drive d = new Drive();
+        d.setPrice(info.getPrice());
+        d.setStatus(DriveStatus.SCHEDULING_IN_PROGRESS);
+        set.add(createClientDrive(d,loggedUser,info,true));
+        for (String email: info.getPassengers()){
+            Client c = clientService.getClientByEmail(email);
+            set.add(createClientDrive(d,c,info,false));
+        }
+        d.setPassengers(set);
+        driveRepository.save(d);
+        return d;
+    }
+
+    public ClientDrive createClientDrive(Drive d,Client client,ScheduleInfoDTO info,Boolean logged){
+        ClientDrive cd = new ClientDrive();
+        cd.setDrive(d);
+        cd.setClient(client);
+        if (info.getSplitFaire()){
+            double splitFairePrice = info.getPrice()/(info.getPassengers().size()+1);
+            cd.setPrice(splitFairePrice);
+        }else {
+            if (logged != null){
+                cd.setPrice(info.getPrice());
+            }
+            else{
+                cd.setPrice(0);
+            }
+        }
+        return cd;
+    }
+
+    public ClientDrive getClientDriveByInfo(Client client, Long driveId) {
+        return clientDriveRepository.getClientDriveByDriveAndClient(client.getId(),driveId);
+    }
 }

@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,5 +29,8 @@ public class Client extends User{
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Set<Report> reports = new HashSet<>();
+
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    private List<Notification> notifications = new ArrayList<>();
 
 }

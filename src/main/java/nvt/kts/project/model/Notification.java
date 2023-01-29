@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "clientDrives")
-public class ClientDrive {
+@Table(name = "notifications")
+public class Notification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -19,15 +21,20 @@ public class ClientDrive {
     @JoinColumn(name = "client")
     private Client client;
 
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "drive")
     private Drive drive;
 
-    @Column(name = "price")
-    private double price;
+    @Column(name = "reason", nullable = false)
+    private NotificationReason reason;
 
-    @Column(name = "approved")
-    private boolean approved = false;
+    @Column(name = "message", nullable = false)
+    private String message;
+
+    @Column(name = "dateTime")
+    private LocalDateTime dateTime;
+
 
 
 }

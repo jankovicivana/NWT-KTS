@@ -2,16 +2,14 @@ package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
 import nvt.kts.project.dto.DriveDTO;
-import nvt.kts.project.dto.DriverDTO;
 import nvt.kts.project.dto.DriverRouteDTO;
 import nvt.kts.project.dto.ReportDatesDTO;
-import nvt.kts.project.model.Drive;
-import nvt.kts.project.model.Driver;
-import nvt.kts.project.model.Position;
-import nvt.kts.project.model.Route;
+import nvt.kts.project.dto.ScheduleInfoDTO;
+import nvt.kts.project.model.*;
+import nvt.kts.project.service.ClientService;
 import nvt.kts.project.service.DriveService;
 import nvt.kts.project.service.DriverService;
-import org.modelmapper.ModelMapper;
+import nvt.kts.project.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +32,12 @@ public class DriveController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -155,4 +159,29 @@ public class DriveController {
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("/saveDrive")
+    public ResponseEntity<Map<String, Position>> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
+        //nekako treba sacuvati podatke
+        Client client = clientService.getClientByEmail(principal.getName());
+        Drive d = driveService.saveDrive(info,client);
+        notificationService.sendNotificationsForApprovingPayment(d);
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @PostMapping("/getDrivePriceByClient/{id}")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<Double> getDrivePriceByClient(@PathVariable("id") Long driveId,Principal principal){
+        Client client = clientService.getClientByEmail(principal.getName());
+        Drive d = driveService.findById(driveId);
+        ClientDrive cd = driveService.getClientDriveByInfo(client,driveId);
+        //dto vrati
+        return new ResponseEntity<>(cd.getPrice(), HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
+
 }
