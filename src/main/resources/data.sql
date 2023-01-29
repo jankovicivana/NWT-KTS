@@ -50,9 +50,9 @@ insert into messages (sender, recipient, text) values (3,1,'sta vam treba?');
 insert into messages (sender, recipient, text) values (1,3,'nista hehe');
 insert into messages (sender, recipient, text) values (2,3,'sta ima?');
 
-insert into positions (lat, lon) values (45.2484513, 19.8487313);
+insert into positions (lat, lon, address) values (45.2484513, 19.8487313, 'Puskinova 16');
 
-insert into positions (lat, lon) values (45.2451945, 19.8324524);
+insert into positions (lat, lon, address) values (45.2451945, 19.8324524, 'Strazilovska 14');
 
 insert into cars (type,babies_allowed, pet_friendly, driver)
 values (1,true, true, null );

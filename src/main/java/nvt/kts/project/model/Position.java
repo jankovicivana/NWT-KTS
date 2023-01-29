@@ -21,4 +21,7 @@ public class Position {
 
     @Column(name = "lon", nullable = false)
     private double lon;
+
+    @Column(name = "address", nullable = false)
+    private String address;
 }
