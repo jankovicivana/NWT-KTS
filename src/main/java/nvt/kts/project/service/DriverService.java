@@ -1,9 +1,6 @@
 package nvt.kts.project.service;
 import nvt.kts.project.dto.*;
-import nvt.kts.project.model.Driver;
-import nvt.kts.project.model.DriverActivity;
-import nvt.kts.project.model.Position;
-import nvt.kts.project.model.Role;
+import nvt.kts.project.model.*;
 import nvt.kts.project.repository.DriverActivityRepository;
 import nvt.kts.project.repository.DriverRepository;
 import nvt.kts.project.repository.RoleRepository;
@@ -40,6 +37,9 @@ public class DriverService {
 
     @Autowired
     private CarService carService;
+
+    @Autowired
+    private DriveService driveService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -152,10 +152,20 @@ public class DriverService {
     }
 
     public Driver getDriverNearestToEnd(List<Driver> drivers){
-        // dobavi trenutnu voznju svakog vozaca
-        // vidi kad je pocela i koliko traje
-        // nadji min razlike (krajVoznje - sada)
-        return null;
+        long minTime = Long.MAX_VALUE;
+        Driver nearest = null;
+        for(Driver d: drivers){
+            Drive current = driveService.getDriverCurrentDrive(d.getEmail());
+            LocalDateTime start = current.getStartTime();
+            double duration = current.getDuration();
+            LocalDateTime expectedEnd = start.plusMinutes((long) duration);
+            long diff = LocalDateTime.now().until(expectedEnd, ChronoUnit.MINUTES);
+            if (diff < minTime){
+                minTime = diff;
+                nearest = d;
+            }
+        }
+        return nearest;
     }
 
 

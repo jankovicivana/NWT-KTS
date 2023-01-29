@@ -41,6 +41,9 @@ public class Drive {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "duration")
+    private double duration;
+
     @Column(name = "status", nullable = false)
     private DriveStatus status;
 

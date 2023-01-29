@@ -125,4 +125,8 @@ public class DriveService {
     public ClientDrive getClientDriveByInfo(Client client, Long driveId) {
         return clientDriveRepository.getClientDriveByDriveAndClient(client.getId(),driveId);
     }
+
+    public Drive getDriverCurrentDrive(String mail) {
+        return this.driveRepository.getCurrentDriverDrive(mail);
+    }
 }
