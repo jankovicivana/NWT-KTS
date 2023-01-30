@@ -17,4 +17,6 @@ public class ScheduleInfoDTO {
     private Boolean reservation;
     private Double distance;
     private Double duration;
+
+    private List<RouteDTO> routes;
 }
