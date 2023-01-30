@@ -194,8 +194,22 @@ public class DriveController {
     public ResponseEntity<Void> checkIfAllApproved(@PathVariable("id") Long clientDriveId){
         Drive drive = driveService.findDriveByClientDrive(clientDriveId);
         if (driveService.checkIfAllPassengersApprovedPayment(drive)){
-            //trazi vozaca
-            driverService.findAvailableDriver(drive);
+            Driver driver = driverService.findAvailableDriver(drive);
+            if (driver == null){
+                driveService.rejectDriveNoDriver(drive);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            if (driveService.checkIfAllCanPay(drive)){
+                driveService.payDrive(drive);
+                drive.setDriver(driver);
+                driveService.saveScheduledDrive(drive);
+                driver.setAvailable(false);
+                driverService.save(driver);
+                return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            }else {
+                driveService.rejectDriveNoEnoughTokens(drive);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -210,7 +224,7 @@ public class DriveController {
             else
             {
                 Drive drive = driveService.findDriveByClientDrive(id);
-                driveService.rejectDrive(drive);
+                driveService.rejectDriveNoEnoughTokens(drive);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
     }

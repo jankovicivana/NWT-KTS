@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -148,6 +149,7 @@ public class DriveService {
             r.setStartPosition(start);
             r.setEndPosition(end);
             r.setType(dto.getType());
+
             this.routeService.save(r);
         }
     }
@@ -200,7 +202,7 @@ public class DriveService {
         return null;
     }
 
-    public void rejectDrive(Drive drive) {
+    public void rejectDriveNoEnoughTokens(Drive drive) {
         drive.setStatus(DriveStatus.REJECTED);
         driveRepository.save(drive);
         notificationService.sendNotificationForRejectingDriveNotEnoghTokens(drive);
@@ -212,5 +214,42 @@ public class DriveService {
             if(!cd.isApproved()) {return false;}
         }
         return true;
+    }
+
+    public boolean checkIfAllCanPay(Drive drive) {
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(drive.getId());
+        Double tokenPrice = systemInfoService.getTokenPrice();
+        for (ClientDrive cd: clientDrives){
+            if(cd.getClient().getTokens()*tokenPrice<cd.getPrice()){return false;}
+        }
+        return true;
+    }
+
+    public void payDrive(Drive drive) {
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(drive.getId());
+        Double tokenPrice = systemInfoService.getTokenPrice();
+        for (ClientDrive cd: clientDrives){
+            cd.getClient().setTokens(cd.getClient().getTokens() - cd.getPrice()/tokenPrice);
+            clientService.save(cd.getClient());
+        }
+    }
+
+    public void saveScheduledDrive(Drive drive) {
+        drive.setStatus(DriveStatus.SCHEDULED);
+        driveRepository.save(drive);
+        notificationService.sendNotificationForAcceptingDrive(drive);
+    }
+
+    public void rejectDriveNoDriver(Drive drive) {
+        drive.setStatus(DriveStatus.REJECTED);
+        driveRepository.save(drive);
+        notificationService.sendNotificationForRejectingDriveNoAvailableDriver(drive);
+    }
+
+    public boolean hasFutureReservations(Driver d, Drive drive) {
+        double duration = drive.getDuration()+5;
+        LocalDateTime bound = LocalDateTime.now().plus((long) duration, ChronoUnit.MINUTES);
+        List<Drive> reservations = driveRepository.getReservations(d.getId(),bound);
+        return reservations.size() != 0;
     }
 }

@@ -193,15 +193,40 @@ public class DriverService {
         if (drivers.size() == 0){
             List<Driver> activeDrivers = getActiveDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
             if (activeDrivers.size() == 0){
-                //jbg nema - rip
                 return null;
             }
             else{
-                return getDriverNearestToEnd(activeDrivers);
+                return findDriverNearestToEndWithAvailableWorkingHours(activeDrivers,drive);
             }
         }else {
-            return getNearestDriver(drivers, drive.getRoutes().get(0).getStartPosition());
+            return findNearestDriverWithWorkingHours(drivers, drive);
         }
-        //treba provjera za 8 satii
+    }
+
+    public Driver findNearestDriverWithWorkingHours(List<Driver> drivers,Drive drive){
+        if (drivers.size() == 1){return drivers.get(0);}
+        while (true){
+            Driver d = getNearestDriver(drivers, drive.getRoutes().get(0).getStartPosition());
+            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d,drive)){
+                return d;
+            }
+            drivers.remove(d);
+            if (drivers.size() == 1){return drivers.get(0);}
+        }
+
+
+    }
+
+    public Driver findDriverNearestToEndWithAvailableWorkingHours(List<Driver> drivers,Drive drive){
+        if (drivers.size() == 1){return drivers.get(0);}
+        while (true){
+            Driver d = getDriverNearestToEnd(drivers);
+            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d,drive)){
+                return d;
+            }
+            drivers.remove(d);
+            if (drivers.size() == 1){return drivers.get(0);}
+        }
+
     }
 }

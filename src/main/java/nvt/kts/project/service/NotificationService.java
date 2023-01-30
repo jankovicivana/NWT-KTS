@@ -76,4 +76,57 @@ public class NotificationService {
         }
         notificationRepository.saveAll(newNotifications);
     }
+
+    public void sendNotificationForRejectingDriveNoAvailableDriver(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.REJECT_DRIVE);
+            n.setMessage("Voznja na ruti Trebinje-Beograd je otkazana.Nema dostupnih vozaca.");
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/noAvailableDriver",dto);
+        }
+        notificationRepository.saveAll(newNotifications);
+    }
+
+    public void sendNotificationForAcceptingDrive(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.REJECT_DRIVE);
+            n.setMessage("Voznja na ruti Trebinje-Beograd je prihvacena. Automobil stize za ..."); //ruteee
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/approvedDrive",dto);
+        }
+        //posalji i vozacu
+        sendNotificationOfAcceptedDriveToDriver(d);
+        notificationRepository.saveAll(newNotifications);
+    }
+
+    private void sendNotificationOfAcceptedDriveToDriver(Drive d) {
+        Notification n = new Notification();
+        n.setClient(null);
+        n.setDrive(d);
+        n.setReason(NotificationReason.REJECT_DRIVE);
+        n.setMessage("Voznja na ruti Trebinje-Beograd je prihvacena.");         //ruteeeee
+        n.setDateTime(LocalDateTime.now());
+        NotificationDTO dto = new NotificationDTO(n);
+        dto.setReceiverEmail(n.getDrive().getDriver().getEmail());
+        dto.setApprovedPayment(false);
+        this.simpMessagingTemplate.convertAndSend("/notification/approvedDrive",dto);
+    }
 }
