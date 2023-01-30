@@ -1,9 +1,6 @@
 package nvt.kts.project.service;
 
-import nvt.kts.project.dto.ClientDriveDTO;
-import nvt.kts.project.dto.DriveDTO;
-import nvt.kts.project.dto.DriverDTO;
-import nvt.kts.project.dto.ScheduleInfoDTO;
+import nvt.kts.project.dto.*;
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.ClientDriveRepository;
 import nvt.kts.project.repository.DriveRepository;
@@ -39,6 +36,9 @@ public class DriveService {
 
     @Autowired
     private CarService carService;
+
+    @Autowired
+    private RouteService routeService;
 
     @Autowired
     private ClientDriveRepository clientDriveRepository;
@@ -99,6 +99,7 @@ public class DriveService {
     }
 
     public Drive saveDrive(ScheduleInfoDTO info,Client loggedUser) {
+
         Drive d = new Drive();
         d.setPrice(info.getPrice());
         // rezervacija ? ? ?
@@ -108,12 +109,32 @@ public class DriveService {
         d.setBabiesAllowed(info.getBabies());
         d.setPetFriendly(info.getPet());
         driveRepository.save(d);
+        saveRoutes(info.getRoutes(), d);
         clientDriveRepository.save(createClientDrive(d,loggedUser,info,true));
         for (String email: info.getPassengers()){
             Client c = clientService.getClientByEmail(email);
             clientDriveRepository.save(createClientDrive(d,c,info,false));
         }
         return d;
+    }
+
+    private void saveRoutes(List<RouteDTO> routes, Drive d) {
+        for(RouteDTO dto: routes){
+            Route r = new Route();
+            r.setDrive(d);
+            Position start = new Position();
+            start.setLat(dto.getStart().getLat());
+            start.setLon(dto.getStart().getLon());
+
+            Position end = new Position();
+            end.setLat(dto.getEnd().getLat());
+            end.setLon(dto.getEnd().getLon());
+
+            r.setStartPosition(start);
+            r.setEndPosition(end);
+            r.setType(dto.getType());
+            this.routeService.save(r);
+        }
     }
 
     public ClientDrive createClientDrive(Drive d,Client client,ScheduleInfoDTO info,Boolean logged){
