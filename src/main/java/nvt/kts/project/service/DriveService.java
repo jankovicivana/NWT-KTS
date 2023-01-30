@@ -93,17 +93,16 @@ public class DriveService {
     }
 
     public Drive saveDrive(ScheduleInfoDTO info,Client loggedUser) {
-        List<ClientDrive> set = new ArrayList<>();
         Drive d = new Drive();
         d.setPrice(info.getPrice());
         d.setStatus(DriveStatus.SCHEDULING_IN_PROGRESS);
-        set.add(createClientDrive(d,loggedUser,info,true));
+        d.setDuration(info.getDuration());
+        driveRepository.save(d);
+        clientDriveRepository.save(createClientDrive(d,loggedUser,info,true));
         for (String email: info.getPassengers()){
             Client c = clientService.getClientByEmail(email);
-            set.add(createClientDrive(d,c,info,false));
+            clientDriveRepository.save(createClientDrive(d,c,info,false));
         }
-        d.setPassengers(set);
-        driveRepository.save(d);
         return d;
     }
 

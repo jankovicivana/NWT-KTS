@@ -9,10 +9,12 @@ import java.util.List;
 @Setter
 public class ScheduleInfoDTO {
     private List<String> passengers;
-    private String carType;
-    private Boolean babiesAllowed;
-    private Boolean petFriendly;
+    private String car;
+    private Boolean babies;
+    private Boolean pet;
     private Double price;
     private Boolean splitFaire;
     private Boolean reservation;
+    private Double distance;
+    private Double duration;
 }

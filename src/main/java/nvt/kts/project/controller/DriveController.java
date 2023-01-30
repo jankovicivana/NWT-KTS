@@ -159,7 +159,6 @@ public class DriveController {
     @PostMapping("/saveDrive")
     public ResponseEntity<Map<String, Position>> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
         //nekako treba sacuvati podatke
-
         Client client = clientService.getClientByEmail(principal.getName());
         Drive d = driveService.saveDrive(info,client);
         notificationService.sendNotificationsForApprovingPayment(d);
