@@ -109,12 +109,25 @@ public class DriveController {
         return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/positions")
-    public ResponseEntity<Map<String, Position>> getDriversPositions() {
+
+    @GetMapping("/positionsActive")
+    public ResponseEntity<Map<String, Position>> getActiveDriversPositions() {
         Map<String, Position> driversMap = new HashMap<>();
         List<Driver> drivers = driverService.findAll();
         for(Driver d: drivers){
             if(d.isActive()) {
+                driversMap.put(d.getUsername(), d.getPosition());
+            }
+        }
+        return new ResponseEntity<>(driversMap, HttpStatus.OK);
+    }
+
+    @GetMapping("/positionsInactive")
+    public ResponseEntity<Map<String, Position>> getInactiveDriversPositions() {
+        Map<String, Position> driversMap = new HashMap<>();
+        List<Driver> drivers = driverService.findAll();
+        for(Driver d: drivers){
+            if(!d.isActive()) {
                 driversMap.put(d.getUsername(), d.getPosition());
             }
         }
@@ -158,7 +171,6 @@ public class DriveController {
 
     @PostMapping("/saveDrive")
     public ResponseEntity<String> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
-        //nekako treba sacuvati podatke
         Client client = clientService.getClientByEmail(principal.getName());
         Drive d = driveService.saveDrive(info,client);
         notificationService.sendNotificationsForApprovingPayment(d);

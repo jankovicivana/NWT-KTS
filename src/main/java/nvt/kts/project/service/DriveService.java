@@ -101,6 +101,7 @@ public class DriveService {
     public Drive saveDrive(ScheduleInfoDTO info,Client loggedUser) {
         Drive d = new Drive();
         d.setPrice(info.getPrice());
+        // rezervacija ? ? ?
         d.setStatus(DriveStatus.SCHEDULING_IN_PROGRESS);
         d.setDuration(info.getDuration());
         d.setCarType(carService.findCarTypeByName(info.getCar()));
