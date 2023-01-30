@@ -19,4 +19,5 @@ public class ScheduleInfoDTO {
     private Double duration;
 
     private List<RouteDTO> routes;
+    private String reservationTime;
 }
