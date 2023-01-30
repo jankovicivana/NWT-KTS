@@ -57,4 +57,23 @@ public class NotificationService {
     public List<Notification> getNotifications(Client c) {
         return notificationRepository.findAllByClientId(c.getId());
     }
+
+    public void sendNotificationForRejectingDriveNotEnoghTokens(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.REJECT_DRIVE);
+            n.setMessage("Voznja na ruti Trebinje-Beograd je otkazana zbog nedostatka tokena.");
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/rejectedPayment",dto);
+        }
+        notificationRepository.saveAll(newNotifications);
+    }
 }

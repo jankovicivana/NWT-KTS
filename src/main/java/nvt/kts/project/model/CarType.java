@@ -36,4 +36,7 @@ public class CarType {
 
     @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
     private Set<Car> cars = new HashSet<>();
+
+    @OneToMany(mappedBy = "carType", fetch = FetchType.LAZY)
+    private Set<Drive> drives = new HashSet<>();
 }

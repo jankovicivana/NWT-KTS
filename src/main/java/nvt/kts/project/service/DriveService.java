@@ -35,6 +35,12 @@ public class DriveService {
     private SystemInfoService systemInfoService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private CarService carService;
+
+    @Autowired
     private ClientDriveRepository clientDriveRepository;
 
     public List<Drive> getCurrentDrives() {
@@ -97,6 +103,9 @@ public class DriveService {
         d.setPrice(info.getPrice());
         d.setStatus(DriveStatus.SCHEDULING_IN_PROGRESS);
         d.setDuration(info.getDuration());
+        d.setCarType(carService.findCarTypeByName(info.getCar()));
+        d.setBabiesAllowed(info.getBabies());
+        d.setPetFriendly(info.getPet());
         driveRepository.save(d);
         clientDriveRepository.save(createClientDrive(d,loggedUser,info,true));
         for (String email: info.getPassengers()){
@@ -157,5 +166,14 @@ public class DriveService {
     public void rejectDrive(Drive drive) {
         drive.setStatus(DriveStatus.REJECTED);
         driveRepository.save(drive);
+        notificationService.sendNotificationForRejectingDriveNotEnoghTokens(drive);
+    }
+
+    public boolean checkIfAllPassengersApprovedPayment(Drive drive) {
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(drive.getId());
+        for(ClientDrive cd:clientDrives){
+            if(!cd.isApproved()) {return false;}
+        }
+        return true;
     }
 }

@@ -41,7 +41,7 @@ public class DriverController {
     @PostMapping(value = "/getActiveDriver",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Void> getActiveDriver(@RequestBody CarDTO dto, Principal principal) {
-        List<Driver> activeDrivers = driverService.getActiveDriversByCarCriteria(dto);
+        List<Driver> activeDrivers = driverService.getActiveAndAvailableDriversByCarCriteria(dto);
         //nadji najblizeg
         return new ResponseEntity<>(HttpStatus.OK);
     }

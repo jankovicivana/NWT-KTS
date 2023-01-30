@@ -94,10 +94,12 @@ public class DriverService {
         return driverRepository.findDriverById(id);
     }
 
+    public List<Driver> getActiveAndAvailableDriversByCarCriteria(CarDTO dto) {
+        return driverRepository.findActiveAndAvailableDriversByCarCriteria(dto.getType(),dto.isBabiesAllowed(),dto.isPetFriendly());
+    }
+
     public List<Driver> getActiveDriversByCarCriteria(CarDTO dto) {
-        List<Driver> activeDrivers = driverRepository.findActiveDriversByCarCriteria(dto.getType(),dto.isBabiesAllowed(),dto.isPetFriendly());
-        System.out.print(activeDrivers);
-        return activeDrivers;
+        return driverRepository.findActiveDriversByCarCriteria(dto.getType(),dto.isBabiesAllowed(),dto.isPetFriendly());
     }
 
     public void createActivityLog(Driver d) {
@@ -184,5 +186,22 @@ public class DriverService {
 
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
+    }
+
+    public Driver findAvailableDriver(Drive drive) {
+        List<Driver> drivers = getActiveAndAvailableDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
+        if (drivers.size() == 0){
+            List<Driver> activeDrivers = getActiveDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
+            if (activeDrivers.size() == 0){
+                //jbg nema - rip
+                return null;
+            }
+            else{
+                return getDriverNearestToEnd(activeDrivers);
+            }
+        }else {
+            return getNearestDriver(drivers, drive.getRoutes().get(0).getStartPosition());
+        }
+        //treba provjera za 8 satii
     }
 }

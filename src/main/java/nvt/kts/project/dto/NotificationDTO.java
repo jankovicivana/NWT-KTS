@@ -13,6 +13,7 @@ public class NotificationDTO {
     private String dateTime;
     private String receiverEmail;
     private Boolean approvedPayment;
+    private String driveStatus;
 
 
     public NotificationDTO(){}
@@ -22,5 +23,6 @@ public class NotificationDTO {
         this.reason = n.getReason().name();
         this.dateTime = n.getDateTime().toString().split("T")[0]+' '+n.getDateTime().toString().split("T")[1].substring(0,5);
         this.approvedPayment = false;
+        this.driveStatus = n.getDrive().getStatus().toString();
     }
 }

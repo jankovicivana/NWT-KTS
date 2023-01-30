@@ -10,4 +10,10 @@ public class CarDTO {
     private boolean petFriendly;
     private String type;
     private Long driverId;
+
+    public CarDTO(boolean pet,boolean baby,String type){
+        this.petFriendly = pet;
+        this.babiesAllowed = baby;
+        this.type = type;
+    }
 }

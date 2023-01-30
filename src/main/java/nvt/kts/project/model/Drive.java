@@ -44,6 +44,16 @@ public class Drive {
     @Column(name = "duration")
     private double duration;
 
+    @Column(name = "babiesAllowed")
+    private boolean babiesAllowed;
+
+    @Column(name = "petFriendly")
+    private boolean petFriendly;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "carType")
+    private CarType carType;
+
     @Column(name = "status", nullable = false)
     private DriveStatus status;
 

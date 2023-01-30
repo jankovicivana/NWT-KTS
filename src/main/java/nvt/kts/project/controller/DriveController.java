@@ -178,6 +178,16 @@ public class DriveController {
         return new ResponseEntity<>(clientDriveDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/checkIfAllApproved/{id}")
+    public ResponseEntity<Void> checkIfAllApproved(@PathVariable("id") Long clientDriveId){
+        Drive drive = driveService.findDriveByClientDrive(clientDriveId);
+        if (driveService.checkIfAllPassengersApprovedPayment(drive)){
+            //trazi vozaca
+            driverService.findAvailableDriver(drive);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/approvePayment/{id}")
     @PreAuthorize("hasAnyRole('client')")
     public ResponseEntity<Void> approvePayment(@PathVariable Long id,Principal principal) {
