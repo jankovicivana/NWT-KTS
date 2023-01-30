@@ -20,7 +20,7 @@ public class Reservation {
     private LocalDateTime start;
 
     @Column(name = "expectedDuration", nullable = false)
-    private int expectedDuration;
+    private double expectedDuration;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "drive")

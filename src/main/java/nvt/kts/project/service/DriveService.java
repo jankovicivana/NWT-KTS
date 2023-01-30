@@ -43,6 +43,9 @@ public class DriveService {
     @Autowired
     private ClientDriveRepository clientDriveRepository;
 
+    @Autowired
+    private ReservationService reservationService;
+
     public List<Drive> getCurrentDrives() {
         return driveRepository.getCurrentDrives(LocalDateTime.now());
     }
@@ -102,13 +105,23 @@ public class DriveService {
 
         Drive d = new Drive();
         d.setPrice(info.getPrice());
-        // rezervacija ? ? ?
+
         d.setStatus(DriveStatus.SCHEDULING_IN_PROGRESS);
         d.setDuration(info.getDuration());
         d.setCarType(carService.findCarTypeByName(info.getCar()));
         d.setBabiesAllowed(info.getBabies());
         d.setPetFriendly(info.getPet());
         driveRepository.save(d);
+        if(Boolean.TRUE.equals(info.getReservation())){
+            Reservation r = new Reservation();
+            r.setDrive(d);
+            r.setStart(LocalDateTime.parse(info.getReservationTime().replace("Z", "")).plusHours(1));
+            r.setExpectedDuration(info.getDuration());
+            Reservation saved = this.reservationService.save(r);
+            d.setReservation(saved);
+            driveRepository.save(d);
+        }
+
         saveRoutes(info.getRoutes(), d);
         clientDriveRepository.save(createClientDrive(d,loggedUser,info,true));
         for (String email: info.getPassengers()){
@@ -125,10 +138,12 @@ public class DriveService {
             Position start = new Position();
             start.setLat(dto.getStart().getLat());
             start.setLon(dto.getStart().getLon());
+            start.setAddress(dto.getStart().getAddress());
 
             Position end = new Position();
             end.setLat(dto.getEnd().getLat());
             end.setLon(dto.getEnd().getLon());
+            end.setAddress(dto.getEnd().getAddress());
 
             r.setStartPosition(start);
             r.setEndPosition(end);
