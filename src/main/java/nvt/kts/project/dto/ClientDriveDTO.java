@@ -12,6 +12,8 @@ public class ClientDriveDTO {
     private String surname;
     private String email;
     private Double price;
+    private String startPlace = "Beograd";
+    private String endPlace = "Trebinje";
 
     public ClientDriveDTO(Long id, String name, String surname, String email, Double price) {
         this.id = id;
@@ -20,4 +22,6 @@ public class ClientDriveDTO {
         this.email = email;
         this.price = price;
     }
+
+    public ClientDriveDTO(){}
 }

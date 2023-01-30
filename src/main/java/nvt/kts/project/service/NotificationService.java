@@ -2,9 +2,9 @@ package nvt.kts.project.service;
 
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.ClientDriveRepository;
-import nvt.kts.project.repository.DriveRepository;
 import nvt.kts.project.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +23,14 @@ public class NotificationService {
     @Autowired
     private SystemInfoService systemInfoService;
 
+    @Autowired
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    public NotificationService(SimpMessagingTemplate simpMessagingTemplate) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+
     public void sendNotificationsForApprovingPayment(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
@@ -37,6 +45,7 @@ public class NotificationService {
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
             //salji websoket
+            this.simpMessagingTemplate.convertAndSend("/notification/approvePayment",n);
         }
         notificationRepository.saveAll(newNotifications);
     }

@@ -32,6 +32,9 @@ public class DriveService {
     private ClientService clientService;
 
     @Autowired
+    private SystemInfoService systemInfoService;
+
+    @Autowired
     private ClientDriveRepository clientDriveRepository;
 
     public List<Drive> getCurrentDrives() {
@@ -128,5 +131,32 @@ public class DriveService {
 
     public Drive getDriverCurrentDrive(String mail) {
         return this.driveRepository.getCurrentDriverDrive(mail);
+    }
+
+    public boolean approvePayment(Long id, Client c) {
+        ClientDrive cd  = clientDriveRepository.findById(id).orElse(null);
+        if (cd != null){
+            if (c.getTokens()*systemInfoService.getTokenPrice() > cd.getPrice()){
+                cd.setApproved(true);
+                clientDriveRepository.save(cd);
+                return true;
+            }
+            else
+            {return false;}
+        }
+        return false;
+    }
+
+    public Drive findDriveByClientDrive(Long id) {
+        ClientDrive cd  = clientDriveRepository.findById(id).orElse(null);
+        if (cd != null){
+            return cd.getDrive();
+        }
+        return null;
+    }
+
+    public void rejectDrive(Drive drive) {
+        drive.setStatus(DriveStatus.REJECTED);
+        driveRepository.save(drive);
     }
 }

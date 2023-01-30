@@ -1,10 +1,7 @@
 package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
-import nvt.kts.project.dto.DriveDTO;
-import nvt.kts.project.dto.DriverRouteDTO;
-import nvt.kts.project.dto.ReportDatesDTO;
-import nvt.kts.project.dto.ScheduleInfoDTO;
+import nvt.kts.project.dto.*;
 import nvt.kts.project.model.*;
 import nvt.kts.project.service.ClientService;
 import nvt.kts.project.service.DriveService;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
@@ -163,6 +159,7 @@ public class DriveController {
     @PostMapping("/saveDrive")
     public ResponseEntity<Map<String, Position>> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
         //nekako treba sacuvati podatke
+
         Client client = clientService.getClientByEmail(principal.getName());
         Drive d = driveService.saveDrive(info,client);
         notificationService.sendNotificationsForApprovingPayment(d);
@@ -170,18 +167,32 @@ public class DriveController {
     }
 
 
-    @PostMapping("/getDrivePriceByClient/{id}")
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<Double> getDrivePriceByClient(@PathVariable("id") Long driveId,Principal principal){
+    @GetMapping("/getDrivePriceByClient/{id}")
+    @PreAuthorize("hasRole('client')")
+    public ResponseEntity<ClientDriveDTO> getDrivePriceByClient(@PathVariable("id") Long driveId,Principal principal){
         Client client = clientService.getClientByEmail(principal.getName());
-        Drive d = driveService.findById(driveId);
+        Drive d = driveService.findById(driveId);  //rute uzmi
         ClientDrive cd = driveService.getClientDriveByInfo(client,driveId);
-        //dto vrati
-        return new ResponseEntity<>(cd.getPrice(), HttpStatus.BAD_REQUEST);
+        ClientDriveDTO clientDriveDTO = new ClientDriveDTO();
+        clientDriveDTO.setId(cd.getId());
+        clientDriveDTO.setPrice(cd.getPrice());
+        return new ResponseEntity<>(clientDriveDTO, HttpStatus.OK);
     }
 
-
-
+    @GetMapping("/approvePayment/{id}")
+    @PreAuthorize("hasAnyRole('client')")
+    public ResponseEntity<Void> approvePayment(@PathVariable Long id,Principal principal) {
+            Client c = clientService.getClientByEmail(principal.getName());
+            if (driveService.approvePayment(id,c)){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else
+            {
+                Drive drive = driveService.findDriveByClientDrive(id);
+                driveService.rejectDrive(drive);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+    }
 
 
 }

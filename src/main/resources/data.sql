@@ -80,22 +80,22 @@ insert into user_role (user_id, role_id) values (8, 3);
 insert into user_role (user_id, role_id) values (9, 3);
 
 
+insert into drives (driver, start_time, end_time, price, status, distance, duration)
+values (8, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0, 25, 0);
 
-
-insert into drives (driver, start_time, end_time, price, status, distance)
-values (8, '2023-01-11 23:43:00', '2023-01-11 23:59:00', 20.0, 0, 25);
-
-insert into client_drives (client, drive, price) values (2, 1, 20.0);
+insert into client_drives (client, drive, price,approved) values (2, 1, 20.0,false);
 
 insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 'fastest');
 
 
-insert into drives (driver, start_time, end_time, price, status, distance)
-values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0, 38);
 
-insert into client_drives (client, drive, price) values (1, 2, 20.0);
-insert into client_drives (client, drive, price) values (5, 2, 20.0);
-insert into client_drives (client, drive, price) values (2, 2, 20.0);
+insert into drives (driver, start_time, end_time, price, status, distance, duration)
+values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0, 38, 0);
+
+
+insert into client_drives (client, drive, price,approved) values (1, 2, 20.0,false );
+insert into client_drives (client, drive, price,approved) values (5, 2, 20.0,false );
+insert into client_drives (client, drive, price,approved) values (2, 2, 20.0,false );
 
 
 insert into routes (drive, start_position, end_position, type) values (2, 2, 1, 'shortest');
@@ -112,8 +112,4 @@ insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 19
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 19:04:00', null ,7);
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-28 16:04:00', '2023-01-28 16:59:00',7);
 
-insert into client_drives (client,drive,price) values (1,1,20);
-insert into client_drives (client,drive,price) values (1,2,15);
-
-insert into notifications (client,drive,reason,message,date_time) values (1,1,0,'Molimo Vas odobrite placanja na ruti Beograd - Novi Sad u iznosu od 15$ sto je 3 tokena! ','2023-01-28 19:04:00');
-insert into notifications (client,drive,reason,message,date_time) values (1,2,0,'Molimo Vas odobrite placanja na ruti Beograd - Pazar u iznosu od 20$ sto je 4 tokena! ','2023-01-28 19:04:00');
+insert into notifications (client,drive,reason,message,date_time) values (1,2,0,'Molimo Vas odobrite placanja na ruti Beograd - Novi Sad u iznosu od 15$ sto je 3 tokena! ','2023-01-28 19:04:00');

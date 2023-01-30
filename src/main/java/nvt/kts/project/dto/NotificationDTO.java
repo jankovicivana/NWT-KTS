@@ -13,6 +13,7 @@ public class NotificationDTO {
     private String dateTime;
 
 
+    public NotificationDTO(){}
     public NotificationDTO(Notification n){
         this.driveId = n.getDrive().getId();
         this.message = n.getMessage();
