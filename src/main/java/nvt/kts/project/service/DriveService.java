@@ -133,6 +133,9 @@ public class DriveService {
     }
 
     private void saveRoutes(List<RouteDTO> routes, Drive d) {
+        if (d.getRoutes() == null){
+            d.setRoutes(new ArrayList<>());
+        }
         for(RouteDTO dto: routes){
             Route r = new Route();
             r.setDrive(d);
@@ -149,7 +152,7 @@ public class DriveService {
             r.setStartPosition(start);
             r.setEndPosition(end);
             r.setType(dto.getType());
-
+            d.getRoutes().add(r);
             this.routeService.save(r);
         }
     }

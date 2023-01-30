@@ -36,12 +36,13 @@ public class NotificationService {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         Double tokenPrice = systemInfoService.getTokenPrice();
+        String route = getRouteString(d);
         for (ClientDrive clientDrive: clientDrives){
             Notification n = new Notification();
             n.setClient(clientDrive.getClient());
             n.setDrive(d);
             n.setReason(NotificationReason.APPROVE_PAYMENT);
-            n.setMessage("Molim vas odobrite placanje voznje na ruti Trebinje-Beograd i iznosi "+clientDrive.getPrice()+"$" +
+            n.setMessage("Molim vas odobrite placanje voznje na ruti "+route+" i iznosi "+clientDrive.getPrice()+"$" +
                     " = "+clientDrive.getPrice()/tokenPrice+ " tokena.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
@@ -61,12 +62,13 @@ public class NotificationService {
     public void sendNotificationForRejectingDriveNotEnoghTokens(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
         for (ClientDrive clientDrive: clientDrives){
             Notification n = new Notification();
             n.setClient(clientDrive.getClient());
             n.setDrive(d);
             n.setReason(NotificationReason.REJECT_DRIVE);
-            n.setMessage("Voznja na ruti Trebinje-Beograd je otkazana zbog nedostatka tokena.");
+            n.setMessage("Voznja na ruti "+route+"je otkazana zbog nedostatka tokena.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
             NotificationDTO dto = new NotificationDTO(n);
@@ -80,12 +82,13 @@ public class NotificationService {
     public void sendNotificationForRejectingDriveNoAvailableDriver(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
         for (ClientDrive clientDrive: clientDrives){
             Notification n = new Notification();
             n.setClient(clientDrive.getClient());
             n.setDrive(d);
             n.setReason(NotificationReason.REJECT_DRIVE);
-            n.setMessage("Voznja na ruti Trebinje-Beograd je otkazana.Nema dostupnih vozaca.");
+            n.setMessage("Voznja na ruti "+route+" je otkazana.Nema dostupnih vozaca.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
             NotificationDTO dto = new NotificationDTO(n);
@@ -99,12 +102,13 @@ public class NotificationService {
     public void sendNotificationForAcceptingDrive(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
         for (ClientDrive clientDrive: clientDrives){
             Notification n = new Notification();
             n.setClient(clientDrive.getClient());
             n.setDrive(d);
             n.setReason(NotificationReason.REJECT_DRIVE);
-            n.setMessage("Voznja na ruti Trebinje-Beograd je prihvacena. Automobil stize za ..."); //ruteee
+            n.setMessage("Voznja na ruti "+route+" je prihvacena. Automobil stize za ...");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
             NotificationDTO dto = new NotificationDTO(n);
@@ -118,15 +122,20 @@ public class NotificationService {
     }
 
     private void sendNotificationOfAcceptedDriveToDriver(Drive d) {
+        String route = getRouteString(d);
         Notification n = new Notification();
         n.setClient(null);
         n.setDrive(d);
         n.setReason(NotificationReason.REJECT_DRIVE);
-        n.setMessage("Voznja na ruti Trebinje-Beograd je prihvacena.");         //ruteeeee
+        n.setMessage("Voznja na ruti "+route+" je prihvacena.");
         n.setDateTime(LocalDateTime.now());
         NotificationDTO dto = new NotificationDTO(n);
         dto.setReceiverEmail(n.getDrive().getDriver().getEmail());
         dto.setApprovedPayment(false);
         this.simpMessagingTemplate.convertAndSend("/notification/approvedDrive",dto);
+    }
+
+    private String getRouteString(Drive d){
+        return d.getRoutes().get(0).getStartPosition().getAddress()+" - "+d.getRoutes().get(d.getRoutes().size()-1).getEndPosition().getAddress();
     }
 }
