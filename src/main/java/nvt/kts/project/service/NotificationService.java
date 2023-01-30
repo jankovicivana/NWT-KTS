@@ -1,5 +1,6 @@
 package nvt.kts.project.service;
 
+import nvt.kts.project.dto.NotificationDTO;
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.ClientDriveRepository;
 import nvt.kts.project.repository.NotificationRepository;
@@ -41,14 +42,17 @@ public class NotificationService {
             n.setDrive(d);
             n.setReason(NotificationReason.APPROVE_PAYMENT);
             n.setMessage("Molim vas odobrite placanje voznje na ruti Trebinje-Beograd i iznosi "+clientDrive.getPrice()+"$" +
-                    "sto iznosi "+clientDrive.getPrice()/tokenPrice+ " tokena.");
+                    " = "+clientDrive.getPrice()/tokenPrice+ " tokena.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
-            //salji websoket
-            this.simpMessagingTemplate.convertAndSend("/notification/approvePayment",n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/approvePayment",dto);
         }
         notificationRepository.saveAll(newNotifications);
     }
+
 
     public List<Notification> getNotifications(Client c) {
         return notificationRepository.findAllByClientId(c.getId());

@@ -46,7 +46,11 @@ public class NotificationController {
         Client c = clientService.getClientByEmail(principal.getName());
         List<Notification> notif = notificationService.getNotifications(c);
         for (Notification n: notif){
-            dtos.add(new NotificationDTO(n));
+            ClientDrive cd = driveService.getClientDriveByInfo(c,n.getDrive().getId());
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(cd.isApproved());
+            dtos.add(dto);
         }
     return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
