@@ -14,7 +14,7 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
     @Query("SELECT d from Drive d where d.startTime <= :now and d.endTime > :now")
     List<Drive> getCurrentDrives(@Param("now") LocalDateTime now);
 
-    @Query("SELECT d from Drive d where d.status = 2 and d.driver.email = :driver")
+    @Query("SELECT d from Drive d where d.driver.email = :driver and (d.status = 2 or (d.status = 1 and d.reservation is null and d.startTime is null )) ")
     Drive getCurrentDriverDrive(@Param("driver") String driver);
 
     @Query("SELECT d from Drive d where d.endTime < :now and :email IN (SELECT p.client.email from d.passengers p)")

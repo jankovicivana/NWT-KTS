@@ -160,7 +160,7 @@ public class DriverService {
             Drive current = driveService.getDriverCurrentDrive(d.getEmail());
             LocalDateTime start = current.getStartTime();
             double duration = current.getDuration();
-            LocalDateTime expectedEnd = start.plusMinutes((long) duration);
+            LocalDateTime expectedEnd = start.plusMinutes((long) duration);  //start moze biti null
             long diff = LocalDateTime.now().until(expectedEnd, ChronoUnit.MINUTES);
             if (diff < minTime){
                 minTime = diff;
