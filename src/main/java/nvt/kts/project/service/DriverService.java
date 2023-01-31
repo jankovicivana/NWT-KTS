@@ -160,7 +160,12 @@ public class DriverService {
             Drive current = driveService.getDriverCurrentDrive(d.getEmail());
             LocalDateTime start = current.getStartTime();
             double duration = current.getDuration();
-            LocalDateTime expectedEnd = start.plusMinutes((long) duration);  //start moze biti null
+            LocalDateTime expectedEnd;
+            if (start == null){
+                expectedEnd = LocalDateTime.now().plusMinutes((long) duration);
+            }else{
+                expectedEnd = start.plusMinutes((long) duration);  //start moze biti null}
+                 }
             long diff = LocalDateTime.now().until(expectedEnd, ChronoUnit.MINUTES);
             if (diff < minTime){
                 minTime = diff;
@@ -188,6 +193,7 @@ public class DriverService {
         return (rad * 180.0 / Math.PI);
     }
 
+
     public Driver findAvailableDriver(Drive drive) {
         List<Driver> drivers = getActiveAndAvailableDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
         if (drivers.size() == 0){
@@ -207,7 +213,7 @@ public class DriverService {
         if (drivers.size() == 1){return drivers.get(0);}
         while (true){
             Driver d = getNearestDriver(drivers, drive.getRoutes().get(0).getStartPosition());
-            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d,drive)){
+            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d, drive)){
                 return d;
             }
             drivers.remove(d);
@@ -221,7 +227,7 @@ public class DriverService {
         if (drivers.size() == 1){return drivers.get(0);}
         while (true){
             Driver d = getDriverNearestToEnd(drivers);
-            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d,drive)){
+            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d, drive)){
                 return d;
             }
             drivers.remove(d);

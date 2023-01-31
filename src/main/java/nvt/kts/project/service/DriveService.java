@@ -251,7 +251,12 @@ public class DriveService {
 
     public boolean hasFutureReservations(Driver d, Drive drive) {
         double duration = drive.getDuration()+5;
-        LocalDateTime bound = LocalDateTime.now().plus((long) duration, ChronoUnit.MINUTES);
+        LocalDateTime bound;
+        if (drive.getReservation() == null){
+            bound = LocalDateTime.now().plus((long) duration, ChronoUnit.MINUTES);}
+        else {
+            bound = drive.getReservation().getStart().plus((long) duration, ChronoUnit.MINUTES);
+        }
         List<Drive> reservations = driveRepository.getReservations(d.getId(),bound);
         return reservations.size() != 0;
     }
