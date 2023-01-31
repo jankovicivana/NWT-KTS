@@ -3,14 +3,12 @@ package nvt.kts.project.controller;
 import lombok.RequiredArgsConstructor;
 import nvt.kts.project.dto.*;
 import nvt.kts.project.model.*;
-import nvt.kts.project.service.ClientService;
-import nvt.kts.project.service.DriveService;
-import nvt.kts.project.service.DriverService;
-import nvt.kts.project.service.NotificationService;
+import nvt.kts.project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +32,9 @@ public class DriveController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ReservationService reservationService;
 
     @Autowired
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -244,6 +245,37 @@ public class DriveController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
     }
+
+    @Scheduled(cron = "${reminder.cron}")
+    public void cronJob(){
+        // nadji sve voznje koje imaju reservation != null i vrijeme rezervacije je za 15 min / 10 min / 5 min
+        // ako je status RESERVED - trazimo im vozaca + saljemo notifikaciju
+        // ako je status SCHEDULED - samo saljemo notifikaciju
+
+        List<Reservation> reservationsIn15 = this.reservationService.getReservationsIn(15L);
+        List<Reservation> reservationsIn10 = this.reservationService.getReservationsIn(10L);
+        List<Reservation> reservationsIn5 = this.reservationService.getReservationsIn(5L);
+
+        for(Reservation r: reservationsIn15){
+            this.notificationService.sendReservationReminder(r, 15);
+            if(r.getDrive().getStatus().equals(DriveStatus.RESERVED)){
+                notificationService.sendNotificationsForApprovingPayment(r.getDrive());
+            }
+        }
+
+        for(Reservation r: reservationsIn10){
+            if(r.getDrive().getStatus().equals(DriveStatus.RESERVED) || r.getDrive().getStatus().equals(DriveStatus.SCHEDULED)){
+                this.notificationService.sendReservationReminder(r, 10);
+            }
+        }
+
+        for(Reservation r: reservationsIn5){
+            if(r.getDrive().getStatus().equals(DriveStatus.RESERVED) || r.getDrive().getStatus().equals(DriveStatus.SCHEDULED)){
+                this.notificationService.sendReservationReminder(r, 5);
+            }
+        }
+    }
+
 
 
 }

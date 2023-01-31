@@ -120,6 +120,7 @@ public class DriveService {
             r.setExpectedDuration(info.getDuration());
             Reservation saved = this.reservationService.save(r);
             d.setReservation(saved);
+            d.setStatus(DriveStatus.RESERVED);
             driveRepository.save(d);
         }
 
@@ -208,7 +209,7 @@ public class DriveService {
     public void rejectDriveNoEnoughTokens(Drive drive) {
         drive.setStatus(DriveStatus.REJECTED);
         driveRepository.save(drive);
-        notificationService.sendNotificationForRejectingDriveNotEnoghTokens(drive);
+        notificationService.sendNotificationForRejectingDriveNotEnoughTokens(drive);
     }
 
     public boolean checkIfAllPassengersApprovedPayment(Drive drive) {

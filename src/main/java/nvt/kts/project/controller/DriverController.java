@@ -92,8 +92,6 @@ public class DriverController {
         return new ResponseEntity<>(false,HttpStatus.OK);
     }
 
-
-
     @PostMapping("/rejectDriverChanges")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Boolean> rejectDriverChanges(@RequestBody DriverCarDTO dto, Principal principal) {

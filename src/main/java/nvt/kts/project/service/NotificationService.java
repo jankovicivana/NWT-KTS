@@ -59,7 +59,7 @@ public class NotificationService {
         return notificationRepository.findAllByClientId(c.getId());
     }
 
-    public void sendNotificationForRejectingDriveNotEnoghTokens(Drive d) {
+    public void sendNotificationForRejectingDriveNotEnoughTokens(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         String route = getRouteString(d);
@@ -137,5 +137,24 @@ public class NotificationService {
 
     private String getRouteString(Drive d){
         return d.getRoutes().get(0).getStartPosition().getAddress()+" - "+d.getRoutes().get(d.getRoutes().size()-1).getEndPosition().getAddress();
+    }
+
+    public void sendReservationReminder(Reservation r, int i) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(r.getDrive().getId());
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(r.getDrive());
+            n.setReason(NotificationReason.DRIVE_REMINDER);
+            n.setMessage("Podsjetnik: imate zakazanu voznju za " + i + " minuta na relaciji " + getRouteString(r.getDrive()));
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/reminder", dto);
+        }
+        notificationRepository.saveAll(newNotifications);
     }
 }
