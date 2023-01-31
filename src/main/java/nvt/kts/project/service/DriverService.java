@@ -227,7 +227,7 @@ public class DriverService {
         if (drivers.size() == 1){return drivers.get(0);}
         while (true){
             Driver d = getDriverNearestToEnd(drivers);
-            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d, drive)){
+            if (hasWorkingHours(d) && !driveService.hasFutureReservations(d, drive)){  //nije uracunato vrijeme trenutno radno vrijeme
                 return d;
             }
             drivers.remove(d);

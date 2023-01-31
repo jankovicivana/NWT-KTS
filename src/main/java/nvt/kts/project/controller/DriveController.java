@@ -199,7 +199,9 @@ public class DriveController {
     public ResponseEntity<String> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
         Client client = clientService.getClientByEmail(principal.getName());
         Drive d = driveService.saveDrive(info,client);
-        notificationService.sendNotificationsForApprovingPayment(d);
+        if (!info.getReservation()){
+            notificationService.sendNotificationsForApprovingPayment(d);
+        }
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
 
@@ -208,6 +210,8 @@ public class DriveController {
         Drive d = driveService.findById(drive.getId());
         d.setRejectionReason(drive.getRejectionReason());
         driveService.save(d);
+        //posalji obavj
+        notificationService.sendNotificationForDriverRejectingDrive(d);
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
 

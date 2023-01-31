@@ -1,5 +1,6 @@
 package nvt.kts.project.service;
 
+import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.NotificationDTO;
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.ClientDriveRepository;
@@ -154,6 +155,26 @@ public class NotificationService {
             dto.setReceiverEmail(n.getClient().getEmail());
             dto.setApprovedPayment(clientDrive.isApproved());
             this.simpMessagingTemplate.convertAndSend("/notification/reminder", dto);
+        }
+        notificationRepository.saveAll(newNotifications);
+    }
+
+    public void sendNotificationForDriverRejectingDrive(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.REJECT_DRIVE);
+            n.setMessage("Voznja na ruti "+route+" je otkazana.Vozac je otkazao. Razlog je: "+d.getRejectionReason());
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/driverRejected",dto);
         }
         notificationRepository.saveAll(newNotifications);
     }

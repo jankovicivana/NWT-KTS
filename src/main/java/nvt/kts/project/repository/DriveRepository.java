@@ -26,7 +26,6 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
     @Query("SELECT d from Drive d where d.endTime < :now")
     List<Drive> getAllDrives(@Param("now") LocalDateTime now);
 
-
     @Query("SELECT d from Drive d where d.startTime >= :start and d.endTime <= :end and :email IN (SELECT p.client.email from d.passengers p)")
     List<Drive> getDrivesByClientDate(@Param("start") LocalDateTime start,@Param("end") LocalDateTime end,@Param("email") String email);
 
@@ -36,10 +35,10 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
     @Query("SELECT d from Drive d where d.startTime >= :start and d.endTime <= :end")
     List<Drive> getDrivesByDate(@Param("start") LocalDateTime start,@Param("end") LocalDateTime end);
 
-    @Query("SELECT d from Drive d where d.driver.id = :id  and d.reservation is not null and d.reservation.start < :bound")
-    List<Drive> getReservations(@Param("id")Long id,@Param("bound") LocalDateTime bound);
+    @Query("SELECT d from Drive d where d.driver.id = :id  and d.reservation is not null and d.reservation.start < :bound and d.reservation.start > :now")
+    List<Drive> getReservations(@Param("id")Long id,@Param("bound") LocalDateTime bound,@Param("now") LocalDateTime now);
 
-    @Query("SELECT d from Drive d where d.reservation is not null and d.reservation.start > :now and d.driver.email = :email")
-    List<Drive> getFutureDriverDrives(@Param("now") LocalDateTime now,@Param("email") String email);
+    @Query("SELECT d from Drive d where d.startTime is null  and d.driver.email = :email and d.status = 1")
+    List<Drive> getFutureDriverDrives(@Param("email") String email);
 
 }

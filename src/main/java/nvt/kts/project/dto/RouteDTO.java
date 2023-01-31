@@ -11,6 +11,8 @@ public class RouteDTO {
     private PositionDTO end;
     private String type;
 
+    public RouteDTO(){}
+
     public RouteDTO(Route r){
         this.end = new PositionDTO(r.getEndPosition());
         this.start = new PositionDTO(r.getStartPosition());

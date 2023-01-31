@@ -258,7 +258,7 @@ public class DriveService {
         else {
             bound = drive.getReservation().getStart().plus((long) duration, ChronoUnit.MINUTES);
         }
-        List<Drive> reservations = driveRepository.getReservations(d.getId(),bound);
+        List<Drive> reservations = driveRepository.getReservations(d.getId(),bound,LocalDateTime.now());
         return reservations.size() != 0;
     }
 
@@ -267,6 +267,6 @@ public class DriveService {
     }
 
     public List<Drive> getFutureDriverDrives(String name) {
-        return driveRepository.getFutureDriverDrives(LocalDateTime.now(),name);
+        return driveRepository.getFutureDriverDrives(name);
     }
 }

@@ -12,6 +12,7 @@ public class PositionDTO {
     private double lon;
     private String address;
 
+    public PositionDTO(){}
     public PositionDTO(Position p){
         this.address = p.getAddress();
         this.lat = p.getLat();
