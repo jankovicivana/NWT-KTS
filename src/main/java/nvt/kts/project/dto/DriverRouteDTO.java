@@ -13,14 +13,13 @@ public class DriverRouteDTO {
 
     private String username;
 
-    private List<Route> routes;
+    private List<RouteDTO> routes;
 
-    private LocalDateTime startTime;
+    private String startTime;
 
-
-    public DriverRouteDTO(String username, List<Route> routes, LocalDateTime startTime){
+    public DriverRouteDTO(String username, List<RouteDTO> routes, LocalDateTime startTime){
         this.username = username;
         this.routes = routes;
-        this.startTime = startTime;
+        this.startTime = startTime.toString();
     }
 }

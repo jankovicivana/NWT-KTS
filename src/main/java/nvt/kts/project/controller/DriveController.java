@@ -44,9 +44,9 @@ public class DriveController {
         List<Drive> drives = driveService.getCurrentDrives();
         List<DriverRouteDTO> routes = new ArrayList<>();
         for(Drive d: drives){
-            List<Route> routeList = d.getRoutes();
-            for(Route r: routeList){
-                r.setDrive(null);
+            List<RouteDTO> routeList = new ArrayList<>();
+            for(Route r: d.getRoutes()){
+                routeList.add(new RouteDTO(r));
             }
             routes.add(new DriverRouteDTO(d.getDriver().getUsername(), routeList, d.getStartTime()));
         }
@@ -150,9 +150,9 @@ public class DriveController {
         // mozda i stanje i poziciju vozaca da promijenimo
         DriverRouteDTO driverRouteDTO = null;
         if(drive != null) {
-            List<Route> routeList = drive.getRoutes();
-            for (Route r : routeList) {
-                r.setDrive(null);
+            List<RouteDTO> routeList = new ArrayList<>();
+            for(Route r: drive.getRoutes()){
+                routeList.add(new RouteDTO(r));
             }
             driverRouteDTO = new DriverRouteDTO(drive.getDriver().getUsername(), routeList, LocalDateTime.now());
             this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
