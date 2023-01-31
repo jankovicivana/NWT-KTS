@@ -85,11 +85,11 @@ public class DriveService {
     public List<DriveDTO> convertDriveToDTO(List<Drive> drives){
         List<DriveDTO> drivesDTO = new ArrayList<>();
         for (Drive d:drives){
-            List<Route> routeList = d.getRoutes();
-
-            for(Route r: routeList){
-                r.setDrive(null);
+            List<RouteDTO> routeList = new ArrayList<>();
+            for(Route r: d.getRoutes()){
+                routeList.add(new RouteDTO(r));
             }
+
             DriverDTO driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
             DriveDTO driveDTO = new DriveDTO(d, routeList, driverDTO);
             Set<ClientDriveDTO> passengers = new HashSet<>();
@@ -259,5 +259,13 @@ public class DriveService {
         }
         List<Drive> reservations = driveRepository.getReservations(d.getId(),bound);
         return reservations.size() != 0;
+    }
+
+    public void save(Drive d) {
+        driveRepository.save(d);
+    }
+
+    public List<Drive> getFutureDriverDrives(String name) {
+        return driveRepository.getFutureDriverDrives(LocalDateTime.now(),name);
     }
 }

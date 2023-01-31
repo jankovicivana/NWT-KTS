@@ -39,4 +39,7 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
     @Query("SELECT d from Drive d where d.driver.id = :id  and d.reservation is not null and d.reservation.start < :bound")
     List<Drive> getReservations(@Param("id")Long id,@Param("bound") LocalDateTime bound);
 
+    @Query("SELECT d from Drive d where d.reservation is not null and d.reservation.start > :now and d.driver.email = :email")
+    List<Drive> getFutureDriverDrives(@Param("now") LocalDateTime now,@Param("email") String email);
+
 }

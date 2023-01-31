@@ -26,13 +26,15 @@ public class DriveDTO {
 
     private String status;
 
-    private List<Route> routes;
+    private List<RouteDTO> routes;
 
     private Set<ClientDriveDTO> passengers;
 
     private Double distance;
 
-    public DriveDTO(Drive d, List<Route> routeList, DriverDTO driverDTO) {
+    private String rejectionReason;
+
+    public DriveDTO(Drive d, List<RouteDTO> routeList, DriverDTO driverDTO) {
         this.id = d.getId();
         this.driver = driverDTO;
         this.startTime = d.getStartTime();
@@ -43,4 +45,5 @@ public class DriveDTO {
         this.passengers = new HashSet<>();
         this.distance = d.getDistance();
     }
+
 }

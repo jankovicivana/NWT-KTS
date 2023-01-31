@@ -68,6 +68,14 @@ public class DriveController {
         return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/getFutureDriverDrives")
+    @PreAuthorize("hasAnyRole('client','admin','driver')")
+    public ResponseEntity<List<DriveDTO>> getFutureDriverDrives(Principal principal) {
+        List<Drive> drives = driveService.getFutureDriverDrives(principal.getName());
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<List<DriveDTO>> getAll(Principal principal) {
@@ -174,6 +182,14 @@ public class DriveController {
         Client client = clientService.getClientByEmail(principal.getName());
         Drive d = driveService.saveDrive(info,client);
         notificationService.sendNotificationsForApprovingPayment(d);
+        return new ResponseEntity<>("Super", HttpStatus.OK);
+    }
+
+    @PostMapping("/saveRejectionDriveReason")
+    public ResponseEntity<String> saveRejectionDriveReason(@RequestBody DriveDTO drive,Principal principal){
+        Drive d = driveService.findById(drive.getId());
+        d.setRejectionReason(drive.getRejectionReason());
+        driveService.save(d);
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
 
