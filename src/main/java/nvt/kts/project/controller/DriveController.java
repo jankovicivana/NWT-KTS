@@ -178,6 +178,23 @@ public class DriveController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/finish/{id}")
+    public ResponseEntity<Map<String, Position>> finishDrive(@PathVariable("id") Long id){
+        Drive drive = this.driveService.findById(id);
+        // mozda i stanje i poziciju vozaca da promijenimo
+        // promijeni status voznje - FINISHED
+
+        if(drive != null) {
+            Route route = drive.getRoutes().get(drive.getRoutes().size() - 1); // posljednja
+            Position pos = route.getEndPosition();
+            Map<String, Position> mapa =  new HashMap<>();
+            mapa.put(drive.getDriver().getUsername(), pos);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", mapa);
+            return new ResponseEntity<>(mapa, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping("/saveDrive")
     public ResponseEntity<String> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
         Client client = clientService.getClientByEmail(principal.getName());
@@ -248,10 +265,6 @@ public class DriveController {
 
     @Scheduled(cron = "${reminder.cron}")
     public void cronJob(){
-        // nadji sve voznje koje imaju reservation != null i vrijeme rezervacije je za 15 min / 10 min / 5 min
-        // ako je status RESERVED - trazimo im vozaca + saljemo notifikaciju
-        // ako je status SCHEDULED - samo saljemo notifikaciju
-
         List<Reservation> reservationsIn15 = this.reservationService.getReservationsIn(15L);
         List<Reservation> reservationsIn10 = this.reservationService.getReservationsIn(10L);
         List<Reservation> reservationsIn5 = this.reservationService.getReservationsIn(5L);
