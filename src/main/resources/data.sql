@@ -79,7 +79,7 @@ INSERT INTO drivers (id, email, password,
 
              VALUES (nextval('user_seq'), 'ivana1@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
                      'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-                      'unknown.jpg', false, true, false, true, 3,3);
+                      'unknown.jpg', false, true, true, true, 3,3);
 
 insert into user_role (user_id, role_id) values (8, 3);
 insert into user_role (user_id, role_id) values (9, 3);
@@ -99,9 +99,9 @@ insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time,favourite, distance)
 values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0,0,1,true,false,'2023-01-31 23:59:00',false, 25);
 
-insert into client_drives (client, drive, price,approved) values (1, 2, 20.0,false );
-insert into client_drives (client, drive, price,approved) values (5, 2, 20.0,false );
-insert into client_drives (client, drive, price,approved) values (2, 2, 20.0,false );
+insert into client_drives (client, drive, price,approved,favourite) values (1, 2, 20.0,false, true );
+insert into client_drives (client, drive, price,approved, favourite) values (5, 2, 20.0,false, true );
+insert into client_drives (client, drive, price,approved, favourite) values (2, 2, 20.0,false, true );
 
 
 insert into routes (drive, start_position, end_position, type) values (2, 2, 1, 'shortest');
