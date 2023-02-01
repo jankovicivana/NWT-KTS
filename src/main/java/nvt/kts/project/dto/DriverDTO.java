@@ -21,6 +21,7 @@ public class DriverDTO {
     private Boolean enabled;
     private Boolean blocked;
     private Boolean isSocialLogin;
+    private PositionDTO position;
 
     public DriverDTO(){}
 
@@ -37,5 +38,6 @@ public class DriverDTO {
         this.enabled = d.isEnabled();
         this.blocked = d.isBlocked();
         this.isSocialLogin = d.getIsSocialLogin();
+        this.position = new PositionDTO(d.getPosition());
     }
 }

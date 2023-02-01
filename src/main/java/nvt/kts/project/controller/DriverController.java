@@ -56,6 +56,15 @@ public class DriverController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @GetMapping("/getDriver")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<DriverDTO> getDriver(Principal principal) {
+        Driver u = driverService.getDriverByEmail(principal.getName());
+        DriverDTO dto = mapper.map(u, DriverDTO.class);
+        dto.setRole("Driver");
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/getDriverChanges/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<DriverCarDTO> getDriverChangesById(@PathVariable Long id, Principal principal) {

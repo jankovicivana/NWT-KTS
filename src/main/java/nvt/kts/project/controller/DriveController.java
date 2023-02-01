@@ -1,6 +1,7 @@
 package nvt.kts.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import nvt.kts.project.dto.*;
 import nvt.kts.project.model.*;
 import nvt.kts.project.service.*;
@@ -240,11 +241,28 @@ public class DriveController {
 
     @PostMapping("/goToClient")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<String> goToClient(@RequestBody DriveDTO dto,Principal principal){
-        Drive d = driveService.findById(dto.getId());
+    public ResponseEntity<String> goToClient(@RequestBody EmptyDriveDTO dto,Principal principal){
+        Drive d = driveService.findById(dto.getDrive().getId());
         d.setStatus(DriveStatus.GOING_TO_CLIENT);
         driveService.save(d);
+
         //napravi praznu
+        Drive newDrive = new Drive();
+        newDrive.setDriver(d.getDriver());
+        newDrive.setDuration(dto.getDuration());
+        newDrive.setPrice(0);
+        newDrive.setPassengers(new ArrayList<>());
+        newDrive.setStatus(DriveStatus.EMPTY);
+        Route r = new Route();
+        r.setStartPosition(d.getDriver().getPosition());
+        r.setEndPosition(d.getRoutes().get(0).getStartPosition());
+        List<Route> routes = new ArrayList<>();
+        routes.add(r);
+        newDrive.setRoutes(routes);
+        newDrive.setCreatedTime(LocalDateTime.now());
+        newDrive.setStartTime(LocalDateTime.now());
+        driveService.save(newDrive);
+
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
 
