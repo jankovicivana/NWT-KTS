@@ -29,5 +29,8 @@ public class ClientDrive {
     @Column(name = "approved")
     private boolean approved = false;
 
+    @Column(name = "favourite")
+    private boolean favourite = false;
+
 
 }

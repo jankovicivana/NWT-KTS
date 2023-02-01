@@ -35,7 +35,7 @@ public class DriveDTO {
 
     private String createdTime;
 
-    public DriveDTO(Drive d, List<RouteDTO> routeList, DriverDTO driverDTO) {
+    public DriveDTO(Drive d, List<RouteDTO> routeList, DriverDTO driverDTO, LocalDateTime createdTime) {
         this.id = d.getId();
         this.driver = driverDTO;
         this.startTime = d.getStartTime();
@@ -45,8 +45,9 @@ public class DriveDTO {
         this.routes = routeList;
         this.passengers = new HashSet<>();
         this.distance = d.getDistance();
-
+        this.createdTime = createdTime.toString();
     }
+
     public DriveDTO(){}
 
 }

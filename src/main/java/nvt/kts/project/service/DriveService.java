@@ -90,9 +90,14 @@ public class DriveService {
                 routeList.add(new RouteDTO(r));
             }
 
-            DriverDTO driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
-            DriveDTO driveDTO = new DriveDTO(d, routeList, driverDTO);
+
+            DriverDTO driverDTO = null;
+            if(d.getDriver() != null)
+                 driverDTO = mapper.map(d.getDriver(),DriverDTO.class);
+
+            DriveDTO driveDTO = new DriveDTO(d, routeList, driverDTO, d.getCreatedTime());
             Set<ClientDriveDTO> passengers = new HashSet<>();
+
             for(ClientDrive cd:d.getPassengers()){
                 passengers.add(new ClientDriveDTO(cd.getId(),cd.getClient().getName(),cd.getClient().getSurname(),cd.getClient().getEmail(),cd.getPrice()));
             }
@@ -126,10 +131,10 @@ public class DriveService {
         }
 
         saveRoutes(info.getRoutes(), d);
-        clientDriveRepository.save(createClientDrive(d,loggedUser,info,true));
+        clientDriveRepository.save(createClientDrive(d,loggedUser,info,true, info.isFavourite()));
         for (String email: info.getPassengers()){
             Client c = clientService.getClientByEmail(email);
-            clientDriveRepository.save(createClientDrive(d,c,info,false));
+            clientDriveRepository.save(createClientDrive(d,c,info,false, false));
         }
         return d;
     }
@@ -159,10 +164,11 @@ public class DriveService {
         }
     }
 
-    public ClientDrive createClientDrive(Drive d,Client client,ScheduleInfoDTO info,Boolean logged){
+    public ClientDrive createClientDrive(Drive d,Client client,ScheduleInfoDTO info,Boolean logged, Boolean favourite){
         ClientDrive cd = new ClientDrive();
         cd.setDrive(d);
         cd.setClient(client);
+        cd.setFavourite(favourite);
         if (info.getSplitFaire()){
             double splitFairePrice = info.getPrice()/(info.getPassengers().size()+1);
             cd.setPrice(splitFairePrice);
@@ -277,13 +283,9 @@ public class DriveService {
 
     public List<Drive> getFavouriteDrives(String name) {
         List<Drive> favourites = new ArrayList<>();
-        for(Drive d: driveRepository.getFavouriteDrives()){
-            for(ClientDrive c : d.getPassengers()){
-                if(c.getClient().getEmail().equals(name)){
-                    favourites.add(d);
-                    break;
-                }
-            }
+        for(ClientDrive cd: clientDriveRepository.getFavouriteDrives(name)){
+            Drive d = cd.getDrive();
+            favourites.add(d);
         }
         return favourites;
     }

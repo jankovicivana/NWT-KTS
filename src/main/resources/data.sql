@@ -87,8 +87,11 @@ insert into user_role (user_id, role_id) values (9, 3);
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time,favourite, distance)
 values (8, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 0,0,1,false,false,'2023-01-31 23:59:00',false, 25 );
 
+insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
+values (8, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 0,0,1,false,false,'2023-01-31 23:59:00');
 
-insert into client_drives (client, drive, price,approved) values (2, 1, 20.0,false);
+
+insert into client_drives (client, drive, price,approved, favourite) values (2, 1, 20.0,false, true);
 
 insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 'fastest');
 

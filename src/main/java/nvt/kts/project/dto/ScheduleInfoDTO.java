@@ -20,4 +20,6 @@ public class ScheduleInfoDTO {
 
     private List<RouteDTO> routes;
     private String reservationTime;
+
+    private boolean favourite;
 }
