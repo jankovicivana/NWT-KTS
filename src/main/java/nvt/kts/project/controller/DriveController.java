@@ -37,6 +37,9 @@ public class DriveController {
     private ReservationService reservationService;
 
     @Autowired
+    private ReportService reportService;
+
+    @Autowired
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/current")
@@ -250,9 +253,22 @@ public class DriveController {
     public ResponseEntity<String> saveRejectionDriveReason(@RequestBody DriveDTO drive,Principal principal){
         Drive d = driveService.findById(drive.getId());
         d.setRejectionReason(drive.getRejectionReason());
+        d.setStatus(DriveStatus.REJECTED);
         driveService.save(d);
         //posalji obavj
         notificationService.sendNotificationForDriverRejectingDrive(d);
+        return new ResponseEntity<>("Super", HttpStatus.OK);
+    }
+
+    @PostMapping("/saveReport")
+    public ResponseEntity<String> saveReport(@RequestBody ReportDTO dto,Principal principal){
+        Drive d = driveService.findById(dto.getDriveId());
+        Client c = clientService.getClientByEmail(principal.getName());
+        Report r = new Report();
+        r.setDrive(d);
+        r.setClient(c);
+        r.setComment(dto.getComment());
+        reportService.save(r);
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
 
@@ -306,6 +322,17 @@ public class DriveController {
                 driveService.rejectDriveNoEnoughTokens(drive);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+    }
+
+    @GetMapping("/getCurrentDrive")
+    @PreAuthorize("hasAnyRole('client')")
+    public ResponseEntity<DriveDTO> getCurrentDrive(Principal principal) {
+            Client c = clientService.getClientByEmail(principal.getName());
+            Drive currentDrive = driveService.getCurrentClientDrive(c.getEmail());
+            List<Drive> drive = new ArrayList<>();
+            drive.add(currentDrive);
+            DriveDTO dto = driveService.convertDriveToDTO(drive).get(0);
+            return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
     @Scheduled(cron = "${reminder.cron}")

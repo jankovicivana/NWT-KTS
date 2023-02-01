@@ -72,4 +72,7 @@ public class Drive {
     @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
     private List<Notification> notifications = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
+    private Set<Report> reports = new HashSet<>();
 }

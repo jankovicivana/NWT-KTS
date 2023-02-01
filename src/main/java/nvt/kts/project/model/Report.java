@@ -20,6 +20,10 @@ public class Report {
     @JoinColumn(name = "client")
     private Client client;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "drive")
+    private Drive drive;
+
     @Column(name = "comment", nullable = false)
     private String comment;
 

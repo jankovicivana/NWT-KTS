@@ -22,4 +22,5 @@ public class ClientDTO {
     private Boolean blocked;
     private Boolean isSocialLogin;
     private Boolean driving = false;
+
 }

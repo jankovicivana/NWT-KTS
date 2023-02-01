@@ -185,6 +185,10 @@ public class DriveService {
         return this.driveRepository.getCurrentDriverDrive(mail);
     }
 
+    public Drive getCurrentClientDrive(String mail) {
+        return this.driveRepository.getCurrentClientDrive(mail).get(0);
+    }
+
     public boolean approvePayment(Long id, Client c) {
         ClientDrive cd  = clientDriveRepository.findById(id).orElse(null);
         if (cd != null){

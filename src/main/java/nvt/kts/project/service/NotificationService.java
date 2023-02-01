@@ -1,6 +1,5 @@
 package nvt.kts.project.service;
 
-import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.NotificationDTO;
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.ClientDriveRepository;
