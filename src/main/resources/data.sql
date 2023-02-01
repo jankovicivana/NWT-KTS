@@ -39,7 +39,7 @@ insert into positions (lat, lon, address) values (45.245504, 19.8292116, 'Ljermo
 insert into positions (lat, lon, address) values (45.2464232, 19.8308877, 'Doza Djerdja 34');
 
 INSERT INTO drivers (id, email, password, name, surname, deleted, phone_number, city,is_social_login, photo, blocked, enabled,available,active,car,position)
-VALUES (nextval('user_seq'), 'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozac', 'Vozic', false, '0654079380', 'Trebinje',false, 'unknown.jpg', false, true,true , true,1,1 );
+VALUES (nextval('user_seq'), 'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozac', 'Vozic', false, '0654079380', 'Trebinje',false, 'unknown.jpg', false, true,true , false,1,1 );
 
 insert into user_role (user_id, role_id) values (1, 1);
 insert into user_role (user_id, role_id) values (2, 1);
@@ -71,7 +71,7 @@ INSERT INTO drivers (id, email, password,
 
             VALUES (nextval('user_seq'), 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
                     'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-                     'unknown.jpg', false, true, true, true, 2,2);
+                     'unknown.jpg', false, true, false, true, 2,2);
 
 INSERT INTO drivers (id, email, password,
                  name, surname, deleted, phone_number, city, is_social_login,
@@ -79,7 +79,7 @@ INSERT INTO drivers (id, email, password,
 
              VALUES (nextval('user_seq'), 'ivana1@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
                      'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-                      'unknown.jpg', false, true, true, true, 3,3);
+                      'unknown.jpg', false, true, false, true, 3,3);
 
 insert into user_role (user_id, role_id) values (8, 3);
 insert into user_role (user_id, role_id) values (9, 3);
@@ -113,7 +113,6 @@ INSERT INTO edit_driver (id,driver_id, email, password, name, surname, status, p
 VALUES (nextval('edit_seq'),7,'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozaccc', 'Vozic', 1, '0654079380', 'Trebinjeee', 'unknown.jpg',1,true, true);
 
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-29 23:59:00', '2023-01-30 21:59:00',7);
-insert into driver_activities(start_time,end_time,driver) values ('2023-01-29 19:04:00', null ,7);
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-29 16:04:00', '2023-01-28 16:59:00',7);
 
 insert into notifications (client,drive,reason,message,date_time) values (1,2,0,'Molimo Vas odobrite placanja na ruti Beograd - Novi Sad u iznosu od 15$ sto je 3 tokena! ','2023-01-28 19:04:00');

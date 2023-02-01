@@ -110,6 +110,8 @@ public class DriverController {
         }else {
             driverService.createActivityLog(d);
         }
+        d.setActive(!active);
+        driverService.save(d);
         return new ResponseEntity<>(false,HttpStatus.OK);
     }
 }
