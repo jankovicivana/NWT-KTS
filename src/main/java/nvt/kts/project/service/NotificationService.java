@@ -109,7 +109,7 @@ public class NotificationService {
             n.setClient(clientDrive.getClient());
             n.setDrive(d);
             n.setReason(NotificationReason.REJECT_DRIVE);
-            n.setMessage("Voznja na ruti "+route+" je prihvacena. Automobil stize za ...");
+            n.setMessage("Voznja na ruti "+route+" je prihvacena. Automobil uskoro stize na vasu adresu.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
             NotificationDTO dto = new NotificationDTO(n);
@@ -175,6 +175,65 @@ public class NotificationService {
             dto.setReceiverEmail(n.getClient().getEmail());
             dto.setApprovedPayment(clientDrive.isApproved());
             this.simpMessagingTemplate.convertAndSend("/notification/driverRejected",dto);
+        }
+        notificationRepository.saveAll(newNotifications);
+    }
+
+    public void sendNotificationsForStartingDrive(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.CAR_ARRIVED);
+            n.setMessage("Voznja na ruti "+route+" je pocela.");
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/driveStarted",dto);
+        }
+        notificationRepository.saveAll(newNotifications);
+    }
+
+    public void sendNotificationsForStoppingDrive(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.STOPPED);
+            n.setMessage("Voznja na ruti "+route+" je zaustavljena.");
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/driveStarted",dto);
+        }
+        notificationRepository.saveAll(newNotifications);
+    }
+    public void sendNotificationsForFinishedDrive(Drive d) {
+        List<Notification> newNotifications = new ArrayList<>();
+        List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
+        String route = getRouteString(d);
+        for (ClientDrive clientDrive: clientDrives){
+            Notification n = new Notification();
+            n.setClient(clientDrive.getClient());
+            n.setDrive(d);
+            n.setReason(NotificationReason.FINISHED);
+            n.setMessage("Voznja na ruti "+route+" je zavrsena.");
+            n.setDateTime(LocalDateTime.now());
+            newNotifications.add(n);
+            NotificationDTO dto = new NotificationDTO(n);
+            dto.setReceiverEmail(n.getClient().getEmail());
+            dto.setApprovedPayment(clientDrive.isApproved());
+            this.simpMessagingTemplate.convertAndSend("/notification/driveFinished",dto);
         }
         notificationRepository.saveAll(newNotifications);
     }

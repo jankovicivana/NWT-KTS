@@ -3,6 +3,7 @@ package nvt.kts.project.service;
 import nvt.kts.project.dto.UserRequest;
 import nvt.kts.project.model.Admin;
 import nvt.kts.project.model.Client;
+import nvt.kts.project.model.ClientDrive;
 import nvt.kts.project.model.Role;
 import nvt.kts.project.repository.ClientRepository;
 import nvt.kts.project.repository.RoleRepository;
@@ -70,5 +71,12 @@ public class ClientService {
     public void setRole(Client client) {
         List<Role> roles = roleRepository.findByName("ROLE_client");
         client.setRoles(roles);
+    }
+
+    public void setClientsDriving(List<ClientDrive> passengers,Boolean status) {
+        for (ClientDrive cd: passengers){
+            cd.getClient().setDriving(status);
+            clientRepository.save(cd.getClient());
+        }
     }
 }

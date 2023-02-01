@@ -11,7 +11,7 @@ import java.util.List;
 public interface DriveRepository extends JpaRepository<Drive, Long> {
 
     // treba gledati da li je rejected ? ? ?
-    @Query("SELECT d from Drive d where d.startTime <= :now and d.endTime > :now")
+    @Query("SELECT d from Drive d where d.status = 2")
     List<Drive> getCurrentDrives(@Param("now") LocalDateTime now);
 
     @Query("SELECT d from Drive d where d.driver.email = :driver and (d.status = 2 or (d.status = 1 and d.reservation is null and d.startTime is null )) ")
@@ -38,7 +38,7 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
     @Query("SELECT d from Drive d where d.driver.id = :id  and d.reservation is not null and d.reservation.start < :bound and d.reservation.start > :now")
     List<Drive> getReservations(@Param("id")Long id,@Param("bound") LocalDateTime bound,@Param("now") LocalDateTime now);
 
-    @Query("SELECT d from Drive d where d.startTime is null  and d.driver.email = :email and d.status = 1")
+    @Query("SELECT d from Drive d where (d.status = 6 or d.status = 1 or d.status = 2) and d.driver.email = :email ")
     List<Drive> getFutureDriverDrives(@Param("email") String email);
 
 }

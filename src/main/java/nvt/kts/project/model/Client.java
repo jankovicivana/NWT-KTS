@@ -20,6 +20,9 @@ public class Client extends User{
 
     @Column(name = "photo", nullable = false)
     private String photo = "unknown.jog";
+
+    @Column(name = "driving", nullable = false)
+    private Boolean driving = false;
 //
 //    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
 //    private Set<Route> favouriteRoutes = new HashSet<>();

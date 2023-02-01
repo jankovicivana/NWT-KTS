@@ -63,6 +63,9 @@ public class Drive {
     @Column(name = "distance")
     private Double distance;
 
+    @Column(name = "createdTime", nullable = false)
+    private LocalDateTime createdTime;
+
     @OneToMany(mappedBy = "drive", fetch = FetchType.LAZY)
     private List<Notification> notifications = new ArrayList<>();
 

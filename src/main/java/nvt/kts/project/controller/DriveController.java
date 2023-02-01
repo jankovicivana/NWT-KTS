@@ -143,9 +143,15 @@ public class DriveController {
         return new ResponseEntity<>(driversMap, HttpStatus.OK);
     }
 
-    @PostMapping("/start/{id}")
-    public ResponseEntity<DriverRouteDTO> startDrive(@PathVariable("id") Long id){
+    @PostMapping("/start")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<DriverRouteDTO> startDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
+        drive.setStatus(DriveStatus.IN_PROGRESS);
+        drive.setStartTime(LocalDateTime.now());
+        driveService.save(drive);
+        clientService.setClientsDriving(drive.getPassengers(),true);
+        notificationService.sendNotificationsForStartingDrive(drive);
         // promijeni u bazi pocetak voznje
         // mozda i stanje i poziciju vozaca da promijenimo
         DriverRouteDTO driverRouteDTO = null;
@@ -161,9 +167,17 @@ public class DriveController {
         return new ResponseEntity<>(driverRouteDTO, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/stop/{id}")
-    public ResponseEntity<Map<String, Position>> stopDrive(@PathVariable("id") Long id){
+    @PostMapping("/stop")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<Map<String, Position>> stopDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
+        drive.setStatus(DriveStatus.STOPPED);
+        driveService.save(drive);
+        clientService.setClientsDriving(drive.getPassengers(),false);
+        notificationService.sendNotificationsForStoppingDrive(drive);
+        Driver driver = drive.getDriver();
+        driver.setAvailable(true);
+        driverService.save(driver);
         // mozda i stanje i poziciju vozaca da promijenimo
         // promijeni status voznje - cancelled
 
@@ -178,9 +192,17 @@ public class DriveController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/finish/{id}")
-    public ResponseEntity<Map<String, Position>> finishDrive(@PathVariable("id") Long id){
+    @PostMapping("/finish")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<Map<String, Position>> finishDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
+        drive.setStatus(DriveStatus.FINISHED);
+        driveService.save(drive);
+        clientService.setClientsDriving(drive.getPassengers(),false);
+        notificationService.sendNotificationsForFinishedDrive(drive);
+        Driver driver = drive.getDriver();
+        driver.setAvailable(true);
+        driverService.save(driver);
         // mozda i stanje i poziciju vozaca da promijenimo
         // promijeni status voznje - FINISHED
 
@@ -204,6 +226,17 @@ public class DriveController {
         }
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
+
+    @PostMapping("/goToClient")
+    @PreAuthorize("hasRole('driver')")
+    public ResponseEntity<String> goToClient(@RequestBody DriveDTO dto,Principal principal){
+        Drive d = driveService.findById(dto.getId());
+        d.setStatus(DriveStatus.GOING_TO_CLIENT);
+        driveService.save(d);
+        //napravi praznu
+        return new ResponseEntity<>("Super", HttpStatus.OK);
+    }
+
 
     @PostMapping("/saveRejectionDriveReason")
     public ResponseEntity<String> saveRejectionDriveReason(@RequestBody DriveDTO drive,Principal principal){

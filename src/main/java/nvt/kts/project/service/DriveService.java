@@ -112,6 +112,7 @@ public class DriveService {
         d.setCarType(carService.findCarTypeByName(info.getCar()));
         d.setBabiesAllowed(info.getBabies());
         d.setPetFriendly(info.getPet());
+        d.setCreatedTime(LocalDateTime.now());
         driveRepository.save(d);
         if(Boolean.TRUE.equals(info.getReservation())){
             Reservation r = new Reservation();

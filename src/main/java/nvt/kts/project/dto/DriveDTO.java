@@ -2,9 +2,8 @@ package nvt.kts.project.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import nvt.kts.project.model.Drive;
-import nvt.kts.project.model.Route;
 
+import nvt.kts.project.model.Drive;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +33,8 @@ public class DriveDTO {
 
     private String rejectionReason;
 
+    private String createdTime;
+
     public DriveDTO(Drive d, List<RouteDTO> routeList, DriverDTO driverDTO) {
         this.id = d.getId();
         this.driver = driverDTO;
@@ -44,6 +45,8 @@ public class DriveDTO {
         this.routes = routeList;
         this.passengers = new HashSet<>();
         this.distance = d.getDistance();
+
     }
+    public DriveDTO(){}
 
 }
