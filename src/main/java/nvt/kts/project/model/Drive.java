@@ -50,6 +50,9 @@ public class Drive {
     @Column(name = "petFriendly")
     private boolean petFriendly;
 
+    @Column(name = "favourite")
+    private boolean favourite;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "carType")
     private CarType carType;

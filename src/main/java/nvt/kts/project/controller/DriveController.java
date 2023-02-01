@@ -77,6 +77,14 @@ public class DriveController {
         return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/getFavouriteDrives")
+    @PreAuthorize("hasAnyRole('client')")
+    public ResponseEntity<List<DriveDTO>> getFavouriteDrives(Principal principal) {
+        List<Drive> drives = driveService.getFavouriteDrives(principal.getName());
+        List<DriveDTO> drivesDTO = driveService.convertDriveToDTO(drives);
+        return new ResponseEntity<>(drivesDTO, HttpStatus.OK);
+    }
+
     @GetMapping("/getAll")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<List<DriveDTO>> getAll(Principal principal) {

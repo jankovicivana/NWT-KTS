@@ -270,4 +270,17 @@ public class DriveService {
     public List<Drive> getFutureDriverDrives(String name) {
         return driveRepository.getFutureDriverDrives(name);
     }
+
+    public List<Drive> getFavouriteDrives(String name) {
+        List<Drive> favourites = new ArrayList<>();
+        for(Drive d: driveRepository.getFavouriteDrives()){
+            for(ClientDrive c : d.getPassengers()){
+                if(c.getClient().getEmail().equals(name)){
+                    favourites.add(d);
+                    break;
+                }
+            }
+        }
+        return favourites;
+    }
 }
