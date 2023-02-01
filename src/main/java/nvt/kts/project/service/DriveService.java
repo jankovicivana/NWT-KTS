@@ -273,8 +273,8 @@ public class DriveService {
         return reservations.size() != 0;
     }
 
-    public void save(Drive d) {
-        driveRepository.save(d);
+    public Drive save(Drive d) {
+        return driveRepository.save(d);
     }
 
     public List<Drive> getFutureDriverDrives(String name) {
@@ -288,5 +288,30 @@ public class DriveService {
             favourites.add(d);
         }
         return favourites;
+    }
+
+    public Drive getDriverEmptyDrive(String username, String address) {
+        List<Drive> drives = this.driveRepository.getDriverEmptyDrives(username);
+        for(Drive d: drives){
+            if(d.getRoutes().get(0).getEndPosition().getAddress().equals(address)){
+                return d;
+            }
+        }
+        return null;
+    }
+
+    public List<Drive> getEmptyDrives() {
+        return this.driveRepository.getEmptyDrives();
+    }
+
+    public Drive getScheduledDrive(String email, Position endPosition) {
+        List<Drive> drives = this.driveRepository.getGoingToClientDrives(email);
+        for(Drive d: drives){
+            List<Route> routes = this.routeService.getRoutes(d.getId());
+            if(routes.get(0).getStartPosition().getAddress().equals(endPosition.getAddress())){
+                return d;
+            }
+        }
+        return null;
     }
 }

@@ -46,7 +46,7 @@ public class EmailService {
         mail.setSubject("Uber account activation");
 
         String token = tokenUtils.generateToken(u.getUsername());
-        String link = "https://localhost:4200/activate/" + token;
+        String link = "http://localhost:4200/activate/" + token;
         mail.setText("<html>\n" +
                 "    <body>\n" +
                 "        <div style=\"margin: 50px;\">\n" +
@@ -81,7 +81,7 @@ public class EmailService {
         mail.setSubject("Uber account password forgotten");
 
         String token = tokenUtils.generateToken(u.getUsername());
-        String link = "https://localhost:4200/changePassword/" + token;
+        String link = "http://localhost:4200/changePassword/" + token;
         mail.setText("<html>\n" +
                 "    <body>\n" +
                 "        <div style=\"margin: 50px;\">\n" +

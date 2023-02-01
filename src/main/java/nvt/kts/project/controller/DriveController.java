@@ -5,6 +5,7 @@ import net.bytebuddy.asm.Advice;
 import nvt.kts.project.dto.*;
 import nvt.kts.project.model.*;
 import nvt.kts.project.service.*;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RestController
@@ -42,6 +44,9 @@ public class DriveController {
 
     @Autowired
     private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    private RouteService routeService;
 
     @GetMapping("/current")
     public ResponseEntity<List<DriverRouteDTO>> getCurrentDrives() {
@@ -164,19 +169,27 @@ public class DriveController {
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),true);
         notificationService.sendNotificationsForStartingDrive(drive);
-        // promijeni u bazi pocetak voznje
         // mozda i stanje i poziciju vozaca da promijenimo
-        DriverRouteDTO driverRouteDTO = null;
-        if(drive != null) {
-            List<RouteDTO> routeList = new ArrayList<>();
-            for(Route r: drive.getRoutes()){
-                routeList.add(new RouteDTO(r));
-            }
-            driverRouteDTO = new DriverRouteDTO(drive.getDriver().getUsername(), routeList, LocalDateTime.now());
-            this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
-            return new ResponseEntity<>(driverRouteDTO, HttpStatus.OK);
+
+        // zaustavi medjuvoznju
+        Drive empty = this.driveService.getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
+        if(empty != null) {
+            empty.setStatus(DriveStatus.FINISHED);
+            Route route = empty.getRoutes().get(0);
+            Position pos = route.getEndPosition();
+            Map<String, Position> mapa = new HashMap<>();
+            mapa.put(drive.getDriver().getUsername(), pos);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", mapa);
         }
-        return new ResponseEntity<>(driverRouteDTO, HttpStatus.BAD_REQUEST);
+
+        DriverRouteDTO driverRouteDTO;
+        List<RouteDTO> routeList = new ArrayList<>();
+        for(Route r: drive.getRoutes()){
+            routeList.add(new RouteDTO(r));
+        }
+        driverRouteDTO = new DriverRouteDTO(drive.getDriver().getUsername(), routeList, LocalDateTime.now());
+        this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
+        return new ResponseEntity<>(driverRouteDTO, HttpStatus.OK);
     }
 
     @PostMapping("/stop")
@@ -253,15 +266,31 @@ public class DriveController {
         newDrive.setPrice(0);
         newDrive.setPassengers(new ArrayList<>());
         newDrive.setStatus(DriveStatus.EMPTY);
+        newDrive.setCreatedTime(LocalDateTime.now());
+        newDrive.setStartTime(LocalDateTime.now());
+        Drive updated = driveService.save(newDrive);
         Route r = new Route();
         r.setStartPosition(d.getDriver().getPosition());
         r.setEndPosition(d.getRoutes().get(0).getStartPosition());
+        r.setType("recommended");
+        r.setDrive(updated);
+        this.routeService.save(r);
         List<Route> routes = new ArrayList<>();
         routes.add(r);
-        newDrive.setRoutes(routes);
-        newDrive.setCreatedTime(LocalDateTime.now());
-        newDrive.setStartTime(LocalDateTime.now());
-        driveService.save(newDrive);
+        updated.setRoutes(routes);
+        driveService.save(updated);
+
+        DriverRouteDTO driverRouteDTO;
+        List<RouteDTO> routeList = new ArrayList<>();
+        for(Route route: updated.getRoutes()){
+            routeList.add(new RouteDTO(route));
+        }
+        driverRouteDTO = new DriverRouteDTO(updated.getDriver().getUsername(), routeList, LocalDateTime.now());
+
+        // notifikacija da je vozac krenuo ka klijentu
+        this.notificationService.sendNotificationGoingToClient(d);
+
+        this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
 
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
@@ -355,6 +384,9 @@ public class DriveController {
 
     @Scheduled(cron = "${reminder.cron}")
     public void cronJob(){
+
+        this.sendDriveUpdates();
+
         List<Reservation> reservationsIn15 = this.reservationService.getReservationsIn(15L);
         List<Reservation> reservationsIn10 = this.reservationService.getReservationsIn(10L);
         List<Reservation> reservationsIn5 = this.reservationService.getReservationsIn(5L);
@@ -379,6 +411,22 @@ public class DriveController {
         }
     }
 
+    private void sendDriveUpdates() {
+        List<Drive> emptyDrives = this.driveService.getEmptyDrives();
+        for(Drive d: emptyDrives){
+            List<Route> routes = this.routeService.getRoutes(d.getId());
+            Drive scheduled = this.driveService.getScheduledDrive(d.getDriver().getEmail(), routes.get(0).getEndPosition());
+            int duration = (int) d.getDuration();
+            LocalDateTime start = d.getStartTime();
+            LocalDateTime end = start.plusMinutes(duration);
+            LocalDateTime now = LocalDateTime.now();
+
+            if(end.isAfter(now)){
+                long timeLeft = now.until(end, ChronoUnit.MINUTES);
+                this.notificationService.sendNotificationTimeLeft(scheduled, timeLeft);
+            }
+        }
+    }
 
 
 }

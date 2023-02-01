@@ -5,6 +5,8 @@ import nvt.kts.project.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RouteService {
 
@@ -14,5 +16,9 @@ public class RouteService {
 
     public Route save(Route r){
         return this.routeRepository.save(r);
+    }
+
+    public List<Route> getRoutes(Long id) {
+        return this.routeRepository.finAllByDrive(id);
     }
 }
