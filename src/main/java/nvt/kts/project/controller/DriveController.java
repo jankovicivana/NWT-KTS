@@ -169,7 +169,12 @@ public class DriveController {
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),true);
         notificationService.sendNotificationsForStartingDrive(drive);
+
         // mozda i stanje i poziciju vozaca da promijenimo
+        Driver driver = drive.getDriver();
+        driver.setAvailable(false);
+        driver.setPosition(drive.getRoutes().get(0).getStartPosition());
+        this.driverService.save(driver);
 
         // zaustavi medjuvoznju
         Drive empty = this.driveService.getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
@@ -203,18 +208,11 @@ public class DriveController {
         Driver driver = drive.getDriver();
         driver.setAvailable(true);
         driverService.save(driver);
-        // mozda i stanje i poziciju vozaca da promijenimo
-        // promijeni status voznje - cancelled
 
-        if(drive != null) {
-            Route route = drive.getRoutes().get(0);
-            Position pos = route.getStartPosition();
-            Map<String, Position> mapa =  new HashMap<>();
-            mapa.put(drive.getDriver().getUsername(), pos);
-            this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
-            return new ResponseEntity<>(mapa, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        Map<String, Position> mapa =  new HashMap<>();
+        mapa.put(driver.getUsername(), driver.getPosition());
+        this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
+        return new ResponseEntity<>(mapa, HttpStatus.OK);
     }
 
     @PostMapping("/finish")
@@ -227,19 +225,13 @@ public class DriveController {
         notificationService.sendNotificationsForFinishedDrive(drive);
         Driver driver = drive.getDriver();
         driver.setAvailable(true);
+        driver.setPosition(drive.getRoutes().get(drive.getRoutes().size() - 1).getEndPosition());
         driverService.save(driver);
-        // mozda i stanje i poziciju vozaca da promijenimo
-        // promijeni status voznje - FINISHED
 
-        if(drive != null) {
-            Route route = drive.getRoutes().get(drive.getRoutes().size() - 1); // posljednja
-            Position pos = route.getEndPosition();
-            Map<String, Position> mapa =  new HashMap<>();
-            mapa.put(drive.getDriver().getUsername(), pos);
-            this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", mapa);
-            return new ResponseEntity<>(mapa, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        Map<String, Position> mapa =  new HashMap<>();
+        mapa.put(driver.getUsername(), driver.getPosition());
+        this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", mapa);
+        return new ResponseEntity<>(mapa, HttpStatus.OK);
     }
 
     @PostMapping("/saveDrive")
@@ -302,7 +294,19 @@ public class DriveController {
         d.setRejectionReason(drive.getRejectionReason());
         d.setStatus(DriveStatus.REJECTED);
         driveService.save(d);
-        //posalji obavj
+
+        // zaustavi medjuvoznju
+        Drive empty = this.driveService.getDriverEmptyDrive(d.getDriver().getUsername(), d.getRoutes().get(0).getStartPosition().getAddress());
+        if(empty != null) {
+            empty.setStatus(DriveStatus.FINISHED);
+            Route route = empty.getRoutes().get(0);
+            Position pos = route.getStartPosition();
+            Map<String, Position> mapa = new HashMap<>();
+            mapa.put(d.getDriver().getUsername(), pos);
+            this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
+        }
+
+
         notificationService.sendNotificationForDriverRejectingDrive(d);
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
