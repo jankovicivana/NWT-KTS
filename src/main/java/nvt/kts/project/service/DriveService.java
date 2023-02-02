@@ -139,7 +139,7 @@ public class DriveService {
         return d;
     }
 
-    private void saveRoutes(List<RouteDTO> routes, Drive d) {
+    public void saveRoutes(List<RouteDTO> routes, Drive d) {
         if (d.getRoutes() == null){
             d.setRoutes(new ArrayList<>());
         }
@@ -173,7 +173,7 @@ public class DriveService {
             double splitFairePrice = info.getPrice()/(info.getPassengers().size()+1);
             cd.setPrice(splitFairePrice);
         }else {
-            if (logged != null){
+            if (logged){
                 cd.setPrice(info.getPrice());
             }
             else{

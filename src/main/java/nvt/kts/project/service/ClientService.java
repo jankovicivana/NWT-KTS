@@ -54,6 +54,7 @@ public class ClientService {
     public Client findClientById(Long id){
         return clientRepository.findClientById(id);
     }
+
     public Client getClientByEmail(String email){
         return clientRepository.findByEmail(email);
     }

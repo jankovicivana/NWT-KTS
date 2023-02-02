@@ -35,6 +35,4 @@ public class Notification {
     @Column(name = "dateTime")
     private LocalDateTime dateTime;
 
-
-
 }

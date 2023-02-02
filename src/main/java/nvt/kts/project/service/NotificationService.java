@@ -25,17 +25,13 @@ public class NotificationService {
     private SystemInfoService systemInfoService;
 
     @Autowired
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
     private RouteService routeService;
 
-    public NotificationService(SimpMessagingTemplate simpMessagingTemplate) {
-        this.simpMessagingTemplate = simpMessagingTemplate;
-    }
 
-
-    public void sendNotificationsForApprovingPayment(Drive d) {
+    public List<Notification> sendNotificationsForApprovingPayment(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         Double tokenPrice = systemInfoService.getTokenPrice();
@@ -55,6 +51,7 @@ public class NotificationService {
             this.simpMessagingTemplate.convertAndSend("/notification/approvePayment",dto);
         }
         notificationRepository.saveAll(newNotifications);
+        return newNotifications;
     }
 
 
