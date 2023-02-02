@@ -179,6 +179,7 @@ public class DriveController {
         Drive empty = this.driveService.getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
         if(empty != null) {
             empty.setStatus(DriveStatus.FINISHED);
+            this.driveService.save(empty);
             Route route = empty.getRoutes().get(0);
             Position pos = route.getEndPosition();
             Map<String, Position> mapa = new HashMap<>();
@@ -298,6 +299,7 @@ public class DriveController {
         Drive empty = this.driveService.getDriverEmptyDrive(d.getDriver().getUsername(), d.getRoutes().get(0).getStartPosition().getAddress());
         if(empty != null) {
             empty.setStatus(DriveStatus.FINISHED);
+            driveService.save(empty);
             Route route = empty.getRoutes().get(0);
             Position pos = route.getStartPosition();
             Map<String, Position> mapa = new HashMap<>();

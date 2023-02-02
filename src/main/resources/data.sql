@@ -39,7 +39,7 @@ insert into positions (lat, lon, address) values (45.245504, 19.8292116, 'Ljermo
 insert into positions (lat, lon, address) values (45.2464232, 19.8308877, 'Doza Djerdja 34');
 
 INSERT INTO drivers (id, email, password, name, surname, deleted, phone_number, city,is_social_login, photo, blocked, enabled,available,active,car,position)
-VALUES (nextval('user_seq'), 'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozac', 'Vozic', false, '0654079380', 'Trebinje',false, 'unknown.jpg', false, true,true , false,1,1 );
+VALUES (nextval('user_seq'), 'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozac', 'Vozic', false, '0654079380', 'Trebinje',false, 'unknown.jpg', false, true,true , true,1,1 );
 
 insert into user_role (user_id, role_id) values (1, 1);
 insert into user_role (user_id, role_id) values (2, 1);
@@ -71,7 +71,7 @@ INSERT INTO drivers (id, email, password,
 
             VALUES (nextval('user_seq'), 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
                     'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-                     'unknown.jpg', false, true, false, true, 2,2);
+                     'unknown.jpg', false, true, true, true, 2,2);
 
 INSERT INTO drivers (id, email, password,
                  name, surname, deleted, phone_number, city, is_social_login,
