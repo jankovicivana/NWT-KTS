@@ -196,42 +196,43 @@ public class DriverService {
 
     public Driver findAvailableDriver(Drive drive) {
         List<Driver> drivers = getActiveAndAvailableDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
-        if (drivers.size() == 0){
-            List<Driver> activeDrivers = getActiveDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
-            if (activeDrivers.size() == 0){
-                return null;
+        if (drivers.size() != 0){
+            Driver d = findNearestDriverWithWorkingHours(drivers, drive);
+            if ( d!= null ){
+                return d;
             }
-            else{
-                return findDriverNearestToEndWithAvailableWorkingHours(activeDrivers,drive);
-            }
-        }else {
-            return findNearestDriverWithWorkingHours(drivers, drive);
         }
+        List<Driver> activeDrivers = getActiveDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
+        if (activeDrivers.size() == 0){
+            return null;
+        }
+        else{
+            return findDriverNearestToEndWithAvailableWorkingHours(activeDrivers,drive);
+        }
+
     }
 
     public Driver findNearestDriverWithWorkingHours(List<Driver> drivers,Drive drive){
-        if (drivers.size() == 1){return drivers.get(0);}
         while (true){
             Driver d = getNearestDriver(drivers, drive.getRoutes().get(0).getStartPosition());
             if (hasWorkingHours(d) && !driveService.hasFutureReservations(d, drive)){
                 return d;
             }
             drivers.remove(d);
-            if (drivers.size() == 1){return drivers.get(0);}
+            if (drivers.size() == 0){return null;}
         }
 
 
     }
 
     public Driver findDriverNearestToEndWithAvailableWorkingHours(List<Driver> drivers,Drive drive){
-        if (drivers.size() == 1){return drivers.get(0);}
         while (true){
             Driver d = getDriverNearestToEnd(drivers);
             if (hasWorkingHours(d) && !driveService.hasFutureReservations(d, drive)){  //nije uracunato vrijeme trenutno radno vrijeme
                 return d;
             }
             drivers.remove(d);
-            if (drivers.size() == 1){return drivers.get(0);}
+            if (drivers.size() == 0){return null;}
         }
 
     }

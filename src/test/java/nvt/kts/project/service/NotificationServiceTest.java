@@ -114,11 +114,14 @@ public class NotificationServiceTest {
         drive.setPassengers(clientDriveList);
         drive.setId(1L);
         drive.setRoutes(routes);
+        Driver driver = new Driver();
+        driver.setEmail("ivana@gmail.com");
+        drive.setDriver(driver);
 
     }
 
     @Test
-    public void shouldReturnOneNotification(){
+    public void shouldReturnOneNotificationForApprovingPayment(){
         List<ClientDrive> clientDriveList = new ArrayList<>();
         clientDriveList.add(clientDrive);
         Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
@@ -136,7 +139,7 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void shouldReturnTwoNotifications(){
+    public void shouldReturnTwoNotificationsForApprovingPayment(){
         List<ClientDrive> clientDriveList = new ArrayList<>();
         clientDriveList.add(clientDrive);
         clientDriveList.add(clientDrive2);
@@ -157,4 +160,123 @@ public class NotificationServiceTest {
         assertEquals(notifications.get(1).getReason(), NotificationReason.APPROVE_PAYMENT);
     }
 
+    @Test
+    public void shouldReturnOneNotificationNoDriver(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForRejectingDriveNoAvailableDriver(drive);
+
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/notification/noAvailableDriver"), Mockito.any(NotificationDTO.class));
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 1);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
+    }
+
+    @Test
+    public void shouldReturnTwoNotificationsNoDriver(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForRejectingDriveNoAvailableDriver(drive);
+
+        verify(simpMessagingTemplate, times(2)).convertAndSend(eq("/notification/noAvailableDriver"), Mockito.any(NotificationDTO.class));
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 2);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
+        assertEquals(notifications.get(1).getClient().getEmail(), "ivana@gmail.com");
+        assertEquals(notifications.get(1).getReason(), NotificationReason.REJECT_DRIVE);
+    }
+
+    @Test
+    public void shouldReturnTwoNotificationsAcceptedDrive(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForAcceptingDrive(drive);
+
+        verify(simpMessagingTemplate, times(3)).convertAndSend(eq("/notification/approvedDrive"), Mockito.any(NotificationDTO.class));
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 2);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.DRIVE_SCHEDULED);
+        assertEquals(notifications.get(1).getClient().getEmail(), "ivana@gmail.com");
+        assertEquals(notifications.get(1).getReason(), NotificationReason.DRIVE_SCHEDULED);
+    }
+
+    @Test
+    public void shouldReturnOneNotificationAcceptedDrive(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForAcceptingDrive(drive);
+
+        verify(simpMessagingTemplate, times(2)).convertAndSend(eq("/notification/approvedDrive"), Mockito.any(NotificationDTO.class));
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 1);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.DRIVE_SCHEDULED);
+    }
+
+    @Test
+    public void shouldReturnTwoNotificationsNoTokens(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForRejectingDriveNotEnoughTokens(drive);
+
+        verify(simpMessagingTemplate, times(2)).convertAndSend(eq("/notification/rejectedPayment"), Mockito.any(NotificationDTO.class));
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 2);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
+        assertEquals(notifications.get(1).getClient().getEmail(), "ivana@gmail.com");
+        assertEquals(notifications.get(1).getReason(), NotificationReason.REJECT_DRIVE);
+    }
+
+    @Test
+    public void shouldReturnOneNotificationNoTokens(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForRejectingDriveNotEnoughTokens(drive);
+
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/notification/rejectedPayment"), Mockito.any(NotificationDTO.class));
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 1);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
+    }
 }

@@ -1,13 +1,15 @@
 package nvt.kts.project.repository;
 
 import nvt.kts.project.model.ClientDrive;
-import nvt.kts.project.model.Drive;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Repository
 public interface ClientDriveRepository extends JpaRepository<ClientDrive,Long> {
 
     @Query("SELECT d from ClientDrive d where d.drive.id = :id")

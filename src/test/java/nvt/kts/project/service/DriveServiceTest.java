@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,6 +37,9 @@ public class DriveServiceTest {
     private RouteService routeService;
 
     @Mock
+    private SystemInfoService systemInfoService;
+
+    @Mock
     private ClientService clientService;
 
     @InjectMocks
@@ -46,6 +50,10 @@ public class DriveServiceTest {
     private Client client;
 
     private CarType carType;
+
+    private ClientDrive clientDrive;
+
+    private ClientDrive clientDrive2;
 
     private List<RouteDTO> routes;
 
@@ -121,6 +129,30 @@ public class DriveServiceTest {
         carType.setId(1L);
         carType.setPersonNum(8);
         carType.setPrice(20.0);
+
+        this.clientDrive = new ClientDrive();
+        clientDrive.setClient(client);
+        clientDrive.setFavourite(false);
+        clientDrive.setId(1L);
+        clientDrive.setApproved(false);
+        clientDrive.setDrive(drive);
+
+        Client passenger = new Client();
+        passenger.setId(2L);
+        passenger.setTokens(0);
+        passenger.setPhoto("");
+        passenger.setCity("Novi Sad");
+        passenger.setEmail("ivana@gmail.com");
+        passenger.setPassword("pass");
+        passenger.setDriving(false);
+        passenger.setBlocked(false);
+        passenger.setDeleted(false);
+
+        this.clientDrive2 = new ClientDrive();
+        clientDrive2.setClient(passenger);
+        clientDrive2.setFavourite(false);
+        clientDrive2.setId(2L);
+        clientDrive2.setApproved(false);
     }
 
     @Test
@@ -432,5 +464,203 @@ public class DriveServiceTest {
         assertEquals(cd1.getPrice(), 10.0);
         assertEquals(cd1.getClient().getEmail(), passenger.getEmail());
     }
+
+    @Test
+    public void shouldFindDriveByClientDrive(){
+        Mockito.when(clientDriveRepository.findById(1L)).thenReturn(Optional.of(clientDrive));
+
+        Drive d = driveService.findDriveByClientDrive(1L);
+
+        verify(clientDriveRepository,times(1)).findById(1L);
+
+        assertEquals(Optional.of(d.getId()),Optional.of(1L));
+
+    }
+
+    @Test
+    public void shouldNotFindDriveByClientDrive(){
+        Mockito.when(clientDriveRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Drive d = driveService.findDriveByClientDrive(1L);
+
+        verify(clientDriveRepository,times(1)).findById(1L);
+
+        assertNull(d);
+
+    }
+
+    @Test
+    public void onePassengerNotApprovedPayment(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(false);
+        clientDriveList.add(clientDrive);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+
+        boolean approved = driveService.checkIfAllPassengersApprovedPayment(drive);
+
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertFalse(approved);
+
+    }
+
+    @Test
+    public void onePassengerApprovedPayment(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(true);
+        clientDriveList.add(clientDrive);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+
+        boolean approved = driveService.checkIfAllPassengersApprovedPayment(drive);
+
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertTrue(approved);
+
+    }
+
+    @Test
+    public void twoPassengersApprovedPayment(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(true);
+        clientDrive2.setApproved(true);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+
+        boolean approved = driveService.checkIfAllPassengersApprovedPayment(drive);
+
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertTrue(approved);
+
+    }
+
+    @Test
+    public void twoPassengersNotApprovedPayment(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(false);
+        clientDrive2.setApproved(false);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+
+        boolean approved = driveService.checkIfAllPassengersApprovedPayment(drive);
+
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertFalse(approved);
+
+    }
+
+    @Test
+    public void twoPassengersOneNotApprovedPayment(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(true);
+        clientDrive2.setApproved(false);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+
+        boolean approved = driveService.checkIfAllPassengersApprovedPayment(drive);
+
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertFalse(approved);
+
+    }
+
+    @Test
+    public void allPassengersCanPay(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(false);
+        clientDrive.setPrice(30);
+        clientDrive.getClient().setTokens(10);
+        clientDrive2.setApproved(false);
+        clientDrive2.getClient().setTokens(20);
+        clientDrive2.setPrice(30);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(5.0);
+
+        boolean canPay = driveService.checkIfAllCanPay(drive);
+
+        verify(systemInfoService,times(1)).getTokenPrice();
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertTrue(canPay);
+    }
+
+    @Test
+    public void noPassengerCanPay(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(false);
+        clientDrive.setPrice(100);
+        clientDrive.getClient().setTokens(10);
+        clientDrive2.setApproved(false);
+        clientDrive2.getClient().setTokens(10);
+        clientDrive2.setPrice(100);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(5.0);
+
+        boolean canPay = driveService.checkIfAllCanPay(drive);
+
+        verify(systemInfoService,times(1)).getTokenPrice();
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertFalse(canPay);
+    }
+
+    @Test
+    public void onePassengerCanNotPay(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(false);
+        clientDrive.setPrice(100);
+        clientDrive.getClient().setTokens(100);
+        clientDrive2.setApproved(false);
+        clientDrive2.getClient().setTokens(19);
+        clientDrive2.setPrice(100);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(5.0);
+
+        boolean canPay = driveService.checkIfAllCanPay(drive);
+
+        verify(systemInfoService,times(1)).getTokenPrice();
+        verify(clientDriveRepository,times(1)).getClientDriveByDrive(1L);
+
+        assertFalse(canPay);
+    }
+
+
+    @Test
+    public void allPayedSuccessfully(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDrive.setApproved(true);
+        clientDrive.setPrice(100);
+        clientDrive.getClient().setTokens(100);
+        clientDrive2.setApproved(true);
+        clientDrive2.getClient().setTokens(19);
+        clientDrive2.setPrice(100);
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(5.0);
+
+        driveService.payDrive(drive);
+
+        verify(clientService,times(2)).save(Mockito.any(Client.class));
+
+    }
+
+
 
 }

@@ -59,7 +59,7 @@ public class NotificationService {
         return notificationRepository.findAllByClientId(c.getId());
     }
 
-    public void sendNotificationForRejectingDriveNotEnoughTokens(Drive d) {
+    public List<Notification> sendNotificationForRejectingDriveNotEnoughTokens(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         String route = getRouteString(d);
@@ -77,9 +77,10 @@ public class NotificationService {
             this.simpMessagingTemplate.convertAndSend("/notification/rejectedPayment",dto);
         }
         notificationRepository.saveAll(newNotifications);
+        return newNotifications;
     }
 
-    public void sendNotificationForRejectingDriveNoAvailableDriver(Drive d) {
+    public List<Notification> sendNotificationForRejectingDriveNoAvailableDriver(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         String route = getRouteString(d);
@@ -97,9 +98,10 @@ public class NotificationService {
             this.simpMessagingTemplate.convertAndSend("/notification/noAvailableDriver",dto);
         }
         notificationRepository.saveAll(newNotifications);
+        return newNotifications;
     }
 
-    public void sendNotificationForAcceptingDrive(Drive d) {
+    public List<Notification> sendNotificationForAcceptingDrive(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         String route = getRouteString(d);
@@ -107,7 +109,7 @@ public class NotificationService {
             Notification n = new Notification();
             n.setClient(clientDrive.getClient());
             n.setDrive(d);
-            n.setReason(NotificationReason.REJECT_DRIVE);
+            n.setReason(NotificationReason.DRIVE_SCHEDULED);
             n.setMessage("Voznja na ruti "+route+" je prihvacena. Automobil uskoro stize na vasu adresu.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
@@ -119,6 +121,7 @@ public class NotificationService {
         //posalji i vozacu
         sendNotificationOfAcceptedDriveToDriver(d);
         notificationRepository.saveAll(newNotifications);
+        return newNotifications;
     }
 
     private void sendNotificationOfAcceptedDriveToDriver(Drive d) {
