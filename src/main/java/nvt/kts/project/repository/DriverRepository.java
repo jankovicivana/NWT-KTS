@@ -20,6 +20,6 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     @Query("SELECT d from Driver d where d.active = true and d.available = true and (d.car.babiesAllowed = :babies or :babies = false) and (d.car.petFriendly = :pets or :pets = false) and d.car.type.type = :type ")
     List<Driver> findActiveAndAvailableDriversByCarCriteria(@Param("type") String type,  @Param("babies") boolean babies, @Param("pets") boolean pets);
 
-    @Query("SELECT d from Driver d where d.active = true and (d.car.babiesAllowed = :babies or :babies = false) and (d.car.petFriendly = :pets or :pets = false) and d.car.type.type = :type ")
+    @Query("SELECT d from Driver d where d.active = true and d.available = false and (d.car.babiesAllowed = :babies or :babies = false) and (d.car.petFriendly = :pets or :pets = false) and d.car.type.type = :type ")
     List<Driver> findActiveDriversByCarCriteria(@Param("type") String type, @Param("babies") boolean babies, @Param("pets") boolean pets);
 }

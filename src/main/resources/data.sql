@@ -69,7 +69,7 @@ INSERT INTO drivers (id, email, password,
                     name, surname, deleted, phone_number, city, is_social_login,
                     photo, blocked, enabled, active, available, position,car)
 
-            VALUES (nextval('user_seq'), 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+            VALUES (nextval('user_seq'), 'ivana111@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
                     'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
                      'unknown.jpg', false, true, true, true, 2,2);
 
@@ -150,7 +150,7 @@ INSERT INTO drivers (id, email, password,
                      photo, blocked, enabled, active, available, position,car)
 VALUES (nextval('user_seq'), 'test@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
         'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-        'unknown.jpg', false, true, false, true, 3, 2);
+        'unknown.jpg', false, true, false, false, 3, 2);
 
 --
 

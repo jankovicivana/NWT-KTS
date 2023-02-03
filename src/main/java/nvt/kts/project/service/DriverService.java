@@ -255,4 +255,16 @@ public class DriverService {
         save(driver);
         return driver;
     }
+
+    public List<Driver> getAll() {
+        return driverRepository.findAll();
+    }
+
+    public void addDriverActivityForUnactiveDriver(Driver d) {
+        DriverActivity activity = new DriverActivity();
+        activity.setStartTime(LocalDateTime.now().minusHours(10));
+        activity.setEndTime(LocalDateTime.now().minusHours(1));
+        activity.setDriver(d);
+        driverActivityRepository.save(activity);
+    }
 }

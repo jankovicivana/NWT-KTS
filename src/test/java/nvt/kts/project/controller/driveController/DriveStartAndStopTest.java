@@ -146,9 +146,4 @@ public class DriveStartAndStopTest {
         assertEquals(response.getBody(), "Drive stopped.");
     }
 
-    @Test
-    @Order(6)
-    void shouldFinishDrive(){
-
-    }
 }
