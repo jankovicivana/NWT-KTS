@@ -233,7 +233,7 @@ public class DriveController {
         Map<String, Position> positionMap =  new HashMap<>();
         positionMap.put(driver.getUsername(), driver.getPosition());
         this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", positionMap);
-        return new ResponseEntity<>("Drive finished", HttpStatus.OK);
+        return new ResponseEntity<>("Drive finished.", HttpStatus.OK);
     }
 
     @PostMapping("/saveDrive")
