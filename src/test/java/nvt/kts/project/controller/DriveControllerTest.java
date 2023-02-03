@@ -41,7 +41,7 @@ public class DriveControllerTest {
 
 
     @Test
-    public void shouldSaveDrive() throws Exception {
+    public void shouldSaveDrive(){
         this.info = new ScheduleInfoDTO();
         info.setCar("Van XL");
         info.setBabies(false);
@@ -77,6 +77,7 @@ public class DriveControllerTest {
         String message = response.getBody();
 
         assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(message, "Successfully saved drive.");
     }
 
     @Test

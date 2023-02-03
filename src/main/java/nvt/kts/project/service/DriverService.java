@@ -236,4 +236,22 @@ public class DriverService {
         }
 
     }
+
+    // treba testirati ***
+    public Driver finishDrive(Drive drive) {
+        Driver driver = drive.getDriver();
+        driver.setAvailable(true);
+        driver.setPosition(drive.getRoutes().get(drive.getRoutes().size() - 1).getEndPosition());
+        save(driver);
+        return driver;
+    }
+
+    // treba testirati ***
+    public Driver startDrive(Drive drive) {
+        Driver driver = drive.getDriver();
+        driver.setAvailable(false);
+        driver.setPosition(drive.getRoutes().get(0).getStartPosition());
+        save(driver);
+        return driver;
+    }
 }

@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class DriveService {
@@ -313,5 +310,62 @@ public class DriveService {
             }
         }
         return null;
+    }
+
+    // treba testirati ***
+    public DriverRouteDTO saveEmptyDrive(Drive d, double duration) {
+        Drive newDrive = new Drive();
+        newDrive.setDriver(d.getDriver());
+        newDrive.setDuration(duration);
+        newDrive.setPrice(0);
+        newDrive.setPassengers(new ArrayList<>());
+        newDrive.setStatus(DriveStatus.EMPTY);
+        newDrive.setCreatedTime(LocalDateTime.now());
+        newDrive.setStartTime(LocalDateTime.now());
+        Drive updated = save(newDrive);
+        Route r = new Route();
+        r.setStartPosition(d.getDriver().getPosition());
+        r.setEndPosition(d.getRoutes().get(0).getStartPosition());
+        r.setType("recommended");
+        r.setDrive(updated);
+        this.routeService.save(r);
+        List<Route> routes = new ArrayList<>();
+        routes.add(r);
+        updated.setRoutes(routes);
+        save(updated);
+
+        List<RouteDTO> routeList = new ArrayList<>();
+        for(Route route: updated.getRoutes()){
+            routeList.add(new RouteDTO(route));
+        }
+        return new DriverRouteDTO(updated.getDriver().getUsername(), routeList, LocalDateTime.now());
+    }
+
+    public Map<String, Position> finishEmptyDrive(Drive drive) {
+        Drive empty = getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
+        if(empty != null) {
+            empty.setStatus(DriveStatus.FINISHED);
+            save(empty);
+            Route route = empty.getRoutes().get(0);
+            Position pos = route.getEndPosition();
+            Map<String, Position> mapa = new HashMap<>();
+            mapa.put(drive.getDriver().getUsername(), pos);
+            return  mapa;
+        }
+        return Collections.emptyMap();
+    }
+
+    public Map<String, Position> stopEmptyDrive(Drive drive) {
+        Drive empty = getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
+        if(empty != null) {
+            empty.setStatus(DriveStatus.FINISHED);
+            save(empty);
+            Route route = empty.getRoutes().get(0);
+            Position pos = route.getStartPosition();
+            Map<String, Position> mapa = new HashMap<>();
+            mapa.put(drive.getDriver().getUsername(), pos);
+            return  mapa;
+        }
+        return Collections.emptyMap();
     }
 }

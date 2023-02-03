@@ -161,33 +161,25 @@ public class DriveController {
 
     @PostMapping("/start")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<DriverRouteDTO> startDrive(@RequestBody Long id){
+    public ResponseEntity<String> startDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
-        // drive == null
+        if(drive == null){
+            return new ResponseEntity<>("Drive id invalid.", HttpStatus.BAD_REQUEST);
+        }
+        if(drive.getStatus().equals(DriveStatus.IN_PROGRESS)){
+            return new ResponseEntity<>("Drive already started.", HttpStatus.OK);
+        }
         drive.setStatus(DriveStatus.IN_PROGRESS);
         drive.setStartTime(LocalDateTime.now());
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),true);
         notificationService.sendNotificationsForStartingDrive(drive);
+        driverService.startDrive(drive);
 
-        // mozda i stanje i poziciju vozaca da promijenimo
-        Driver driver = drive.getDriver();
-        driver.setAvailable(false);
-        driver.setPosition(drive.getRoutes().get(0).getStartPosition());
-        this.driverService.save(driver);
-
-        // zaustavi medjuvoznju
-        Drive empty = this.driveService.getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
-        if(empty != null) {
-            empty.setStatus(DriveStatus.FINISHED);
-            this.driveService.save(empty);
-            Route route = empty.getRoutes().get(0);
-            Position pos = route.getEndPosition();
-            Map<String, Position> mapa = new HashMap<>();
-            mapa.put(drive.getDriver().getUsername(), pos);
+        Map<String, Position> mapa = driveService.finishEmptyDrive(drive);
+        if(!mapa.isEmpty()) {
             this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", mapa);
         }
-
         DriverRouteDTO driverRouteDTO;
         List<RouteDTO> routeList = new ArrayList<>();
         for(Route r: drive.getRoutes()){
@@ -195,14 +187,19 @@ public class DriveController {
         }
         driverRouteDTO = new DriverRouteDTO(drive.getDriver().getUsername(), routeList, LocalDateTime.now());
         this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
-        return new ResponseEntity<>(driverRouteDTO, HttpStatus.OK);
+        return new ResponseEntity<>("Drive started.", HttpStatus.OK);
     }
 
     @PostMapping("/stop")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<Map<String, Position>> stopDrive(@RequestBody Long id){
+    public ResponseEntity<String> stopDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
-        // drive == null
+        if(drive == null){
+            return new ResponseEntity<>("Drive id invalid.", HttpStatus.BAD_REQUEST);
+        }
+        if(drive.getStatus().equals(DriveStatus.STOPPED)){
+            return new ResponseEntity<>("Drive already stopped.", HttpStatus.OK);
+        }
         drive.setStatus(DriveStatus.STOPPED);
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),false);
@@ -214,27 +211,28 @@ public class DriveController {
         Map<String, Position> mapa =  new HashMap<>();
         mapa.put(driver.getUsername(), driver.getPosition());
         this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
-        return new ResponseEntity<>(mapa, HttpStatus.OK);
+        return new ResponseEntity<>("Drive stopped.", HttpStatus.OK);
     }
 
     @PostMapping("/finish")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<Map<String, Position>> finishDrive(@RequestBody Long id){
+    public ResponseEntity<String> finishDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
-        // drive == null
+        if(drive == null){
+            return new ResponseEntity<>("Drive id invalid.", HttpStatus.BAD_REQUEST);
+        }
+        if(drive.getStatus().equals(DriveStatus.FINISHED)){
+            return new ResponseEntity<>("Drive already finished", HttpStatus.OK);
+        }
         drive.setStatus(DriveStatus.FINISHED);
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),false);
         notificationService.sendNotificationsForFinishedDrive(drive);
-        Driver driver = drive.getDriver();
-        driver.setAvailable(true);
-        driver.setPosition(drive.getRoutes().get(drive.getRoutes().size() - 1).getEndPosition());
-        driverService.save(driver);
-
-        Map<String, Position> mapa =  new HashMap<>();
-        mapa.put(driver.getUsername(), driver.getPosition());
-        this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", mapa);
-        return new ResponseEntity<>(mapa, HttpStatus.OK);
+        Driver driver = driverService.finishDrive(drive);
+        Map<String, Position> positionMap =  new HashMap<>();
+        positionMap.put(driver.getUsername(), driver.getPosition());
+        this.simpMessagingTemplate.convertAndSend("/map-updates/finish-drive", positionMap);
+        return new ResponseEntity<>("Drive finished", HttpStatus.OK);
     }
 
     @PostMapping("/saveDrive")
@@ -244,73 +242,33 @@ public class DriveController {
         if (Boolean.FALSE.equals(info.getReservation())){
             notificationService.sendNotificationsForApprovingPayment(d);
         }
-        return new ResponseEntity<>("Super", HttpStatus.OK);
+        return new ResponseEntity<>("Successfully saved drive.", HttpStatus.OK);
     }
 
     @PostMapping("/goToClient")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<String> goToClient(@RequestBody EmptyDriveDTO dto,Principal principal){
+    public ResponseEntity<String> goToClient(@RequestBody EmptyDriveDTO dto, Principal principal){
         Drive d = driveService.findById(dto.getDrive().getId());
         d.setStatus(DriveStatus.GOING_TO_CLIENT);
         driveService.save(d);
-
-        //napravi praznu
-        Drive newDrive = new Drive();
-        newDrive.setDriver(d.getDriver());
-        newDrive.setDuration(dto.getDuration());
-        newDrive.setPrice(0);
-        newDrive.setPassengers(new ArrayList<>());
-        newDrive.setStatus(DriveStatus.EMPTY);
-        newDrive.setCreatedTime(LocalDateTime.now());
-        newDrive.setStartTime(LocalDateTime.now());
-        Drive updated = driveService.save(newDrive);
-        Route r = new Route();
-        r.setStartPosition(d.getDriver().getPosition());
-        r.setEndPosition(d.getRoutes().get(0).getStartPosition());
-        r.setType("recommended");
-        r.setDrive(updated);
-        this.routeService.save(r);
-        List<Route> routes = new ArrayList<>();
-        routes.add(r);
-        updated.setRoutes(routes);
-        driveService.save(updated);
-
-        DriverRouteDTO driverRouteDTO;
-        List<RouteDTO> routeList = new ArrayList<>();
-        for(Route route: updated.getRoutes()){
-            routeList.add(new RouteDTO(route));
-        }
-        driverRouteDTO = new DriverRouteDTO(updated.getDriver().getUsername(), routeList, LocalDateTime.now());
-
-        // notifikacija da je vozac krenuo ka klijentu
+        DriverRouteDTO driverRouteDTO = driveService.saveEmptyDrive(d, dto.getDuration());
         this.notificationService.sendNotificationGoingToClient(d);
-
         this.simpMessagingTemplate.convertAndSend("/map-updates/new-drive", driverRouteDTO);
-
-        return new ResponseEntity<>("Super", HttpStatus.OK);
+        return new ResponseEntity<>("Driver going to client.", HttpStatus.OK);
     }
 
 
     @PostMapping("/saveRejectionDriveReason")
-    public ResponseEntity<String> saveRejectionDriveReason(@RequestBody DriveDTO drive,Principal principal){
+    public ResponseEntity<String> saveRejectionDriveReason(@RequestBody DriveDTO drive, Principal principal){
         Drive d = driveService.findById(drive.getId());
         d.setRejectionReason(drive.getRejectionReason());
         d.setStatus(DriveStatus.REJECTED);
         driveService.save(d);
 
-        // zaustavi medjuvoznju
-        Drive empty = this.driveService.getDriverEmptyDrive(d.getDriver().getUsername(), d.getRoutes().get(0).getStartPosition().getAddress());
-        if(empty != null) {
-            empty.setStatus(DriveStatus.FINISHED);
-            driveService.save(empty);
-            Route route = empty.getRoutes().get(0);
-            Position pos = route.getStartPosition();
-            Map<String, Position> mapa = new HashMap<>();
-            mapa.put(d.getDriver().getUsername(), pos);
+        Map<String, Position> mapa = driveService.stopEmptyDrive(d);
+        if(!mapa.isEmpty()) {
             this.simpMessagingTemplate.convertAndSend("/map-updates/stop-drive", mapa);
         }
-
-
         notificationService.sendNotificationForDriverRejectingDrive(d);
         return new ResponseEntity<>("Super", HttpStatus.OK);
     }
