@@ -163,6 +163,7 @@ public class DriveController {
     @PreAuthorize("hasRole('driver')")
     public ResponseEntity<DriverRouteDTO> startDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
+        // drive == null
         drive.setStatus(DriveStatus.IN_PROGRESS);
         drive.setStartTime(LocalDateTime.now());
         driveService.save(drive);
@@ -201,6 +202,7 @@ public class DriveController {
     @PreAuthorize("hasRole('driver')")
     public ResponseEntity<Map<String, Position>> stopDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
+        // drive == null
         drive.setStatus(DriveStatus.STOPPED);
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),false);
@@ -219,6 +221,7 @@ public class DriveController {
     @PreAuthorize("hasRole('driver')")
     public ResponseEntity<Map<String, Position>> finishDrive(@RequestBody Long id){
         Drive drive = this.driveService.findById(id);
+        // drive == null
         drive.setStatus(DriveStatus.FINISHED);
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),false);
@@ -237,8 +240,8 @@ public class DriveController {
     @PostMapping("/saveDrive")
     public ResponseEntity<String> saveDrive(@RequestBody ScheduleInfoDTO info,Principal principal){
         Client client = clientService.getClientByEmail(principal.getName());
-        Drive d = driveService.saveDrive(info,client);
-        if (!info.getReservation()){
+        Drive d = driveService.saveDrive(info, client);
+        if (Boolean.FALSE.equals(info.getReservation())){
             notificationService.sendNotificationsForApprovingPayment(d);
         }
         return new ResponseEntity<>("Super", HttpStatus.OK);
