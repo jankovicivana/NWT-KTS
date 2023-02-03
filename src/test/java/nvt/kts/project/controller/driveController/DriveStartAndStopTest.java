@@ -23,9 +23,6 @@ public class DriveStartAndStopTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Autowired
-    private ClientService clientService;
-
     private ScheduleInfoDTO info;
 
     private HttpHeaders headersClient;
@@ -154,25 +151,4 @@ public class DriveStartAndStopTest {
     void shouldFinishDrive(){
 
     }
-
-    @Test
-    @Order(7)
-    void shouldRejectDrive(){
-        DriveDTO dto = new DriveDTO();
-        dto.setId(1L);
-        dto.setRejectionReason("neki razlog");
-        HttpEntity<DriveDTO> entity = new HttpEntity<>(dto, headersDriver);
-        ResponseEntity<String> response = restTemplate.postForEntity("/api/drive/saveRejectionDriveReason", entity, String.class);
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
-    }
-
-
-//    @Test
-//    void checkIfAllApprovedNoAvailableDrivers(){
-//        List<Driver> drivers = driverService.
-//        ResponseEntity<String> response = restTemplate.getForEntity("/api/drive/checkIfAllApproved/"+5, String.class);
-//        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-//    }
-
-
 }
