@@ -11,23 +11,23 @@ insert into car_types (person_num,type,price,photo) values (8,'Minibus',50,'c6.p
 insert  into cars (type,pet_friendly,babies_allowed,driver) values (2,true,true,null );
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
-VALUES (1, 'ivanaj0610@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Jankovic', false, '0654079380', 'Trebinje',false, 500, 'unknown.jpg', false, true,false);
+VALUES (nextval('user_seq'), 'ivanaj0610@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Jankovic', false, '0654079380', 'Trebinje',false, 500, 'unknown.jpg', false, true,false);
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
-VALUES (2, 'i@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Kasikovic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
+VALUES (nextval('user_seq'), 'i@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Kasikovic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
 
 INSERT INTO admins (id, email, password, name, surname, deleted, phone_number, city,is_social_login, enabled,blocked)
-VALUES (3, 'admin@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Maki', 'Milosevic', false, '0654079380', 'Trebinje', false, true, false);
+VALUES (nextval('user_seq'), 'admin@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Maki', 'Milosevic', false, '0654079380', 'Trebinje', false, true, false);
 
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
-VALUES (4, 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Prezimenic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
+VALUES (nextval('user_seq'), 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Prezimenic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
-VALUES (5, 'marija@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Marija', 'Milosevic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
+VALUES (nextval('user_seq'), 'marija@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Marija', 'Milosevic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
 
 INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
-VALUES (6, 'mako@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Marko', 'Kasikovic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
+VALUES (nextval('user_seq'), 'mako@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Marko', 'Kasikovic', false, '0654079380', 'Trebinje',false, 10, 'unknown.jpg', false, true,false);
 
 
 
@@ -39,7 +39,7 @@ insert into positions (lat, lon, address) values (45.245504, 19.8292116, 'Ljermo
 insert into positions (lat, lon, address) values (45.2464232, 19.8308877, 'Doza Djerdja 34');
 
 INSERT INTO drivers (id, email, password, name, surname, deleted, phone_number, city,is_social_login, photo, blocked, enabled,available,active,car,position)
-VALUES (7, 'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozac', 'Vozic', false, '0654079380', 'Trebinje',false, 'unknown.jpg', false, true,true , false,1,1 );
+VALUES (nextval('user_seq'), 'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozac', 'Vozic', false, '0654079380', 'Trebinje',false, 'unknown.jpg', false, true,true , true,1,1 );
 
 insert into user_role (user_id, role_id) values (1, 1);
 insert into user_role (user_id, role_id) values (2, 1);
@@ -69,15 +69,15 @@ INSERT INTO drivers (id, email, password,
                      name, surname, deleted, phone_number, city, is_social_login,
                      photo, blocked, enabled, active, available, position,car)
 
-VALUES (8, 'ivana@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+VALUES (nextval('user_seq'), 'ivana111@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
         'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-        'unknown.jpg', false, true, false, true, 2,2);
+        'unknown.jpg', false, true, true, true, 2,2);
 
 INSERT INTO drivers (id, email, password,
                      name, surname, deleted, phone_number, city, is_social_login,
                      photo, blocked, enabled, active, available, position,car)
 
-VALUES (9, 'ivana1@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+VALUES (nextval('user_seq'), 'ivana1@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
         'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
         'unknown.jpg', false, true, true, true, 3,3);
 
@@ -86,6 +86,10 @@ insert into user_role (user_id, role_id) values (9, 3);
 
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time, distance)
 values (8, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 0,0,1,false,false,'2023-01-31 23:59:00', 25 );
+
+insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
+values (8, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 0,0,1,false,false,'2023-01-31 23:59:00');
+
 
 insert into client_drives (client, drive, price,approved, favourite) values (2, 1, 20.0,false, true);
 
@@ -108,7 +112,7 @@ insert into grades (car_grade,driver_grade,comment,client,driver,drive_id) value
 
 
 INSERT INTO edit_driver (id,driver_id, email, password, name, surname, status, phone_number, city, photo,type,pet_friendly,babies_allowed)
-VALUES (1,7,'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozaccc', 'Vozic', 1, '0654079380', 'Trebinjeee', 'unknown.jpg',1,true, true);
+VALUES (nextval('edit_seq'),7,'driver@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Vozaccc', 'Vozic', 1, '0654079380', 'Trebinjeee', 'unknown.jpg',1,true, true);
 
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-29 23:59:00', '2023-01-30 21:59:00',7);
 insert into driver_activities(start_time,end_time,driver) values ('2023-01-29 16:04:00', '2023-01-28 16:59:00',7);
@@ -125,13 +129,14 @@ INSERT INTO drivers (id, email, password,
                      name, surname, deleted, phone_number, city, is_social_login,
                      photo, blocked, enabled, active, available, position,car)
 
-VALUES (10, 'driver11@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+VALUES (nextval('user_seq'), 'driver11@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
         'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
         'unknown.jpg', false, true, false, false, 3,3);
 
 
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
 values (10, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
+
 
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
 values (10, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
@@ -140,15 +145,37 @@ insert into routes (drive, start_position, end_position, type) values (5, 2, 1, 
 
 insert into routes (drive, start_position, end_position, type) values (6, 2, 1, 'shortest');
 
-
 INSERT INTO drivers (id, email, password,
                      name, surname, deleted, phone_number, city, is_social_login,
                      photo, blocked, enabled, active, available, position,car)
-
-VALUES (11, 'test@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+VALUES (nextval('user_seq'), 'test@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
         'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
-        'unknown.jpg', false, true, false, true, 3, 2);
+        'unknown.jpg', false, true, false, false, 3, 2);
+
+--
+
+INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
+VALUES (nextval('user_seq'), 'client2@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Jankovic', false, '0654079380', 'Trebinje',false, 500, 'unknown.jpg', false, true,false);
+
+
+insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
+values (10, '2024-01-31 19:11:00', '2024-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
+
+insert into routes (drive, start_position, end_position, type) values (7, 2, 1, 'shortest');
+
+insert into client_drives (client, drive, price,approved,favourite) values (12, 7, 20.0,true, true );
+--5
+
+
+INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
+VALUES (nextval('user_seq'), 'clientTest@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Jankovic', false, '0654079380', 'Trebinje',false, 500, 'unknown.jpg', false, true,false);
+
+insert into user_role (user_id, role_id) values (11, 3);
+insert into user_role (user_id, role_id) values (13, 1);
 
 insert into drives (driver, start_time, end_time, price, status, duration, car_type,babies_allowed, pet_friendly,created_time)
 values (11, null, null, 20.0, 1, 5, 2, false, false,'2023-01-31 23:59:00');
 
+insert into client_drives (client, drive, price, approved, favourite) values (13, 8, 20.0, true, true);
+
+insert into routes (drive, start_position, end_position, type) values (8, 1, 2, 'fastest');

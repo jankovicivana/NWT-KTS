@@ -389,7 +389,7 @@ public class DriveController {
             LocalDateTime end = start.plusMinutes(duration);
             LocalDateTime now = LocalDateTime.now();
 
-            if(end.isAfter(now)){
+            if(end.isAfter(now) && scheduled != null){
                 long timeLeft = now.until(end, ChronoUnit.MINUTES);
                 this.notificationService.sendNotificationTimeLeft(scheduled, timeLeft);
             }
