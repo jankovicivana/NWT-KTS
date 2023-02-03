@@ -312,7 +312,6 @@ public class DriveService {
         return null;
     }
 
-    // treba testirati ***
     public DriverRouteDTO saveEmptyDrive(Drive d, double duration) {
         Drive newDrive = new Drive();
         newDrive.setDriver(d.getDriver());
@@ -357,15 +356,23 @@ public class DriveService {
 
     public Map<String, Position> stopEmptyDrive(Drive drive) {
         Drive empty = getDriverEmptyDrive(drive.getDriver().getUsername(), drive.getRoutes().get(0).getStartPosition().getAddress());
-        if(empty != null) {
+        if (empty != null) {
             empty.setStatus(DriveStatus.FINISHED);
             save(empty);
             Route route = empty.getRoutes().get(0);
             Position pos = route.getStartPosition();
             Map<String, Position> mapa = new HashMap<>();
             mapa.put(drive.getDriver().getUsername(), pos);
-            return  mapa;
+            return mapa;
         }
         return Collections.emptyMap();
+    }
+
+    public Drive rejectDrive(DriveDTO drive) {
+        Drive d = findById(drive.getId());
+        d.setRejectionReason(drive.getRejectionReason());
+        d.setStatus(DriveStatus.REJECTED);
+        save(d);
+        return d;
     }
 }

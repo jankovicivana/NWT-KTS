@@ -162,7 +162,7 @@ public class NotificationService {
         notificationRepository.saveAll(newNotifications);
     }
 
-    public void sendNotificationForDriverRejectingDrive(Drive d) {
+    public List<Notification> sendNotificationForDriverRejectingDrive(Drive d) {
         List<Notification> newNotifications = new ArrayList<>();
         List<ClientDrive> clientDrives = clientDriveRepository.getClientDriveByDrive(d.getId());
         String route = getRouteString(d);
@@ -180,6 +180,7 @@ public class NotificationService {
             this.simpMessagingTemplate.convertAndSend("/notification/driverRejected",dto);
         }
         notificationRepository.saveAll(newNotifications);
+        return newNotifications;
     }
 
     public void sendNotificationsForStartingDrive(Drive d) {

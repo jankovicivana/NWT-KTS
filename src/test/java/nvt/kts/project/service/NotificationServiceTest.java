@@ -279,4 +279,41 @@ public class NotificationServiceTest {
         assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
         assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
     }
+
+    @Test
+    public void shouldReturnTwoNotificationsRejectingDrive(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        clientDriveList.add(clientDrive2);
+
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForDriverRejectingDrive(drive);
+
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 2);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
+        assertEquals(notifications.get(1).getClient().getEmail(), "ivana@gmail.com");
+        assertEquals(notifications.get(1).getReason(), NotificationReason.REJECT_DRIVE);
+    }
+
+    @Test
+    public void shouldReturnOneNotificationRejectingDrive(){
+        List<ClientDrive> clientDriveList = new ArrayList<>();
+        clientDriveList.add(clientDrive);
+        Mockito.when(clientDriveRepository.getClientDriveByDrive(1L)).thenReturn(clientDriveList);
+        Mockito.when(systemInfoService.getTokenPrice()).thenReturn(20.0);
+        Mockito.when(routeService.getRoutes(1L)).thenReturn(routes);
+
+        List<Notification> notifications = notificationService.sendNotificationForDriverRejectingDrive(drive);
+        verify(notificationRepository, times(1)).saveAll(notificationsCaptor.capture());
+
+        assertEquals(notifications.size(), 1);
+        assertEquals(notifications.get(0).getClient().getEmail(), "client@gmail.com");
+        assertEquals(notifications.get(0).getReason(), NotificationReason.REJECT_DRIVE);
+    }
 }

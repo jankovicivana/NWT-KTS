@@ -1,5 +1,7 @@
 package nvt.kts.project.service;
 
+import javafx.geometry.Pos;
+import nvt.kts.project.dto.DriveDTO;
 import nvt.kts.project.dto.PositionDTO;
 import nvt.kts.project.dto.RouteDTO;
 import nvt.kts.project.dto.ScheduleInfoDTO;
@@ -56,6 +58,8 @@ public class DriveServiceTest {
     private ClientDrive clientDrive2;
 
     private List<RouteDTO> routes;
+
+    private List<Route> routesList;
 
     private Drive drive;
 
@@ -153,6 +157,25 @@ public class DriveServiceTest {
         clientDrive2.setFavourite(false);
         clientDrive2.setId(2L);
         clientDrive2.setApproved(false);
+
+        Route route = new Route();
+        Position startPosition = new Position();
+        startPosition.setLon(40.0);
+        startPosition.setLat(19.0);
+        startPosition.setAddress("Strazilovska 14");
+
+        Position endPosition = new Position();
+        endPosition.setLon(30.0);
+        endPosition.setLat(19.0);
+        endPosition.setAddress("Puskinova 16");
+
+        route.setStartPosition(startPosition);
+        route.setEndPosition(endPosition);
+        r.setType("recommended");
+        this.routesList = new ArrayList<>();
+        routesList.add(route);
+        drive.setRoutes(routesList);
+
     }
 
     @Test
@@ -661,6 +684,78 @@ public class DriveServiceTest {
 
     }
 
+    @Test
+    public void successfullyRejectDrive(){
+        DriveDTO dto = new DriveDTO();
+        dto.setId(1L);
+        dto.setRejectionReason("neki razlog");
+        Mockito.when(driveRepository.findById(1L)).thenReturn(Optional.ofNullable(drive));
 
+        Drive d = driveService.rejectDrive(dto);
+
+        verify(driveRepository,times(1)).save(Mockito.any(Drive.class));
+        assertEquals(d.getStatus(),DriveStatus.REJECTED);
+        assertEquals(d.getId(),drive.getId());
+    }
+
+
+    @Test
+    public void successfullyFindDriverEmptyDrive(){
+        List<Drive> emptyDrives = new ArrayList<>();
+        drive.setStatus(DriveStatus.EMPTY);
+        Driver driver = new Driver();
+        driver.setEmail("driver@gmail.com");
+        drive.setDriver(driver);
+        drive.setRoutes(routesList);
+
+        drive.getRoutes().get(0).getEndPosition().setAddress("Puskinova 16");
+        emptyDrives.add(drive);
+        Mockito.when(driveRepository.getDriverEmptyDrives("driver@gmail.com")).thenReturn(emptyDrives);
+
+        Drive d = driveService.getDriverEmptyDrive("driver@gmail.com","Puskinova 16");
+
+        verify(driveRepository,times(1)).getDriverEmptyDrives(Mockito.any(String.class));
+        assertEquals(d.getRoutes().get(0).getEndPosition().getAddress(),drive.getRoutes().get(0).getEndPosition().getAddress());
+    }
+
+    @Test
+    public void shouldNotFindDriverEmptyDriveWrongEmail(){
+        List<Drive> emptyDrives = new ArrayList<>();
+        drive.setStatus(DriveStatus.EMPTY);
+        Driver driver = new Driver();
+        driver.setEmail("driver@gmail.com");
+        drive.setDriver(driver);
+        drive.setRoutes(routesList);
+
+        drive.getRoutes().get(0).getEndPosition().setAddress("Puskinova 16");
+        emptyDrives.add(drive);
+        Mockito.when(driveRepository.getDriverEmptyDrives("driver@gmail.com")).thenReturn(emptyDrives);
+
+        //taj vozac nema prazne voznje
+        Drive d = driveService.getDriverEmptyDrive("wrongEmail@gmail.com","Puskinova 16");
+
+        verify(driveRepository,times(1)).getDriverEmptyDrives(Mockito.any(String.class));
+        assertNull(d);
+    }
+
+    @Test
+    public void shouldNotFindDriverEmptyDrivePositionsDoNotMatch(){
+        List<Drive> emptyDrives = new ArrayList<>();
+        drive.setStatus(DriveStatus.EMPTY);
+        Driver driver = new Driver();
+        driver.setEmail("driver@gmail.com");
+        drive.setDriver(driver);
+        drive.setRoutes(routesList);
+
+        drive.getRoutes().get(0).getEndPosition().setAddress("Puskinova 16");
+        emptyDrives.add(drive);
+        Mockito.when(driveRepository.getDriverEmptyDrives("driver@gmail.com")).thenReturn(emptyDrives);
+
+        //taj vozac nema odgovarajaucu  praznu voznju
+        Drive d = driveService.getDriverEmptyDrive("driver@gmail.com","Strazilovska 16");
+
+        verify(driveRepository,times(1)).getDriverEmptyDrives(Mockito.any(String.class));
+        assertNull(d);
+    }
 
 }

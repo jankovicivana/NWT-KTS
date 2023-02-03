@@ -102,6 +102,26 @@ public class DriveControllerTest {
 
     @Test
     void shouldRejectDrive(){
+        JwtAuthenticationRequest request = new JwtAuthenticationRequest();
+        request.setUsername("driver@gmail.com");
+        request.setPassword("pass");
+
+        ResponseEntity<UserTokenState> res = restTemplate
+                .postForEntity("/auth/login/", request, UserTokenState.class);
+
+        String token = "Bearer " + res.getBody().getAccessToken();
+        headers = new HttpHeaders();
+        headers.add("Authorization", token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Content-Type", "application/json");
+
+        DriveDTO dto = new DriveDTO();
+        dto.setId(1L);
+        dto.setRejectionReason("neki razlog");
+        HttpEntity<DriveDTO> entity = new HttpEntity<>(dto, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity("/api/drive/saveRejectionDriveReason", entity, String.class);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
 
     }
 

@@ -259,10 +259,9 @@ public class DriveController {
 
 
     @PostMapping("/saveRejectionDriveReason")
+    @PreAuthorize("hasRole('driver')")
     public ResponseEntity<String> saveRejectionDriveReason(@RequestBody DriveDTO drive, Principal principal){
-        Drive d = driveService.findById(drive.getId());
-        d.setRejectionReason(drive.getRejectionReason());
-        d.setStatus(DriveStatus.REJECTED);
+        Drive d = driveService.rejectDrive(drive);
         driveService.save(d);
 
         Map<String, Position> mapa = driveService.stopEmptyDrive(d);
