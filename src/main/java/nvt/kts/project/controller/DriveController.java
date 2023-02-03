@@ -3,6 +3,7 @@ package nvt.kts.project.controller;
 import lombok.RequiredArgsConstructor;
 
 import nvt.kts.project.dto.*;
+import nvt.kts.project.exception.DriverNotAvailableException;
 import nvt.kts.project.model.*;
 import nvt.kts.project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -301,8 +302,10 @@ public class DriveController {
     public ResponseEntity<Void> checkIfAllApproved(@PathVariable("id") Long clientDriveId){
         Drive drive = driveService.findDriveByClientDrive(clientDriveId);
         if (driveService.checkIfAllPassengersApprovedPayment(drive)){
-            Driver driver = driverService.findAvailableDriver(drive);
-            if (driver == null){
+            Driver driver;
+            try {
+                 driver = driverService.findAvailableDriver(drive);
+            }catch (DriverNotAvailableException e){
                 driveService.rejectDriveNoDriver(drive);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }

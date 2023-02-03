@@ -1,5 +1,6 @@
 package nvt.kts.project.service;
 import nvt.kts.project.dto.*;
+import nvt.kts.project.exception.DriverNotAvailableException;
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.DriverActivityRepository;
 import nvt.kts.project.repository.DriverRepository;
@@ -157,7 +158,7 @@ public class DriverService {
         long minTime = Long.MAX_VALUE;
         Driver nearest = null;
         for(Driver d: drivers){
-            Drive current = driveService.getDriverCurrentDrive(d.getEmail());
+            Drive current = driveService.getDriverCurrentDrive(d.getEmail()).get(0);
             LocalDateTime start = current.getStartTime();
             double duration = current.getDuration();
             LocalDateTime expectedEnd;
@@ -204,7 +205,7 @@ public class DriverService {
         }
         List<Driver> activeDrivers = getActiveDriversByCarCriteria(new CarDTO(drive.isPetFriendly(),drive.isBabiesAllowed(),drive.getCarType().getType()));
         if (activeDrivers.size() == 0){
-            return null;
+            throw new DriverNotAvailableException();
         }
         else{
             return findDriverNearestToEndWithAvailableWorkingHours(activeDrivers,drive);
@@ -232,7 +233,7 @@ public class DriverService {
                 return d;
             }
             drivers.remove(d);
-            if (drivers.size() == 0){return null;}
+            if (drivers.size() == 0){throw new DriverNotAvailableException();}
         }
 
     }

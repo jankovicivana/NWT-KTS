@@ -1,7 +1,12 @@
 package nvt.kts.project.controller;
 
 import nvt.kts.project.dto.*;
+import nvt.kts.project.model.Client;
 import nvt.kts.project.model.Drive;
+import nvt.kts.project.model.Driver;
+import nvt.kts.project.service.ClientService;
+import nvt.kts.project.service.DriveService;
+import nvt.kts.project.service.DriverService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,12 @@ public class DriveControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private DriverService driverService;
 
     private ScheduleInfoDTO info;
 
@@ -134,5 +145,28 @@ public class DriveControllerTest {
         ResponseEntity<String> response = restTemplate.postForEntity("/api/drive/saveRejectionDriveReason", entity, String.class);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
+
+    @Test
+    void successfulCheckIfAllApproved(){
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/drive/checkIfAllApproved/"+5, String.class);
+        assertEquals(response.getStatusCode(), HttpStatus.ACCEPTED);
+    }
+
+    @Test
+    void checkIfAllApprovedNoEnoughTokens(){
+        Client c = clientService.getClientByEmail("client2@gmail.com");
+        c.setTokens(1);
+        clientService.save(c);
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/drive/checkIfAllApproved/"+5, String.class);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+//    @Test
+//    void checkIfAllApprovedNoAvailableDrivers(){
+//        List<Driver> drivers = driverService.
+//        ResponseEntity<String> response = restTemplate.getForEntity("/api/drive/checkIfAllApproved/"+5, String.class);
+//        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+//    }
+
 
 }

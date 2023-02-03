@@ -4,6 +4,8 @@ import nvt.kts.project.model.Drive;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class DriveRepositoryTest {
     @Test
     public void shouldGetOneEmptyDriveByDriver(){
         List<Drive> cd = driveRepository.getDriverEmptyDrives("driver@gmail.com");
+        System.out.print(cd);
         assertEquals(cd.size(),1);
     }
 

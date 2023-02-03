@@ -123,6 +123,8 @@ insert into notifications (client,drive,reason,message,date_time) values (1,2,0,
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
 values (7, '2021-01-31 19:11:00', '2021-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
 
+insert into routes (drive, start_position, end_position, type) values (4, 2, 1, 'shortest');
+
 INSERT INTO drivers (id, email, password,
                      name, surname, deleted, phone_number, city, is_social_login,
                      photo, blocked, enabled, active, available, position,car)
@@ -138,3 +140,22 @@ values (10, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 8,0,1,false,fals
 
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
 values (10, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
+
+insert into routes (drive, start_position, end_position, type) values (5, 2, 1, 'shortest');
+
+insert into routes (drive, start_position, end_position, type) values (6, 2, 1, 'shortest');
+
+
+--
+
+INSERT INTO clients (id, email, password, name, surname, deleted, phone_number, city,is_social_login, tokens, photo, blocked, enabled,driving)
+VALUES (12, 'client2@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW', 'Ivana', 'Jankovic', false, '0654079380', 'Trebinje',false, 500, 'unknown.jpg', false, true,false);
+
+
+insert into drives (id,driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
+values (7,10, '2024-01-31 19:11:00', '2024-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
+
+insert into routes (drive, start_position, end_position, type) values (7, 2, 1, 'shortest');
+
+insert into client_drives (client, drive, price,approved,favourite) values (12, 7, 20.0,true, true );
+--5

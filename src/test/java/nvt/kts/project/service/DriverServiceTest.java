@@ -1,6 +1,7 @@
 package nvt.kts.project.service;
 
 import nvt.kts.project.dto.CarDTO;
+import nvt.kts.project.exception.DriverNotAvailableException;
 import nvt.kts.project.model.*;
 import nvt.kts.project.repository.DriverActivityRepository;
 import nvt.kts.project.repository.DriverRepository;
@@ -12,10 +13,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.*;
@@ -235,12 +235,10 @@ public class DriverServiceTest {
         Mockito.when(driverActivityRepository.getDriverActivites(1L)).thenReturn(driverActivities);
         Mockito.when(driverActivityRepository.getDriverActivites(2L)).thenReturn(driverActivities1);
 
-        Driver d = driverService.findAvailableDriver(drive);
+        assertThrows(DriverNotAvailableException.class,()->driverService.findAvailableDriver(drive));
 
         verify(driverRepository,times(1)).findActiveAndAvailableDriversByCarCriteria("Van XL",true,true);
         verify(driveService,times(0)).hasFutureReservations(Mockito.any(Driver.class),Mockito.any(Drive.class));
-
-        assertNull(d);
     }
 
 
@@ -286,12 +284,11 @@ public class DriverServiceTest {
         Mockito.when(driveService.hasFutureReservations(driver,drive)).thenReturn(true);
         Mockito.when(driveService.hasFutureReservations(driver1,drive)).thenReturn(true);
 
-        Driver d = driverService.findAvailableDriver(drive);
+        assertThrows(DriverNotAvailableException.class,()->driverService.findAvailableDriver(drive));
 
         verify(driverRepository,times(1)).findActiveAndAvailableDriversByCarCriteria("Van XL",true,true);
         verify(driveService,times(2)).hasFutureReservations(Mockito.any(Driver.class),Mockito.any(Drive.class));
 
-        assertNull(d);
     }
 
     @Test
@@ -300,13 +297,12 @@ public class DriverServiceTest {
         Mockito.when(driverRepository.findActiveAndAvailableDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(drivers);
         Mockito.when(driverRepository.findActiveDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(drivers);
 
-        Driver d = driverService.findAvailableDriver(drive);
+        assertThrows(DriverNotAvailableException.class,()->driverService.findAvailableDriver(drive));
 
         verify(driverRepository,times(1)).findActiveDriversByCarCriteria("Van XL",true,true);
         verify(driverActivityRepository,times(0)).getDriverActivites(1L);
         verify(driveService,times(0)).hasFutureReservations(driver,drive);
 
-        assertNull(d);
     }
 
 
@@ -328,8 +324,8 @@ public class DriverServiceTest {
         drive1.setDuration(30);
 
         Mockito.when(driverRepository.findActiveDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(activeDrivers);
-        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(drive);
-        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(drive1);
+        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(Collections.singletonList(drive));
+        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(Collections.singletonList(drive1));
 
         Driver d = driverService.findAvailableDriver(drive);
 
@@ -368,8 +364,8 @@ public class DriverServiceTest {
 
 
         Mockito.when(driverRepository.findActiveDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(activeDrivers);
-        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(drive);
-        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(drive1);
+        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(Collections.singletonList(drive));
+        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(Collections.singletonList(drive1));
         Mockito.when(driverActivityRepository.getDriverActivites(1L)).thenReturn(driverActivities);
         Mockito.when(driverActivityRepository.getDriverActivites(2L)).thenReturn(driverActivities1);
         Mockito.when(driveService.hasFutureReservations(driver,drive)).thenReturn(false);
@@ -414,21 +410,20 @@ public class DriverServiceTest {
 
 
         Mockito.when(driverRepository.findActiveDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(activeDrivers);
-        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(drive);
-        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(drive1);
+        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(Collections.singletonList(drive));
+        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(Collections.singletonList(drive1));
         Mockito.when(driverActivityRepository.getDriverActivites(1L)).thenReturn(driverActivities);
         Mockito.when(driverActivityRepository.getDriverActivites(2L)).thenReturn(driverActivities1);
         Mockito.when(driveService.hasFutureReservations(driver,drive)).thenReturn(false);
         Mockito.when(driveService.hasFutureReservations(driver1,drive)).thenReturn(false);
 
-        Driver d = driverService.findAvailableDriver(drive);
+        assertThrows(DriverNotAvailableException.class,()->driverService.findAvailableDriver(drive));
 
         verify(driverRepository,times(1)).findActiveDriversByCarCriteria("Van XL",true,true);
         verify(driverActivityRepository,times(1)).getDriverActivites(2L);
         verify(driverActivityRepository,times(1)).getDriverActivites(1L);
         verify(driveService,times(0)).hasFutureReservations(Mockito.any(Driver.class),Mockito.any(Drive.class));
 
-        assertNull(d);
     }
 
     @Test
@@ -453,8 +448,8 @@ public class DriverServiceTest {
 
 
         Mockito.when(driverRepository.findActiveDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(activeDrivers);
-        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(drive);
-        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(drive1);
+        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(Collections.singletonList(drive));
+        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(Collections.singletonList(drive1));
         Mockito.when(driverActivityRepository.getDriverActivites(1L)).thenReturn(driverActivities);
         Mockito.when(driverActivityRepository.getDriverActivites(2L)).thenReturn(driverActivities1);
         Mockito.when(driveService.hasFutureReservations(driver,drive)).thenReturn(true);
@@ -489,20 +484,18 @@ public class DriverServiceTest {
         List<DriverActivity> driverActivities1 = new ArrayList<>();
 
         Mockito.when(driverRepository.findActiveDriversByCarCriteria(carDTO.getType(),carDTO.isBabiesAllowed(), carDTO.isPetFriendly())).thenReturn(activeDrivers);
-        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(drive);
-        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(drive1);
+        Mockito.when(driveService.getDriverCurrentDrive("email@gmail.com")).thenReturn(Collections.singletonList(drive));
+        Mockito.when(driveService.getDriverCurrentDrive("ivana@gmail.com")).thenReturn(Collections.singletonList(drive1));
         Mockito.when(driverActivityRepository.getDriverActivites(1L)).thenReturn(driverActivities);
         Mockito.when(driverActivityRepository.getDriverActivites(2L)).thenReturn(driverActivities1);
         Mockito.when(driveService.hasFutureReservations(driver,drive)).thenReturn(true);
         Mockito.when(driveService.hasFutureReservations(driver1,drive)).thenReturn(true);
 
-        Driver d = driverService.findAvailableDriver(drive);
+        assertThrows(DriverNotAvailableException.class,()->driverService.findAvailableDriver(drive));
 
         verify(driverRepository,times(1)).findActiveDriversByCarCriteria("Van XL",true,true);
         verify(driverActivityRepository,times(1)).getDriverActivites(2L);
         verify(driverActivityRepository,times(1)).getDriverActivites(1L);
         verify(driveService,times(2)).hasFutureReservations(Mockito.any(Driver.class),Mockito.any(Drive.class));
-
-        assertNull(d);
     }
 }

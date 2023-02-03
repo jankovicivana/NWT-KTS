@@ -30,4 +30,10 @@ public class ClientDriveRepositoryTest {
         List<ClientDrive> cd = clientDriveRepository.getClientDriveByDrive(1L);
         assertEquals(cd.size(),1);
     }
+
+    @Test
+    public void shouldGetNoClientDriveByDrive(){
+        List<ClientDrive> cd = clientDriveRepository.getClientDriveByDrive(20L);
+        assertEquals(cd.size(),0);
+    }
 }
