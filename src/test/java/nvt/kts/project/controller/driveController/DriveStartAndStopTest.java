@@ -1,4 +1,4 @@
-package nvt.kts.project.controller;
+package nvt.kts.project.controller.driveController;
 
 import nvt.kts.project.dto.*;
 import nvt.kts.project.model.Client;
@@ -18,7 +18,7 @@ import static org.testng.Assert.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(properties="spring.datasource.url=jdbc:h2:mem:testdb", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DriveControllerTest {
+public class DriveStartAndStopTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -71,15 +71,7 @@ public class DriveControllerTest {
         headersTestDriver.add("Content-Type", "application/json");
     }
 
-    @Test
-    @Order(1)
-    void checkIfAllApprovedNoEnoughTokens(){
-        Client c = clientService.getClientByEmail("client2@gmail.com");
-        c.setTokens(1);
-        clientService.save(c);
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/drive/checkIfAllApproved/"+5, String.class);
-        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-    }
+
 
     @Test
     @Order(2)
@@ -174,15 +166,6 @@ public class DriveControllerTest {
         assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
-    @Test
-    @Order(8)
-    void successfulCheckIfAllApproved(){
-        Client c = clientService.getClientByEmail("client2@gmail.com");
-        c.setTokens(10);
-        clientService.save(c);
-        ResponseEntity<String> response = restTemplate.getForEntity("/api/drive/checkIfAllApproved/"+5, String.class);
-        assertEquals(response.getStatusCode(), HttpStatus.ACCEPTED);
-    }
 
 //    @Test
 //    void checkIfAllApprovedNoAvailableDrivers(){
