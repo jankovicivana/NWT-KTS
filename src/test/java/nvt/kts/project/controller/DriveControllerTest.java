@@ -1,18 +1,21 @@
 package nvt.kts.project.controller;
 
 import nvt.kts.project.dto.*;
+import nvt.kts.project.model.Drive;
 import org.junit.jupiter.api.*;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(properties="spring.datasource.url=jdbc:h2:mem:testdb", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DriveControllerTest {
 
     @Autowired
@@ -20,7 +23,9 @@ public class DriveControllerTest {
 
     private ScheduleInfoDTO info;
 
-    private HttpHeaders headers;
+    private HttpHeaders headersClient;
+
+    private HttpHeaders headersDriver;
 
     @BeforeEach
     public void setUp() {
@@ -33,10 +38,23 @@ public class DriveControllerTest {
                 .postForEntity("/auth/login/", request, UserTokenState.class);
 
         String token = "Bearer " + response.getBody().getAccessToken();
-        headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Content-Type", "application/json");
+        headersClient = new HttpHeaders();
+        headersClient.add("Authorization", token);
+        headersClient.setContentType(MediaType.APPLICATION_JSON);
+        headersClient.add("Content-Type", "application/json");
+
+        JwtAuthenticationRequest requestDriver = new JwtAuthenticationRequest();
+        requestDriver.setUsername("driver@gmail.com");
+        requestDriver.setPassword("pass");
+
+        ResponseEntity<UserTokenState> res = restTemplate
+                .postForEntity("/auth/login/", requestDriver, UserTokenState.class);
+
+        String tokenDriver = "Bearer " + res.getBody().getAccessToken();
+        headersDriver = new HttpHeaders();
+        headersDriver.add("Authorization", tokenDriver);
+        headersDriver.setContentType(MediaType.APPLICATION_JSON);
+        headersDriver.add("Content-Type", "application/json");
     }
 
 
@@ -71,7 +89,7 @@ public class DriveControllerTest {
         routes.add(r);
         info.setRoutes(routes);
 
-        HttpEntity<ScheduleInfoDTO> entity = new HttpEntity<>(info, headers);
+        HttpEntity<ScheduleInfoDTO> entity = new HttpEntity<>(info, headersClient);
         ResponseEntity<String> response = restTemplate.postForEntity("/api/drive/saveDrive", entity, String.class);
 
         String message = response.getBody();
@@ -82,6 +100,13 @@ public class DriveControllerTest {
 
     @Test
     void shouldGoToClient(){
+        EmptyDriveDTO dto = new EmptyDriveDTO();
+        Drive drive = new Drive();
+        drive.setId(1L);
+        dto.setDrive(drive);
+        dto.setDuration(5.0);
+        HttpEntity<EmptyDriveDTO> entity = new HttpEntity<>(dto, headersDriver);
+        ResponseEntity<String> response = restTemplate.postForEntity("/api/drive/goToClient", entity, String.class);
 
     }
 
@@ -102,27 +127,12 @@ public class DriveControllerTest {
 
     @Test
     void shouldRejectDrive(){
-        JwtAuthenticationRequest request = new JwtAuthenticationRequest();
-        request.setUsername("driver@gmail.com");
-        request.setPassword("pass");
-
-        ResponseEntity<UserTokenState> res = restTemplate
-                .postForEntity("/auth/login/", request, UserTokenState.class);
-
-        String token = "Bearer " + res.getBody().getAccessToken();
-        headers = new HttpHeaders();
-        headers.add("Authorization", token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Content-Type", "application/json");
-
         DriveDTO dto = new DriveDTO();
         dto.setId(1L);
         dto.setRejectionReason("neki razlog");
-        HttpEntity<DriveDTO> entity = new HttpEntity<>(dto, headers);
+        HttpEntity<DriveDTO> entity = new HttpEntity<>(dto, headersDriver);
         ResponseEntity<String> response = restTemplate.postForEntity("/api/drive/saveRejectionDriveReason", entity, String.class);
-
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-
     }
 
 }
