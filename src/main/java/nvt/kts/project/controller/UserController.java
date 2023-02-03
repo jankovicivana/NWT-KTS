@@ -176,7 +176,7 @@ public class UserController {
         e.setStatus(RequestStatus.PENDING);
         e.setType(carService.findCarTypeByName(dto.getType()).getId().toString());
         editDriverService.save(e);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @PostMapping("/saveClient")
@@ -185,14 +185,14 @@ public class UserController {
         Client client = mapper.map(clientDTO,Client.class);
         clientService.setRole(client);
         clientService.saveClient(client);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
     @PostMapping("/saveDriver")
     @PreAuthorize("hasRole('client')")
-    public ResponseEntity<Driver> saveDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<String> saveDriver(@RequestBody DriverDTO driverDTO) {
         Driver driver = mapper.map(driverDTO,Driver.class);
         driver = driverService.save(driver);
-        return new ResponseEntity<>(driver,HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
 
     @PostMapping("/saveAdmin")
@@ -200,7 +200,7 @@ public class UserController {
     public ResponseEntity<String> saveAdmin(@RequestBody UserDTO adminDTO) {
         Admin admin = mapper.map(adminDTO,Admin.class);
         adminService.save(admin);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
 
     @PostMapping("/changePassword")
@@ -210,7 +210,7 @@ public class UserController {
         Client u = clientService.getClientByEmail(principal.getName());
         u.setPassword(passwordEncoder.encode(newPass));
         clientService.saveClient(u);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
 
     @PostMapping("/checkOldPassword")

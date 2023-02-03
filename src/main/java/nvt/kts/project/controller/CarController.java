@@ -47,7 +47,7 @@ public class CarController {
 
     @PostMapping("/saveCar")
     @PostAuthorize("hasAnyRole('driver','admin')")
-    public ResponseEntity<Void> saveCar(@RequestBody CarDTO dto, Principal principal) {
+    public ResponseEntity<String> saveCar(@RequestBody CarDTO dto, Principal principal) {
         Car car = mapper.map(dto, Car.class);
         Driver driver = driverService.findDriverById(dto.getDriverId());
         car.setType(carService.findCarTypeByName(dto.getType()));
@@ -55,6 +55,6 @@ public class CarController {
         Car savedCar = carService.save(car);
         driver.setCar(savedCar);
         driverService.save(driver);
-        return new ResponseEntity<>( HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
 }

@@ -78,6 +78,6 @@ public class GradeController {
         Grade g = modelMapper.map(gradeDTO,Grade.class);
         g.setClientId(clientService.getClientByEmail("ivanaj0610@gmail.com").getId());
         gradeService.save(g);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
 }

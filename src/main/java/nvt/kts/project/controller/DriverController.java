@@ -38,14 +38,6 @@ public class DriverController {
     @Autowired
     private CarService carService;
 
-    @PostMapping(value = "/getActiveDriver",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<Void> getActiveDriver(@RequestBody CarDTO dto, Principal principal) {
-        List<Driver> activeDrivers = driverService.getActiveAndAvailableDriversByCarCriteria(dto);
-        //nadji najblizeg
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
 
     @GetMapping("/getDriver/{id}")
     @PreAuthorize("hasRole('admin')")
@@ -98,7 +90,7 @@ public class DriverController {
         driverService.save(updatedDriver);
         e.setStatus(RequestStatus.ACCEPTED);
         editDriverService.save(e);
-        return new ResponseEntity<>(false,HttpStatus.OK);
+        return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
     @PostMapping("/rejectDriverChanges")
@@ -107,12 +99,12 @@ public class DriverController {
         EditDriver e = mapper.map(dto,EditDriver.class);
         e.setStatus(RequestStatus.REJECTED);
         editDriverService.save(e);
-        return new ResponseEntity<>(false,HttpStatus.OK);
+        return new ResponseEntity<>(true,HttpStatus.OK);
     }
 
     @PostMapping("/changeDriverActivity")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<Boolean> changeDriverActivity(@RequestBody Boolean active, Principal principal) {
+    public ResponseEntity<String> changeDriverActivity(@RequestBody Boolean active, Principal principal) {
         Driver d = driverService.getDriverByEmail(principal.getName());
         if (active){
             driverService.finishActivityLog(d);
@@ -121,6 +113,6 @@ public class DriverController {
         }
         d.setActive(!active);
         driverService.save(d);
-        return new ResponseEntity<>(false,HttpStatus.OK);
+        return new ResponseEntity<>("Successful",HttpStatus.OK);
     }
 }

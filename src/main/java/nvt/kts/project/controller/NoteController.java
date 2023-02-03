@@ -64,6 +64,6 @@ public class NoteController {
             notes.add(t);
         }
         noteService.saveNotes(notes);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Successful", HttpStatus.OK);
     }
 }

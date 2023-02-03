@@ -74,7 +74,11 @@ public class DriverService {
         updatedDriver.setCar(driver.getCar());
         updatedDriver.getCar().setBabiesAllowed(dto.getBabiesAllowed());
         updatedDriver.getCar().setPetFriendly(dto.getPetFriendly());
-        updatedDriver.getCar().setType(carService.findCarTypeById(dto.getType()));
+        CarType type = carService.findCarTypeByName(dto.getType());
+        if(type == null){
+            type = carService.findCarTypeById(dto.getType());
+        }
+        updatedDriver.getCar().setType(type);
         updatedDriver.setRoles(driver.getRoles());
         return updatedDriver;
     }
