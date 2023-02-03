@@ -133,10 +133,22 @@ VALUES (10, 'driver11@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
 values (10, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
 
-
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time)
 values (10, '2023-01-31 19:11:00', '2023-01-31 23:59:00', 20.0, 8,0,1,false,false,'2023-01-31 23:59:00');
 
 insert into routes (drive, start_position, end_position, type) values (5, 2, 1, 'shortest');
 
 insert into routes (drive, start_position, end_position, type) values (6, 2, 1, 'shortest');
+
+
+INSERT INTO drivers (id, email, password,
+                     name, surname, deleted, phone_number, city, is_social_login,
+                     photo, blocked, enabled, active, available, position,car)
+
+VALUES (11, 'test@gmail.com', '$2a$10$iWm70CXU267iEgtasI.gGOYswU4qcaGKxa7rw/ZJtHnhdmukWqwWW',
+        'Ivana', 'Jankovic', false, '0654079380', 'Trebinje', false,
+        'unknown.jpg', false, true, false, true, 3, 2);
+
+insert into drives (driver, start_time, end_time, price, status, duration, car_type,babies_allowed, pet_friendly,created_time)
+values (11, null, null, 20.0, 1, 5, 2, false, false,'2023-01-31 23:59:00');
+
