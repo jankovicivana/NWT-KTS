@@ -166,7 +166,7 @@ public class DriveService {
         cd.setDrive(d);
         cd.setClient(client);
         cd.setFavourite(favourite);
-        if (info.getSplitFaire()){
+        if (!info.getSplitFaire()){
             double splitFairePrice = info.getPrice()/(info.getPassengers().size()+1);
             cd.setPrice(splitFairePrice);
         }else {
@@ -175,6 +175,7 @@ public class DriveService {
             }
             else{
                 cd.setPrice(0);
+                cd.setApproved(true);
             }
         }
         return cd;
