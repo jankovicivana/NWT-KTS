@@ -1,12 +1,14 @@
 package nvt.kts.project.repository;
 
 import nvt.kts.project.model.Drive;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -22,19 +24,26 @@ public class DriveRepositoryTest {
     public void shouldGetOneEmptyDriveByDriver(){
         List<Drive> cd = driveRepository.getDriverEmptyDrives("driver@gmail.com");
         System.out.print(cd);
-        assertEquals(cd.size(),1);
+        Assertions.assertEquals(cd.size(),1);
     }
 
     @Test
     public void shouldGetNoEmptyDriveByDriver(){
         List<Drive> cd = driveRepository.getDriverEmptyDrives("wrongEmail@gmail.com");
-        assertEquals(cd.size(),0);
+        Assertions.assertEquals(cd.size(),0);
     }
 
     @Test
-    public void shouldGetTwoEmptyDriveByDriver(){
+    public void shouldGetThreeEmptyDriveByDriver(){
         List<Drive> cd = driveRepository.getDriverEmptyDrives("driver11@gmail.com");
-        assertEquals(cd.size(),2);
+        Assertions.assertEquals(cd.size(),3);
+    }
+
+    @Test
+    public void shouldGetReservationsOfDriver(){
+        long l = 7;
+        List<Drive> cd = driveRepository.getReservations(l, LocalDateTime.now(),LocalDateTime.now().minusYears(1000));
+        Assertions.assertEquals(cd.size(), 0);
     }
 
     @Test
