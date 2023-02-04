@@ -100,6 +100,9 @@ insert into routes (drive, start_position, end_position, type) values (1, 1, 2, 
 insert into drives (driver, start_time, end_time, price, status,duration,car_type,babies_allowed, pet_friendly,created_time, distance)
 values (9, '2023-01-16 16:04:00', '2023-01-16 23:59:00', 30.0, 0,0,1,true,false,'2023-01-31 23:59:00', 25);
 
+insert into routes (drive, start_position, end_position, type) values (3, 1, 2, 'fastest');
+
+
 insert into client_drives (client, drive, price,approved,favourite) values (1, 2, 20.0,false, true );
 insert into client_drives (client, drive, price,approved, favourite) values (5, 2, 20.0,false, true );
 insert into client_drives (client, drive, price,approved, favourite) values (2, 2, 20.0,false, true );

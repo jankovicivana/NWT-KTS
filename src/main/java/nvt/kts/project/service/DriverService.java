@@ -242,7 +242,6 @@ public class DriverService {
 
     }
 
-    // treba testirati ***
     public Driver finishDrive(Drive drive) {
         Driver driver = drive.getDriver();
         driver.setAvailable(true);
@@ -251,7 +250,6 @@ public class DriverService {
         return driver;
     }
 
-    // treba testirati ***
     public Driver startDrive(Drive drive) {
         Driver driver = drive.getDriver();
         driver.setAvailable(false);

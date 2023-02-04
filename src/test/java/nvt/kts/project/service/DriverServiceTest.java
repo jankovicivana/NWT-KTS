@@ -498,4 +498,22 @@ public class DriverServiceTest {
         verify(driverActivityRepository,times(1)).getDriverActivites(1L);
         verify(driveService,times(2)).hasFutureReservations(Mockito.any(Driver.class),Mockito.any(Drive.class));
     }
+
+    @Test
+    public void shouldSetDriverUnavailable(){
+        driver1.setAvailable(true);
+        drive.setDriver(driver1);
+        Driver driver1 = driverService.startDrive(drive);
+        assertFalse(driver1.isAvailable());
+        assertEquals(driver1.getPosition().getAddress(), "Puskinova 16");
+    }
+
+    @Test
+    public void shouldSetDriverAvailable(){
+        driver.setAvailable(false);
+        drive.setDriver(driver);
+        Driver driver = driverService.finishDrive(drive);
+        assertTrue(driver.isAvailable());
+        assertEquals(driver.getPosition().getAddress(), "Strazilovska 14");
+    }
 }

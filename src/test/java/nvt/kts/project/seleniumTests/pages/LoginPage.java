@@ -33,12 +33,20 @@ public class LoginPage {
     @FindBy(id = "profile-nav-link")
     WebElement navbarProfileTitle;
 
+    @FindBy(className = "swal2-confirm")
+    WebElement okButton;
+
 
     public LoginPage(WebDriver driver){
         this.driver = driver;
         driver.get(PAGE_URL);
 
         PageFactory.initElements(driver, this);
+    }
+
+    public void clickOk(){
+        (new WebDriverWait(driver, Duration.ofSeconds(15)))
+            .until(ExpectedConditions.elementToBeClickable(okButton)).click();
     }
 
     public void setUserEmail(String email){

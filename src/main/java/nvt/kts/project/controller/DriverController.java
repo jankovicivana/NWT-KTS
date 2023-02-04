@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,10 @@ public class DriverController {
 
     @Autowired
     private CarService carService;
+
+    @Autowired
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
 
 
     @GetMapping("/getDriver/{id}")
@@ -104,7 +109,7 @@ public class DriverController {
 
     @PostMapping("/changeDriverActivity")
     @PreAuthorize("hasRole('driver')")
-    public ResponseEntity<String> changeDriverActivity(@RequestBody Boolean active, Principal principal) {
+    public ResponseEntity<Boolean> changeDriverActivity(@RequestBody Boolean active, Principal principal) {
         Driver d = driverService.getDriverByEmail(principal.getName());
         if (active){
             driverService.finishActivityLog(d);
@@ -113,6 +118,10 @@ public class DriverController {
         }
         d.setActive(!active);
         driverService.save(d);
-        return new ResponseEntity<>("Successful",HttpStatus.OK);
+        if(!active)
+            this.simpMessagingTemplate.convertAndSend("/map-updates/driver-active", principal.getName());
+        else
+            this.simpMessagingTemplate.convertAndSend("/map-updates/driver-not-active", principal.getName());
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

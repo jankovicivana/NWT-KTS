@@ -2,7 +2,6 @@ package nvt.kts.project.service;
 
 import nvt.kts.project.model.Client;
 import nvt.kts.project.repository.ClientRepository;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
