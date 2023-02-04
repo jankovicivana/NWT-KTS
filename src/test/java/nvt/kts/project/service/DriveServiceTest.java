@@ -432,7 +432,7 @@ public class DriveServiceTest {
     }
 
     @Test
-    public void shouldCreateClientDriveTwoClientsNotSplitFaire(){
+    public void shouldCreateClientDriveTwoClientsSplitFaire(){
 
         Client passenger = new Client();
         passenger.setId(2L);
@@ -449,18 +449,18 @@ public class DriveServiceTest {
         ClientDrive cd = driveService.createClientDrive(drive, client, info, true, false);
 
         assertFalse(cd.isFavourite());
-        assertEquals(cd.getPrice(), 20.0);
+        assertEquals(cd.getPrice(), 10.0);
         assertEquals(cd.getClient().getEmail(), client.getEmail());
 
         ClientDrive cd1 = driveService.createClientDrive(drive, passenger, info, false, false);
 
         assertFalse(cd1.isFavourite());
-        assertEquals(cd1.getPrice(), 0.0);
+        assertEquals(cd1.getPrice(), 10.0);
         assertEquals(cd1.getClient().getEmail(), passenger.getEmail());
     }
 
     @Test
-    public void shouldCreateClientDriveTwoClientsSplitFaire(){
+    public void shouldCreateClientDriveTwoClientsNotSplitFaire(){
 
         Client passenger = new Client();
         passenger.setId(2L);
@@ -478,13 +478,13 @@ public class DriveServiceTest {
         ClientDrive cd = driveService.createClientDrive(drive, client, info, true, false);
 
         assertFalse(cd.isFavourite());
-        assertEquals(cd.getPrice(), 10.0);
+        assertEquals(cd.getPrice(), 20.0);
         assertEquals(cd.getClient().getEmail(), client.getEmail());
 
         ClientDrive cd1 = driveService.createClientDrive(drive, passenger, info, false, false);
 
         assertFalse(cd1.isFavourite());
-        assertEquals(cd1.getPrice(), 10.0);
+        assertEquals(cd1.getPrice(), 0.0);
         assertEquals(cd1.getClient().getEmail(), passenger.getEmail());
     }
 
