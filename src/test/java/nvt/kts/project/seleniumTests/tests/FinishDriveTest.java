@@ -15,7 +15,6 @@ public class FinishDriveTest extends TestBase{
     static final String END = "Strazilovska 14";
 
     public static WebDriver driverDriver;
-    public static WebDriver passengerDriver;
 
     @Test
     public void shouldFinishDrive() {
@@ -54,6 +53,70 @@ public class FinishDriveTest extends TestBase{
         driverCurrentDrivesPage.clickGoToClient();
         driverCurrentDrivesPage.clickStart();
         driverCurrentDrivesPage.clickFinish();
+        assertTrue(driverCurrentDrivesPage.driveFinished());
+        driverDriver.quit();
+    }
+
+    @Test
+    public void shouldFinishDriveAndStartAnother() {
+
+        driverDriver = openPage("driver@gmail.com");
+
+        LoginPage loginPage = new LoginPage(driver);
+        assertTrue(loginPage.isPageOpened());
+
+        loginPage.setUserEmail(EMAIL);
+        loginPage.setUserPassword(PASS);
+        loginPage.clickOnLogin();
+
+        ClientHomepagePage clientHomepagePage = new ClientHomepagePage(driver);
+        assertTrue(clientHomepagePage.isPageOpened());
+
+        clientHomepagePage.setInputInfo(START,END);
+        clientHomepagePage.waitToClickChoose();
+        clientHomepagePage.clickChoose();
+
+        clientHomepagePage.selectCarType();
+        clientHomepagePage.clickNextSecondWindow();
+        clientHomepagePage.finishScheduling();
+        clientHomepagePage.clickAlert();
+
+        ApprovePaymentPage approvePaymentPage = new ApprovePaymentPage(driver);
+        approvePaymentPage.clickConfirm();
+        assertTrue(approvePaymentPage.isSuccessful());
+
+        clientHomepagePage = new ClientHomepagePage(driver);
+        assertTrue(clientHomepagePage.isPageOpened());
+
+        clientHomepagePage.setInputInfo(START,END);
+        clientHomepagePage.waitToClickChoose();
+        clientHomepagePage.clickChoose();
+
+        clientHomepagePage.selectCarType();
+        clientHomepagePage.clickNextSecondWindow();
+        clientHomepagePage.finishScheduling();
+        clientHomepagePage.clickAlert();
+
+        approvePaymentPage = new ApprovePaymentPage(driver);
+        approvePaymentPage.clickConfirm();
+        assertTrue(approvePaymentPage.isSuccessful());
+
+        driverDriver.manage().window().maximize();
+        DriverProfilePage driverProfilePage = new DriverProfilePage(driverDriver);
+        driverProfilePage.clickCurrentDrives();
+
+        DriverCurrentDrivesPage driverCurrentDrivesPage = new DriverCurrentDrivesPage(driverDriver);
+        // prva voznja
+        driverCurrentDrivesPage.clickGoToClient();
+        driverCurrentDrivesPage.clickStart();
+        driverCurrentDrivesPage.clickFinish();
+        assertTrue(driverCurrentDrivesPage.driveFinished());
+
+        // druga voznja
+        driverCurrentDrivesPage.clickGoToClient();
+        driverCurrentDrivesPage.clickStart();
+        driverCurrentDrivesPage.clickFinish();
+        assertTrue(driverCurrentDrivesPage.driveFinished());
         driverDriver.quit();
     }
 
@@ -94,11 +157,12 @@ public class FinishDriveTest extends TestBase{
         driverCurrentDrivesPage.clickGoToClient();
         driverCurrentDrivesPage.clickStart();
         driverCurrentDrivesPage.clickStop();
+        assertTrue(driverCurrentDrivesPage.driveStopped());
         driverDriver.quit();
     }
 
     @Test
-    public void shouldRejectDrive() throws InterruptedException {
+    public void shouldRejectDrive() {
 
         driverDriver = openPage("driver@gmail.com");
 

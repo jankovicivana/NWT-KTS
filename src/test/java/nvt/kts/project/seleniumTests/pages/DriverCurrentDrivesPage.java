@@ -4,6 +4,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class DriverCurrentDrivesPage {
 
@@ -29,6 +33,12 @@ public class DriverCurrentDrivesPage {
     @FindBy(id = "reject0")
     WebElement reject;
 
+    @FindBy(id = "toast-container")
+    WebElement stopToast;
+
+    @FindBy(id = "toast-container")
+    WebElement finishToast;
+
     public void clickGoToClient(){
         goTo.click();
     }
@@ -49,4 +59,14 @@ public class DriverCurrentDrivesPage {
         reject.click();
     }
 
+
+    public boolean driveStopped(){
+        return (new WebDriverWait(driver, Duration.ofSeconds(15)))
+                .until(ExpectedConditions.textToBePresentInElement(stopToast,"Drive stopped!"));
+    }
+
+    public boolean driveFinished(){
+        return (new WebDriverWait(driver, Duration.ofSeconds(15)))
+                .until(ExpectedConditions.textToBePresentInElement(finishToast,"Drive finished!"));
+    }
 }
