@@ -1,5 +1,7 @@
 package nvt.kts.project.seleniumTests.pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -8,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class ClientHomepagePage {
 
@@ -55,9 +59,25 @@ public class ClientHomepagePage {
     @FindBy(id = "userInput")
     WebElement passengerInput;
 
+    @FindBy(id = "notificationsId")
+    WebElement notifications;
+
 
     @FindBy(id = "addUser")
     WebElement addUser;
+
+    @FindBy(id = "time")
+    WebElement time;
+
+
+    @FindBy(id = "split_fare")
+    WebElement splitFaire;
+
+    @FindBy(id = "reserve")
+    WebElement reserve;
+
+    @FindBy(id = "endButton")
+    WebElement endButton;
 
 
 
@@ -113,6 +133,12 @@ public class ClientHomepagePage {
         approveToast.click();
     }
 
+    public void clickNotifications(){
+        (new WebDriverWait(driver, Duration.ofSeconds(15)))
+                .until(ExpectedConditions.presenceOfElementLocated(By.id("notificationsId")));
+        notifications.click();
+    }
+
     public void addStation(String s) {
         (new WebDriverWait(driver, Duration.ofSeconds(15)))
                 .until(ExpectedConditions.elementToBeClickable(addPin)).click();
@@ -123,5 +149,33 @@ public class ClientHomepagePage {
         passengerInput.sendKeys(s);
         (new WebDriverWait(driver, Duration.ofSeconds(15)))
                 .until(ExpectedConditions.elementToBeClickable(addUser)).click();
+    }
+
+    public void clickSplitFaire() {
+        splitFaire.click();
+    }
+
+    public void reserve() {
+        (new WebDriverWait(driver, Duration.ofSeconds(15)))
+                .until(ExpectedConditions.elementToBeClickable(reserve));
+        reserve.click();
+        (new WebDriverWait(driver, Duration.ofSeconds(15)))
+                .until(ExpectedConditions.elementToBeClickable(time));
+        time.click();
+        LocalDateTime timeInfo = LocalDateTime.now().plusHours(1);
+        String info = timeInfo.getHour() +":"+timeInfo.getMinute();
+        if (timeInfo.getHour()<12){
+            info += "am";
+        }else {
+            info += "pm";
+        }
+        time.sendKeys(info);
+        endButton.click();
+
+    }
+
+    public boolean isAlertVisible(String alertText){
+        return (new WebDriverWait(driver, Duration.ofSeconds(8)))
+                .until(ExpectedConditions.textToBePresentInElement(alert, alertText));
     }
 }

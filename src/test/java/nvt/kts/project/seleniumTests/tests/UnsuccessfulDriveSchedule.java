@@ -17,6 +17,7 @@ public class UnsuccessfulDriveSchedule extends TestBase{
     static final String PASS = "pass";
     static final String START = "Puskinova 16";
     static final String END = "Strazilovska 14";
+    static final String ALERT = "User not found";
 
     public static WebDriver driverDriver;
     public static WebDriver passengerDriver;
@@ -79,6 +80,28 @@ public class UnsuccessfulDriveSchedule extends TestBase{
         ApprovePaymentPage approvePaymentPage = new ApprovePaymentPage(driver);
         approvePaymentPage.clickConfirm();
         assertTrue(approvePaymentPage.noDrivers());
+
+    }
+    @Test
+    public void testUserNotFound() {
+
+        LoginPage loginPage = new LoginPage(driver);
+        assertTrue(loginPage.isPageOpened());
+        loginPage.setUserEmail("i@gmail.com");
+        loginPage.setUserPassword(PASS);
+        loginPage.clickOnLogin();
+        ClientHomepagePage clientHomepagePage = new ClientHomepagePage(driver);
+        assertTrue(clientHomepagePage.isPageOpened());
+
+        clientHomepagePage.setInputInfo(START,END);
+        clientHomepagePage.waitToClickChoose();
+        clientHomepagePage.clickChoose();
+
+        clientHomepagePage.selectCarType();
+        clientHomepagePage.addPassenger("tretsfsf@gmail.com");
+
+        assertTrue(clientHomepagePage.isAlertVisible(ALERT));
+
 
     }
 
