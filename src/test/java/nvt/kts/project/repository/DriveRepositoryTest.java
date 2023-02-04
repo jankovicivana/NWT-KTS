@@ -36,4 +36,16 @@ public class DriveRepositoryTest {
         List<Drive> cd = driveRepository.getDriverEmptyDrives("driver11@gmail.com");
         assertEquals(cd.size(),2);
     }
+
+    @Test
+    public void shouldGetCurrentDriverDrives(){
+        List<Drive> drives = driveRepository.getCurrentDriverDrive("test@gmail.com");
+        assertEquals(drives.size(), 1);
+    }
+
+    @Test
+    public void shouldNotGetCurrentDriverDrives(){
+        List<Drive> drives = driveRepository.getCurrentDriverDrive("driver11@gmail.com");
+        assertEquals(drives.size(), 0);
+    }
 }
