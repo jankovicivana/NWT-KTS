@@ -45,7 +45,6 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
     @Query("SELECT d from Drive d where (d.status = 6 or d.status = 1 or d.status = 2) and d.driver.email = :email ")
     List<Drive> getFutureDriverDrives(@Param("email") String email);
 
-
     @Query("SELECT d from Drive d where d.status = 8 and d.driver.email = :email")
     List<Drive> getDriverEmptyDrives(@Param("email") String email);
 
@@ -54,4 +53,7 @@ public interface DriveRepository extends JpaRepository<Drive, Long> {
 
     @Query("SELECT d from Drive d where d.status = 6 and d.driver.email = :email")
     List<Drive> getGoingToClientDrives(@Param("email") String email);
+
+    @Query("SELECT d from Drive d where d.reservation is not null and d.reservation.id = :id")
+    Drive getDriveByReservation(@Param("id") Long id);
 }

@@ -380,4 +380,8 @@ public class DriveService {
         save(d);
         return d;
     }
+
+    public Drive getDriveByReservation(Long id) {
+        return driveRepository.getDriveByReservation(id);
+    }
 }

@@ -45,7 +45,13 @@ public class NotificationService {
                     " = "+clientDrive.getPrice()/tokenPrice+ " tokena.");
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
-            NotificationDTO dto = new NotificationDTO(n);
+            NotificationDTO dto;
+            if(d.getStatus().equals(DriveStatus.RESERVED)) {
+                dto = new NotificationDTO(n, DriveStatus.RESERVED);
+            }
+            else {
+                dto = new NotificationDTO(n);
+            }
             dto.setReceiverEmail(n.getClient().getEmail());
             dto.setApprovedPayment(clientDrive.isApproved());
             this.simpMessagingTemplate.convertAndSend("/notification/approvePayment",dto);
@@ -154,7 +160,7 @@ public class NotificationService {
             n.setMessage("Podsjetnik: imate zakazanu voznju za " + i + " minuta na relaciji " + getRouteString(r.getDrive()));
             n.setDateTime(LocalDateTime.now());
             newNotifications.add(n);
-            NotificationDTO dto = new NotificationDTO(n);
+            NotificationDTO dto = new NotificationDTO(n, DriveStatus.RESERVED);
             dto.setReceiverEmail(n.getClient().getEmail());
             dto.setApprovedPayment(clientDrive.isApproved());
             this.simpMessagingTemplate.convertAndSend("/notification/reminder", dto);

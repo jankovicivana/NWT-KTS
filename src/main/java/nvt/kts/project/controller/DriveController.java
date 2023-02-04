@@ -364,19 +364,24 @@ public class DriveController {
 
         for(Reservation r: reservationsIn15){
             this.notificationService.sendReservationReminder(r, 15);
-            if(r.getDrive().getStatus().equals(DriveStatus.RESERVED)){
-                notificationService.sendNotificationsForApprovingPayment(r.getDrive());
+            Drive d = this.driveService.getDriveByReservation(r.getId());
+            if(d.getStatus().equals(DriveStatus.RESERVED)){
+                notificationService.sendNotificationsForApprovingPayment(d);
+                d.setStatus(DriveStatus.SCHEDULING_IN_PROGRESS);
+                driveService.save(d);
             }
         }
 
         for(Reservation r: reservationsIn10){
-            if(r.getDrive().getStatus().equals(DriveStatus.RESERVED) || r.getDrive().getStatus().equals(DriveStatus.SCHEDULED)){
+            Drive d = this.driveService.getDriveByReservation(r.getId());
+            if(d.getStatus().equals(DriveStatus.RESERVED) || d.getStatus().equals(DriveStatus.SCHEDULED) || d.getStatus().equals(DriveStatus.SCHEDULING_IN_PROGRESS)){
                 this.notificationService.sendReservationReminder(r, 10);
             }
         }
 
         for(Reservation r: reservationsIn5){
-            if(r.getDrive().getStatus().equals(DriveStatus.RESERVED) || r.getDrive().getStatus().equals(DriveStatus.SCHEDULED)){
+            Drive d = this.driveService.getDriveByReservation(r.getId());
+            if(d.getStatus().equals(DriveStatus.RESERVED) || d.getStatus().equals(DriveStatus.SCHEDULED)  || d.getStatus().equals(DriveStatus.SCHEDULING_IN_PROGRESS)){
                 this.notificationService.sendReservationReminder(r, 5);
             }
         }
