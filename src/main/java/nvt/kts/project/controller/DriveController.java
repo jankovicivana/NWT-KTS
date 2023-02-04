@@ -344,6 +344,9 @@ public class DriveController {
     public ResponseEntity<DriveDTO> getCurrentDrive(Principal principal) {
             Client c = clientService.getClientByEmail(principal.getName());
             Drive currentDrive = driveService.getCurrentClientDrive(c.getEmail());
+            if(currentDrive == null){
+                return new ResponseEntity<>(null, HttpStatus.OK);
+            }
             List<Drive> drive = new ArrayList<>();
             drive.add(currentDrive);
             DriveDTO dto = driveService.convertDriveToDTO(drive).get(0);
