@@ -73,11 +73,11 @@ public class GradeController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<String> saveNotes(@RequestBody GradeDTO gradeDTO,Principal principal) {
+    @PreAuthorize("hasRole('client')")
+    public ResponseEntity<Boolean> saveGrade(@RequestBody GradeDTO gradeDTO,Principal principal) {
         Grade g = modelMapper.map(gradeDTO,Grade.class);
-        g.setClientId(clientService.getClientByEmail("ivanaj0610@gmail.com").getId());
+        g.setClientId(clientService.getClientByEmail(principal.getName()).getId());
         gradeService.save(g);
-        return new ResponseEntity<>("Successful", HttpStatus.OK);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

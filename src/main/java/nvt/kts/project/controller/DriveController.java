@@ -202,6 +202,7 @@ public class DriveController {
             return new ResponseEntity<>("Drive already stopped.", HttpStatus.OK);
         }
         drive.setStatus(DriveStatus.STOPPED);
+        drive.setEndTime(LocalDateTime.now());
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),false);
         notificationService.sendNotificationsForStoppingDrive(drive);
@@ -226,6 +227,7 @@ public class DriveController {
             return new ResponseEntity<>("Drive already finished", HttpStatus.OK);
         }
         drive.setStatus(DriveStatus.FINISHED);
+        drive.setEndTime(LocalDateTime.now());
         driveService.save(drive);
         clientService.setClientsDriving(drive.getPassengers(),false);
         notificationService.sendNotificationsForFinishedDrive(drive);
